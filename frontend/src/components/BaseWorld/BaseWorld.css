@@ -1,0 +1,20 @@
+.base-world {
+  width: 100%;
+}
+
+.base-world-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: #0b0a08;
+}
+
+.base-world-stage {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: var(--accent);
+}

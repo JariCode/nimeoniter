@@ -1,0 +1,22 @@
+.daily-progress {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding: 16px;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.daily-progress-label {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+
+.daily-progress-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--accent);
+}

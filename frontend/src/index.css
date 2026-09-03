@@ -1,0 +1,23 @@
+:root {
+  --bg-dark: #0f0f0f;
+  --bg-panel: #1a1a1a;
+  --accent: #e8a23d;
+  --accent-dim: #7a5a22;
+  --text-light: #e0e0e0;
+  --text-dim: #888888;
+  --success: #6a9d4f;
+  --border: #2a2a2a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+}

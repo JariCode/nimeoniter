@@ -1,0 +1,94 @@
+.mission-list {
+  margin-top: 32px;
+}
+
+.mission-list-title {
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.mission-list-items {
+  list-style: none;
+}
+
+.mission {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 8px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mission:hover {
+  background-color: var(--bg-panel);
+}
+
+.mission-check {
+  color: var(--accent);
+  font-size: 18px;
+}
+
+.mission-name {
+  flex: 1;
+  color: var(--text-light);
+}
+
+.mission-xp {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.mission-done .mission-name {
+  text-decoration: line-through;
+  color: var(--text-dim);
+}
+
+.mission-done .mission-xp {
+  color: var(--text-dim);
+}
+
+.mission-list-empty {
+  color: var(--text-dim);
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+.mission-remove {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.2s ease;
+}
+
+.mission-remove:hover {
+  color: #c0504d;
+}
+
+/* Cap the daily list; scroll inside when it grows */
+.mission-list-items {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.mission-list-items::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mission-list-items::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 4px;
+}
+
+.mission-list-items::-webkit-scrollbar-track {
+  background: transparent;
+}

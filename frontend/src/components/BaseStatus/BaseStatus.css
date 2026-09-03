@@ -1,0 +1,82 @@
+.base-status {
+  width: 100%;
+}
+
+.base-status-title {
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.base-build {
+  margin-top: 16px;
+}
+
+.base-build-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.base-build-label {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--accent);
+}
+
+.base-build-locked {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #c0504d;
+}
+
+.base-build-cost {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.cost-ok {
+  color: var(--success);
+}
+
+.cost-missing {
+  color: #c0504d;
+}
+
+.base-build-button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--accent-dim);
+  color: var(--text-light);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.base-build-button:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: #1a1a1a;
+}
+
+.base-build-button:disabled {
+  background-color: var(--bg-panel);
+  color: var(--text-dim);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+
+.base-build-complete {
+  margin-top: 16px;
+  text-align: center;
+  color: var(--success);
+  font-size: 14px;
+}

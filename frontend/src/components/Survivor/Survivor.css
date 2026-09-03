@@ -1,0 +1,11 @@
+/* Gentle sway so the figure feels alive by the fire */
+.survivor-body {
+  transform-origin: 243px 219px;
+  animation: survivor-sway 4.5s ease-in-out infinite;
+}
+
+@keyframes survivor-sway {
+  0%   { transform: rotate(0deg) translateY(0px); }
+  50%  { transform: rotate(-1.5deg) translateY(-0.5px); }
+  100% { transform: rotate(0deg) translateY(0px); }
+}

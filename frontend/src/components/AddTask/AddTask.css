@@ -1,0 +1,128 @@
+.add-task {
+  margin-top: 24px;
+}
+
+.add-task-button {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--bg-panel);
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  border-radius: 8px;
+  font-size: 15px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-task-button:hover {
+  background-color: #242424;
+}
+
+/* Full-screen dim overlay behind the modal */
+.add-task-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+/* The modal panel itself */
+.add-task-modal {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-task-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.add-task-close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.2s ease;
+}
+
+.add-task-close:hover {
+  color: var(--text-light);
+}
+
+.add-task-title {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+}
+
+.add-task-empty {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.add-task-options {
+  list-style: none;
+  overflow-y: auto;
+}
+
+.add-task-options::-webkit-scrollbar {
+  width: 8px;
+}
+
+.add-task-options::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 4px;
+}
+
+.add-task-options::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.add-task-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-task-option:last-child {
+  border-bottom: none;
+}
+
+.add-task-option:hover {
+  background-color: #242424;
+}
+
+.add-task-option-icon {
+  font-size: 20px;
+}
+
+.add-task-option-name {
+  flex: 1;
+  color: var(--text-light);
+}
+
+.add-task-option-xp {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: bold;
+}

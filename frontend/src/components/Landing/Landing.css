@@ -1,0 +1,90 @@
+.landing {
+  position: fixed;
+  inset: 0;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.landing-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 720px;
+  width: 100%;
+}
+
+/* Image with a soft vignette that melts into black */
+.landing-image-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+}
+
+.landing-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  /* Fade the image edges into the black background */
+  -webkit-mask-image: radial-gradient(
+    ellipse 75% 75% at 50% 45%,
+    #000 55%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 75% 75% at 50% 45%,
+    #000 55%,
+    transparent 100%
+  );
+}
+
+.landing-title {
+  margin-top: 8px;
+  font-size: 52px;
+  font-weight: bold;
+  letter-spacing: 8px;
+  color: var(--text-light);
+  text-shadow: 0 0 24px rgba(232, 162, 61, 0.35);
+}
+
+.landing-punchline {
+  margin-top: 12px;
+  font-size: 17px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+
+.landing-start {
+  margin-top: 36px;
+  padding: 14px 36px;
+  background-color: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  font-size: 15px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.landing-start:hover {
+  background-color: var(--accent);
+  color: #0b0a08;
+  box-shadow: 0 0 30px rgba(232, 162, 61, 0.4);
+}
+
+@media (max-width: 600px) {
+  .landing-title {
+    font-size: 38px;
+    letter-spacing: 5px;
+  }
+  .landing-punchline {
+    font-size: 15px;
+  }
+}

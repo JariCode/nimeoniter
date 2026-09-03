@@ -1,0 +1,26 @@
+# Riippuvuudet
+node_modules/
+
+# Ympäristömuuttujat ja salaisuudet
+.env
+.env.*
+!.env.example
+
+# Buildit
+dist/
+build/
+
+# Lokit
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editorin ja käyttöjärjestelmän roskat
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Testaus / cache
+coverage/
+.cache/
