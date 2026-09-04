@@ -1,10 +1,10 @@
 import './ResourceBar.css';
 
-function ResourceBar({ resources }) {
+function ResourceBar({ resources, gain }) {
   const items = [
-    { icon: '🪵', label: 'WOOD', value: resources.wood },
-    { icon: '🪨', label: 'STONE', value: resources.stone },
-    { icon: '🍖', label: 'FOOD', value: resources.food },
+    { icon: '🪵', label: 'WOOD', value: resources.wood, gain: gain?.wood || 0 },
+    { icon: '🪨', label: 'STONE', value: resources.stone, gain: gain?.stone || 0 },
+    { icon: '🍖', label: 'FOOD', value: resources.food, gain: gain?.food || 0 },
   ];
 
   return (
@@ -14,6 +14,9 @@ function ResourceBar({ resources }) {
           <span className="resource-icon">{item.icon}</span>
           <span className="resource-value">{item.value}</span>
           <span className="resource-label">{item.label}</span>
+          {item.gain > 0 && (
+            <span key={gain.id} className="resource-gain">+{item.gain}</span>
+          )}
         </div>
       ))}
     </div>

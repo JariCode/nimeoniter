@@ -23,6 +23,7 @@ function App() {
   const [resources, setResources] = useState({ wood: 0, stone: 0, food: 0 });
   const [baseStageIndex, setBaseStageIndex] = useState(-1);
   const [justBuilt, setJustBuilt] = useState(null); // key of the building just built, for the pop animation
+  const [gain, setGain] = useState(null); // { wood, stone, food } just earned, for the resource pop
   const [missions, setMissions] = useState([]);
 
   // Which day the user is currently viewing
@@ -62,6 +63,15 @@ function App() {
           stone: res.stone + (mission.resources?.stone || 0),
           food: res.food + (mission.resources?.food || 0),
         }));
+        // Show a "+n" pop on the resources that were earned
+        const gainId = Date.now();
+        setGain({
+          wood: mission.resources?.wood || 0,
+          stone: mission.resources?.stone || 0,
+          food: mission.resources?.food || 0,
+          id: gainId,
+        });
+        setTimeout(() => setGain((cur) => (cur && cur.id === gainId ? null : cur)), 900);
         return { ...mission, done: true };
       })
     );
@@ -175,7 +185,7 @@ function App() {
             onRemove={removeMission}
           />
           <AddTask addedKeys={addedKeys} onAdd={addTask} />
-          <ResourceBar resources={resources} />
+          <ResourceBar resources={resources} gain={gain} />
         </div>
 
         <div className="app-right">

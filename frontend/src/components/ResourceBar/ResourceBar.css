@@ -30,3 +30,35 @@
   letter-spacing: 2px;
   color: var(--text-dim);
 }
+
+/* "+n" pop when a resource is earned */
+.resource {
+  position: relative;
+}
+
+.resource-gain {
+  position: absolute;
+  top: -6px;
+  right: 50%;
+  transform: translateX(50%);
+  color: var(--success);
+  font-size: 14px;
+  font-weight: bold;
+  pointer-events: none;
+  animation: resource-pop 0.9s ease-out forwards;
+}
+
+@keyframes resource-pop {
+  0% {
+    opacity: 0;
+    transform: translateX(50%) translateY(0) scale(0.8);
+  }
+  25% {
+    opacity: 1;
+    transform: translateX(50%) translateY(-8px) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(50%) translateY(-24px) scale(1);
+  }
+}
