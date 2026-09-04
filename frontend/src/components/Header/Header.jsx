@@ -6,7 +6,7 @@ function Header({ name, level }) {
 
   return (
     <header className="header">
-      <p className="header-greeting">{greeting}, {name}</p>
+      <p className="header-greeting">{greeting}</p>
       <div className="header-level">
         <span className="header-level-label">LEVEL</span>
         <span className="header-level-number">{level}</span>
