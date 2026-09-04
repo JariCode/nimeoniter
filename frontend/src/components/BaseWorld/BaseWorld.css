@@ -18,3 +18,34 @@
   letter-spacing: 3px;
   color: var(--accent);
 }
+
+/* Campfire flicker — flames sway and pulse from their base */
+.flame-outer,
+.flame-inner {
+  transform-origin: 280px 214px;
+  transform-box: fill-box;
+}
+
+.flame-outer {
+  transform-origin: center bottom;
+  animation: flicker-outer 1.1s ease-in-out infinite;
+}
+
+.flame-inner {
+  transform-origin: center bottom;
+  animation: flicker-inner 0.8s ease-in-out infinite;
+}
+
+@keyframes flicker-outer {
+  0%   { transform: scaleY(1) scaleX(1) skewX(0deg); }
+  30%  { transform: scaleY(1.08) scaleX(0.96) skewX(-2deg); }
+  60%  { transform: scaleY(0.95) scaleX(1.03) skewX(2deg); }
+  100% { transform: scaleY(1) scaleX(1) skewX(0deg); }
+}
+
+@keyframes flicker-inner {
+  0%   { transform: scaleY(1) skewX(0deg); }
+  40%  { transform: scaleY(1.12) skewX(2deg); }
+  70%  { transform: scaleY(0.92) skewX(-2deg); }
+  100% { transform: scaleY(1) skewX(0deg); }
+}

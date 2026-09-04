@@ -407,8 +407,8 @@ function BaseWorld({ stageKey }) {
             <rect x="266" y="211" width="26" height="5" rx="2" fill="#2a2018" transform="rotate(14 280 214)" />
             <rect x="266" y="211" width="26" height="5" rx="2" fill="#2a2018" transform="rotate(-14 280 214)" />
             <rect x="269" y="213" width="22" height="4" rx="2" fill="#1c150d" transform="rotate(3 280 215)" />
-            <path d="M 280 187 C 268 205, 273 214, 280 214 C 287 214, 292 205, 280 187 Z" fill="url(#flame)" />
-            <path d="M 280 197 C 274 207, 277 213, 280 213 C 283 213, 286 207, 280 197 Z" fill="#fff3c4" opacity="0.85" />
+            <path className="flame-outer" d="M 280 187 C 268 205, 273 214, 280 214 C 287 214, 292 205, 280 187 Z" fill="url(#flame)" />
+            <path className="flame-inner" d="M 280 197 C 274 207, 277 213, 280 213 C 283 213, 286 207, 280 197 Z" fill="#fff3c4" opacity="0.85" />
           </g>
           <circle cx="272" cy="196" r="1" fill="#f0b429" opacity="0.8" />
           <circle cx="288" cy="192" r="0.8" fill="#f0b429" opacity="0.7" />
