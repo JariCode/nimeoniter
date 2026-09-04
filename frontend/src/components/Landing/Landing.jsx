@@ -106,6 +106,8 @@ function Landing({ onStart }) {
             src="/img/Nimeoniter-Landing-Page.png"
             alt="A lone survivor by a campfire in the dark"
             className="landing-image"
+            width="1536"
+            height="1024"
           />
         </div>
 
