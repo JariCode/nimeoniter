@@ -2,6 +2,7 @@ import './BaseWorld.css';
 import Survivor from '../Survivor/Survivor';
 import { BUILD_STAGES } from '../../data/gameConfig';
 import { getTimeOfDay, SKY_STOPS, STAR_OPACITY, SKY_IS_RADIAL, CELESTIAL } from '../../data/timeOfDay';
+import { getSeason, GROUND_STOPS, SEASON_OVERLAY, FLOWERS } from '../../data/season';
 
 // How many buildings are built, from the current stage key.
 // 'camp' = 0 built; otherwise index in BUILD_STAGES + 1.
@@ -31,6 +32,11 @@ function BaseWorld({ stageKey }) {
   const skyRadial = SKY_IS_RADIAL[tod];
   const celestial = CELESTIAL[tod];
 
+  // Season drives the ground color and overlay (snow / flowers / puddles)
+  const season = getSeason();
+  const groundStops = GROUND_STOPS[season];
+  const overlay = SEASON_OVERLAY[season];
+
   return (
     <div className="base-world">
       <svg
@@ -57,8 +63,9 @@ function BaseWorld({ stageKey }) {
             <stop offset="100%" stopColor={celestial.glow} stopOpacity="0" />
           </radialGradient>
           <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1c1810" />
-            <stop offset="100%" stopColor="#100d09" />
+            {groundStops.map(([off, col]) => (
+              <stop key={off} offset={off} stopColor={col} />
+            ))}
           </linearGradient>
           <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#4a3c28" />
@@ -138,6 +145,34 @@ function BaseWorld({ stageKey }) {
         <ellipse cx="130" cy="235" rx="10" ry="2.5" fill="#241f15" opacity="0.5" />
         <ellipse cx="250" cy="245" rx="14" ry="3" fill="#1a160f" opacity="0.5" />
         <ellipse cx="60" cy="250" rx="12" ry="2.5" fill="#241f15" opacity="0.4" />
+
+        {/* Season overlay: snow blanket, flowers, or puddles */}
+        {overlay === 'snow' && (
+          <g>
+            <rect x="0" y="220" width="400" height="80" fill="#c8d0d8" opacity="0.16" />
+            <ellipse cx="200" cy="222" rx="200" ry="14" fill="#e8eef4" opacity="0.22" />
+            <ellipse cx="90" cy="238" rx="40" ry="7" fill="#e8eef4" opacity="0.3" />
+            <ellipse cx="300" cy="245" rx="50" ry="8" fill="#e8eef4" opacity="0.28" />
+            <ellipse cx="180" cy="258" rx="60" ry="9" fill="#e8eef4" opacity="0.25" />
+          </g>
+        )}
+        {overlay === 'puddles' && (
+          <g>
+            <ellipse cx="120" cy="242" rx="22" ry="4" fill="#3a4a52" opacity="0.5" />
+            <ellipse cx="300" cy="252" rx="28" ry="5" fill="#3a4a52" opacity="0.45" />
+            <ellipse cx="120" cy="241" rx="14" ry="2" fill="#6a7a82" opacity="0.35" />
+          </g>
+        )}
+        {(overlay === 'flowers' || overlay === 'flowersDense') && (
+          <g>
+            {FLOWERS.slice(0, overlay === 'flowersDense' ? FLOWERS.length : 8).map((fl, i) => (
+              <g key={i}>
+                <line x1={fl.x} y1={fl.y} x2={fl.x} y2={fl.y + 4} stroke="#4a5a28" strokeWidth="1" />
+                <circle cx={fl.x} cy={fl.y} r="1.8" fill={fl.c} />
+              </g>
+            ))}
+          </g>
+        )}
 
         {/* ===== BACK LAYER ===== */}
 
