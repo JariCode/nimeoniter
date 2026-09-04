@@ -126,3 +126,22 @@
   font-size: 13px;
   font-weight: bold;
 }
+
+.add-task-done {
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px;
+  background-color: var(--accent-dim);
+  color: var(--text-light);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-task-done:hover {
+  background-color: var(--accent);
+  color: #1a1a1a;
+}

@@ -40,10 +40,7 @@ function AddTask({ addedKeys, onAdd }) {
                   <li
                     key={task.key}
                     className="add-task-option"
-                    onClick={() => {
-                      onAdd(task);
-                      setOpen(false);
-                    }}
+                    onClick={() => onAdd(task)}
                   >
                     <span className="add-task-option-icon">{task.icon}</span>
                     <span className="add-task-option-name">{task.name}</span>
@@ -52,6 +49,10 @@ function AddTask({ addedKeys, onAdd }) {
                 ))}
               </ul>
             )}
+
+            <button className="add-task-done" onClick={() => setOpen(false)}>
+              Done
+            </button>
           </div>
         </div>
       )}
