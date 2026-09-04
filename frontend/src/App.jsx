@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Landing from './components/Landing/Landing';
 import Header from './components/Header/Header';
 import EnergyBar from './components/EnergyBar/EnergyBar';
@@ -8,6 +8,7 @@ import MissionList from './components/MissionList/MissionList';
 import AddTask from './components/AddTask/AddTask';
 import ResourceBar from './components/ResourceBar/ResourceBar';
 import BaseStatus from './components/BaseStatus/BaseStatus';
+import LevelUp from './components/LevelUp/LevelUp';
 import { xpForLevel, BUILD_STAGES } from './data/gameConfig';
 import { todayKey } from './data/dateUtils';
 import './App.css';
@@ -23,6 +24,10 @@ function App() {
 
   // Which day the user is currently viewing
   const [selectedDate, setSelectedDate] = useState(todayKey());
+
+  // Level-up detection
+  const [levelUpShown, setLevelUpShown] = useState(null);
+  const prevLevel = useRef(1);
 
   function addTask(task) {
     setMissions((prev) => [
@@ -75,6 +80,14 @@ function App() {
   const { level, xpIntoLevel, xpForNext } = levelFromXp(totalXp);
   const levelProgress = Math.round((xpIntoLevel / xpForNext) * 100);
 
+  // When level increases, show the level-up notice
+  useEffect(() => {
+    if (level > prevLevel.current) {
+      setLevelUpShown(level);
+    }
+    prevLevel.current = level;
+  }, [level]);
+
   const nextStage = BUILD_STAGES[baseStageIndex + 1] || null;
 
   const canBuild =
@@ -111,6 +124,10 @@ function App() {
   return (
     <>
       {!started && <Landing onStart={() => setStarted(true)} />}
+
+      {levelUpShown && (
+        <LevelUp level={levelUpShown} onDone={() => setLevelUpShown(null)} />
+      )}
 
       <div className="app">
         <div className="app-left">

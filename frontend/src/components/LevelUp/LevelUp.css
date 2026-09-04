@@ -1,0 +1,53 @@
+.levelup-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: levelup-fade 0.3s ease-out;
+}
+
+.levelup-card {
+  text-align: center;
+  animation: levelup-rise 0.5s ease-out;
+}
+
+.levelup-label {
+  font-size: 20px;
+  letter-spacing: 8px;
+  color: var(--accent);
+  text-shadow: 0 0 20px rgba(232, 162, 61, 0.5);
+}
+
+.levelup-number {
+  font-size: 96px;
+  font-weight: bold;
+  color: var(--text-light);
+  line-height: 1;
+  margin: 8px 0;
+  text-shadow: 0 0 40px rgba(232, 162, 61, 0.6);
+}
+
+.levelup-sub {
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+
+@keyframes levelup-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes levelup-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
