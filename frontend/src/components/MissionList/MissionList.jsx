@@ -1,9 +1,22 @@
+import { useState } from 'react';
 import './MissionList.css';
 
 function MissionList({ missions, onComplete, onRemove }) {
+  // Tracks which task just got completed, to show a floating "+XP"
+  const [poppingId, setPoppingId] = useState(null);
+
+  function handleComplete(mission) {
+    // Only pop when going from not-done to done
+    if (!mission.done) {
+      setPoppingId(mission.id);
+      // Clear after the animation so it can fire again later
+      setTimeout(() => setPoppingId((cur) => (cur === mission.id ? null : cur)), 900);
+    }
+    onComplete(mission.id);
+  }
+
   return (
     <div className="mission-list">
-
       {missions.length === 0 ? (
         <p className="mission-list-empty">
           No tasks yet. Add your first task below.
@@ -17,13 +30,13 @@ function MissionList({ missions, onComplete, onRemove }) {
             >
               <span
                 className="mission-check"
-                onClick={() => onComplete(mission.id)}
+                onClick={() => handleComplete(mission)}
               >
                 {mission.done ? '☑' : '☐'}
               </span>
               <span
                 className="mission-name"
-                onClick={() => onComplete(mission.id)}
+                onClick={() => handleComplete(mission)}
               >
                 {mission.icon} {mission.name}
               </span>
@@ -35,6 +48,11 @@ function MissionList({ missions, onComplete, onRemove }) {
               >
                 ✕
               </button>
+
+              {/* Floating reward that pops when completed */}
+              {poppingId === mission.id && (
+                <span className="mission-pop">+{mission.xp} XP</span>
+              )}
             </li>
           ))}
         </ul>

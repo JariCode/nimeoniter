@@ -92,3 +92,34 @@
 .mission-list-items::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* Floating "+XP" reward that rises and fades on completion */
+.mission {
+  position: relative;
+}
+
+.mission-pop {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: bold;
+  pointer-events: none;
+  animation: xp-pop 0.9s ease-out forwards;
+}
+
+@keyframes xp-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-28px) scale(1);
+  }
+}
