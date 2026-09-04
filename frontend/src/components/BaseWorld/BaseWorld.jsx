@@ -21,7 +21,7 @@ const WALL_SEAMS = Array.from({ length: 19 }, (_, i) => {
   return { x, domeH };
 });
 
-function BaseWorld({ stageKey }) {
+function BaseWorld({ stageKey, justBuilt }) {
   const built = builtCountFromKey(stageKey);
   const has = (key) => BUILD_STAGES.slice(0, built).some((s) => s.key === key);
 
@@ -178,6 +178,7 @@ function BaseWorld({ stageKey }) {
 
         {/* WALL + big corner tower — final build */}
         {has('wall') && (
+          <g className={justBuilt === 'wall' ? 'building-pop' : undefined}>
           <>
             <g>
               {/* solid wall body, one continuous fill so it reads as a single structure */}
@@ -238,12 +239,14 @@ function BaseWorld({ stageKey }) {
               <rect x="346" y="145" width="10" height="13" rx="2" fill="url(#paneGlow)" opacity="0.9" />
             </g>
           </>
+          </g>
         )}
 
         {/* ===== MID LAYER (original buildings, unchanged) ===== */}
 
         {/* HOUSE (original) */}
         {has('house') && (
+          <g className={justBuilt === 'house' ? 'building-pop' : undefined}>
           <g>
             <ellipse cx="90" cy="222" rx="48" ry="8" fill="#000" opacity="0.4" />
             {/* stone foundation */}
@@ -289,10 +292,12 @@ function BaseWorld({ stageKey }) {
             <line x1="110" y1="182" x2="110" y2="194" stroke="#4a3410" strokeWidth="1" />
             <line x1="104" y1="188" x2="116" y2="188" stroke="#4a3410" strokeWidth="1" />
           </g>
+          </g>
         )}
 
         {/* HUT (original, enlarged so the doorway reads against the survivor) */}
         {has('hut') && (
+          <g className={justBuilt === 'hut' ? 'building-pop' : undefined}>
           <g transform="translate(-14,-10.4) scale(1.2)">
             <ellipse cx="70" cy="222" rx="34" ry="7" fill="#000" opacity="0.4" />
             <path d="M 45 191 Q 44 220 47 222 L 93 222 Q 96 220 95 191 Z" fill="url(#wood)" />
@@ -319,10 +324,12 @@ function BaseWorld({ stageKey }) {
             <rect x="63" y="203" width="14" height="19" fill="#0d0b07" />
             <path d="M 63 203 Q 70 210 63 219 Z" fill="#241d13" opacity="0.7" />
           </g>
+          </g>
         )}
 
         {/* WELL (brought forward and clear of the hut, shadow aligned to its base) */}
         {has('well') && (
+          <g className={justBuilt === 'well' ? 'building-pop' : undefined}>
           <g transform="translate(-27,-79) scale(1.5)">
             <ellipse cx="35" cy="241" rx="18" ry="4.5" fill="#000" opacity="0.4" />
             <ellipse cx="35" cy="241" rx="13" ry="5" fill="url(#stone)" />
@@ -352,6 +359,7 @@ function BaseWorld({ stageKey }) {
             <path d="M 35 216 L 49 226 L 44 226 L 35 220 Z" fill="#2a230f" opacity="0.5" />
             <line x1="35" y1="216" x2="35" y2="220" stroke="#241d13" strokeWidth="1" opacity="0.5" />
           </g>
+          </g>
         )}
 
         {/* ===== FRONT LAYER ===== */}
@@ -377,6 +385,7 @@ function BaseWorld({ stageKey }) {
 
         {/* FIELD (foreground, enlarged, shifted left so it stays clear of the survivor) */}
         {has('field') && (
+          <g className={justBuilt === 'field' ? 'building-pop' : undefined}>
           <g transform="translate(-85,-80) scale(1.35)">
             <ellipse cx="200" cy="260" rx="50" ry="13" fill="#000" opacity="0.45" />
             <rect x="160" y="250" width="80" height="12" fill="#2e2416" />
@@ -393,6 +402,7 @@ function BaseWorld({ stageKey }) {
             <line x1="160" y1="256" x2="240" y2="256" stroke="#241c12" strokeWidth="1" />
             {/* fence corner post for scale */}
             <line x1="157" y1="240" x2="157" y2="262" stroke="url(#woodDark)" strokeWidth="3" />
+          </g>
           </g>
         )}
 
@@ -417,6 +427,7 @@ function BaseWorld({ stageKey }) {
 
         {/* STORAGE (drawn after the campfire so its glow stays behind the building) */}
         {has('storage') && (
+          <g className={justBuilt === 'storage' ? 'building-pop' : undefined}>
           <g transform="translate(-37,-11) scale(1.2)">
             <ellipse cx="315" cy="243" rx="30" ry="6" fill="#000" opacity="0.4" />
             {/* barrels beside the shed */}
@@ -437,10 +448,12 @@ function BaseWorld({ stageKey }) {
             <rect x="308" y="220" width="15" height="22" fill="#0d0b07" />
             <line x1="315.5" y1="220" x2="315.5" y2="242" stroke="#241c12" strokeWidth="0.8" />
           </g>
+          </g>
         )}
 
         {/* FENCE (right against the front edge of the field, matching its width) */}
         {has('fence') && (
+          <g className={justBuilt === 'fence' ? 'building-pop' : undefined}>
           <g transform="translate(-508,-157) scale(2.16,1.7)" stroke="#8a6f45" strokeWidth="3" opacity="0.95">
             <line x1="300" y1="262" x2="300" y2="246" strokeLinecap="round" />
             <line x1="314" y1="262" x2="314" y2="249" strokeLinecap="round" />
@@ -451,10 +464,12 @@ function BaseWorld({ stageKey }) {
             <line x1="296" y1="254" x2="346" y2="254" />
             <line x1="298" y1="260" x2="344" y2="260" strokeWidth="2" opacity="0.7" />
           </g>
+          </g>
         )}
 
         {/* WATCHTOWER (foreground, stays at the right edge) */}
         {has('watchtower') && (
+          <g className={justBuilt === 'watchtower' ? 'building-pop' : undefined}>
           <g transform="translate(337,-7) scale(1.4)">
             <ellipse cx="32" cy="205" rx="15" ry="4" fill="#000" opacity="0.4" />
             <rect x="26" y="165" width="4" height="40" fill="#2e2418" transform="rotate(4 28 185)" />
@@ -479,6 +494,7 @@ function BaseWorld({ stageKey }) {
             {/* lantern */}
             <circle cx="32" cy="162" r="7" fill="url(#lanternGlow)" filter="url(#softGlow)" />
             <rect x="28" y="159" width="8" height="6" fill="url(#paneGlow)" opacity="0.85" />
+          </g>
           </g>
         )}
       </svg>

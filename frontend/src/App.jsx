@@ -20,6 +20,7 @@ function App() {
   const [totalXp, setTotalXp] = useState(0);
   const [resources, setResources] = useState({ wood: 0, stone: 0, food: 0 });
   const [baseStageIndex, setBaseStageIndex] = useState(-1);
+  const [justBuilt, setJustBuilt] = useState(null); // key of the building just built, for the pop animation
   const [missions, setMissions] = useState([]);
 
   // Which day the user is currently viewing
@@ -105,6 +106,9 @@ function App() {
       food: res.food - nextStage.cost.food,
     }));
     setBaseStageIndex((i) => i + 1);
+    // Trigger the pop animation on the newly built building
+    setJustBuilt(nextStage.key);
+    setTimeout(() => setJustBuilt((cur) => (cur === nextStage.key ? null : cur)), 900);
   }
 
   const baseStageKey =
@@ -147,6 +151,7 @@ function App() {
         <div className="app-right">
           <BaseStatus
             stageKey={baseStageKey}
+            justBuilt={justBuilt}
             nextStage={nextStage}
             resources={resources}
             level={level}

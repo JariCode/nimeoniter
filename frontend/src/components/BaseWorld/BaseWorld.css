@@ -49,3 +49,24 @@
   70%  { transform: scaleY(0.92) skewX(-2deg); }
   100% { transform: scaleY(1) skewX(0deg); }
 }
+
+/* A newly built building pops into place (outer wrapper has no positioning transform) */
+.building-pop {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: building-pop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes building-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

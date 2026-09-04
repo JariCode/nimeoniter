@@ -13,7 +13,6 @@ export const BUILD_STAGES = [
   { key: 'house',      name: 'HOUSE',      requiredLevel: 5,  cost: { wood: 35, stone: 20, food: 0 } },
   { key: 'field',      name: 'FIELD',      requiredLevel: 7,  cost: { wood: 20, stone: 10, food: 10 } },
   { key: 'storage',    name: 'STORAGE',    requiredLevel: 9,  cost: { wood: 30, stone: 25, food: 0 } },
-  { key: 'kitchen',    name: 'KITCHEN',    requiredLevel: 10, cost: { wood: 25, stone: 15, food: 10 } },
   { key: 'fence',      name: 'FENCE',      requiredLevel: 11, cost: { wood: 30, stone: 20, food: 0 } },
   { key: 'watchtower', name: 'WATCHTOWER', requiredLevel: 14, cost: { wood: 40, stone: 40, food: 10 } },
   { key: 'wall',       name: 'WALL',       requiredLevel: 18, cost: { wood: 90, stone: 80, food: 30 } },
