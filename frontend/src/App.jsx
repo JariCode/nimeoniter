@@ -299,6 +299,10 @@ function App() {
                       color: '#c58a22',
                     },
 
+                    avatarImageActionsUpload: {
+                      color: '#c58a22',
+                    },
+
                     formFieldLabel: {
                       color: '#e6e0d2',
                     },
