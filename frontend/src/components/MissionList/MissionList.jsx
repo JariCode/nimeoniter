@@ -3,7 +3,6 @@ import './MissionList.css';
 function MissionList({ missions, onComplete, onRemove }) {
   return (
     <div className="mission-list">
-      <h2 className="mission-list-title">TODAY</h2>
 
       {missions.length === 0 ? (
         <p className="mission-list-empty">
