@@ -130,12 +130,12 @@ function BaseWorld({ stageKey, justBuilt }) {
 
         {/* Stars (fade out toward day) */}
         <g opacity={starOp}>
-          <circle cx="60" cy="40" r="1" fill="#e8dcc0" opacity="0.5" />
-          <circle cx="130" cy="60" r="1.2" fill="#e8dcc0" opacity="0.4" />
-          <circle cx="320" cy="35" r="1" fill="#e8dcc0" opacity="0.6" />
-          <circle cx="360" cy="80" r="1" fill="#e8dcc0" opacity="0.3" />
-          <circle cx="240" cy="50" r="0.8" fill="#e8dcc0" opacity="0.5" />
-          <circle cx="90" cy="90" r="0.8" fill="#e8dcc0" opacity="0.35" />
+          <circle className="star" cx="60" cy="40" r="1" fill="#e8dcc0" opacity="0.5" />
+          <circle className="star" cx="130" cy="60" r="1.2" fill="#e8dcc0" opacity="0.4" />
+          <circle className="star" cx="320" cy="35" r="1" fill="#e8dcc0" opacity="0.6" />
+          <circle className="star" cx="360" cy="80" r="1" fill="#e8dcc0" opacity="0.3" />
+          <circle className="star" cx="240" cy="50" r="0.8" fill="#e8dcc0" opacity="0.5" />
+          <circle className="star" cx="90" cy="90" r="0.8" fill="#e8dcc0" opacity="0.35" />
         </g>
 
         {/* Ground */}
@@ -233,7 +233,7 @@ function BaseWorld({ stageKey, justBuilt }) {
               <line x1="351" y1="90" x2="351" y2="112" stroke="#1c150d" strokeWidth="1" opacity="0.5" />
               {/* flagpole + flag */}
               <line x1="351" y1="90" x2="351" y2="70" stroke="#241d13" strokeWidth="1.5" />
-              <path d="M 351 71 L 366 76 L 351 81 Z" fill="#e8a23d" opacity="0.9" />
+              <path className="flag" d="M 351 71 L 366 76 L 351 81 Z" fill="#e8a23d" opacity="0.9" />
               {/* lantern */}
               <circle cx="351" cy="151" r="10" fill="url(#lanternGlow)" filter="url(#softGlow)" />
               <rect x="346" y="145" width="10" height="13" rx="2" fill="url(#paneGlow)" opacity="0.9" />
@@ -490,7 +490,7 @@ function BaseWorld({ stageKey, justBuilt }) {
             <path d="M 20 157 L 32 145 L 44 157 Z" fill="url(#roof)" />
             <path d="M 32 145 L 44 157 L 40 157 L 32 149 Z" fill="#1c150d" opacity="0.5" />
             <line x1="32" y1="145" x2="32" y2="136" stroke="#241d13" strokeWidth="1" />
-            <path d="M 32 137 L 42 141 L 32 145 Z" fill="#e8a23d" opacity="0.85" />
+            <path className="flag" d="M 32 137 L 42 141 L 32 145 Z" fill="#e8a23d" opacity="0.85" />
             {/* lantern */}
             <circle cx="32" cy="162" r="7" fill="url(#lanternGlow)" filter="url(#softGlow)" />
             <rect x="28" y="159" width="8" height="6" fill="url(#paneGlow)" opacity="0.85" />
