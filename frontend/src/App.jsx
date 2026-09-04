@@ -9,7 +9,9 @@ import AddTask from './components/AddTask/AddTask';
 import ResourceBar from './components/ResourceBar/ResourceBar';
 import BaseStatus from './components/BaseStatus/BaseStatus';
 import LevelUp from './components/LevelUp/LevelUp';
+import Achievement from './components/Achievement/Achievement';
 import { xpForLevel, BUILD_STAGES } from './data/gameConfig';
+import { ACHIEVEMENTS } from './data/achievements';
 import { todayKey } from './data/dateUtils';
 import './App.css';
 
@@ -29,6 +31,10 @@ function App() {
   // Level-up detection
   const [levelUpShown, setLevelUpShown] = useState(null);
   const prevLevel = useRef(1);
+
+  // Achievement detection
+  const [achievementShown, setAchievementShown] = useState(null);
+  const unlockedAchievements = useRef(new Set());
 
   function addTask(task) {
     setMissions((prev) => [
@@ -114,6 +120,23 @@ function App() {
   const baseStageKey =
     baseStageIndex >= 0 ? BUILD_STAGES[baseStageIndex].key : 'camp';
 
+  // Player stats for achievements
+  const tasksDone = missions.filter((m) => m.done).length;
+  const buildingsBuilt = baseStageIndex + 1;
+  const buildingsTotal = BUILD_STAGES.length;
+
+  // Detect newly unlocked achievements (show one at a time, once each)
+  useEffect(() => {
+    const stats = { tasksDone, level, buildingsBuilt, buildingsTotal };
+    for (const a of ACHIEVEMENTS) {
+      if (!unlockedAchievements.current.has(a.id) && a.check(stats)) {
+        unlockedAchievements.current.add(a.id);
+        setAchievementShown(a);
+        break; // show one; the next will appear on the following change
+      }
+    }
+  }, [tasksDone, level, buildingsBuilt, buildingsTotal]);
+
   // Tasks for the day being viewed
   const dayMissions = missions.filter((m) => m.date === selectedDate);
 
@@ -131,6 +154,13 @@ function App() {
 
       {levelUpShown && (
         <LevelUp level={levelUpShown} onDone={() => setLevelUpShown(null)} />
+      )}
+
+      {achievementShown && (
+        <Achievement
+          achievement={achievementShown}
+          onDone={() => setAchievementShown(null)}
+        />
       )}
 
       <div className="app">
