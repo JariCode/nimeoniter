@@ -1,6 +1,7 @@
 import './BaseWorld.css';
 import Survivor from '../Survivor/Survivor';
 import { BUILD_STAGES } from '../../data/gameConfig';
+import { getTimeOfDay, SKY_STOPS, STAR_OPACITY, SKY_IS_RADIAL, CELESTIAL } from '../../data/timeOfDay';
 
 // How many buildings are built, from the current stage key.
 // 'camp' = 0 built; otherwise index in BUILD_STAGES + 1.
@@ -23,6 +24,13 @@ function BaseWorld({ stageKey }) {
   const built = builtCountFromKey(stageKey);
   const has = (key) => BUILD_STAGES.slice(0, built).some((s) => s.key === key);
 
+  // Time of day drives the sky gradient, star visibility, and sun/moon
+  const tod = getTimeOfDay();
+  const skyStops = SKY_STOPS[tod];
+  const starOp = STAR_OPACITY[tod];
+  const skyRadial = SKY_IS_RADIAL[tod];
+  const celestial = CELESTIAL[tod];
+
   return (
     <div className="base-world">
       <svg
@@ -31,10 +39,22 @@ function BaseWorld({ stageKey }) {
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <radialGradient id="sky" cx="50%" cy="30%" r="80%">
-            <stop offset="0%" stopColor="#2a2418" />
-            <stop offset="45%" stopColor="#16140f" />
-            <stop offset="100%" stopColor="#0b0a08" />
+          {skyRadial ? (
+            <radialGradient id="sky" cx="50%" cy="30%" r="80%">
+              {skyStops.map(([off, col]) => (
+                <stop key={off} offset={off} stopColor={col} />
+              ))}
+            </radialGradient>
+          ) : (
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              {skyStops.map(([off, col]) => (
+                <stop key={off} offset={off} stopColor={col} />
+              ))}
+            </linearGradient>
+          )}
+          <radialGradient id="celestialGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={celestial.glow} stopOpacity="0.55" />
+            <stop offset="100%" stopColor={celestial.glow} stopOpacity="0" />
           </radialGradient>
           <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#1c1810" />
@@ -88,13 +108,28 @@ function BaseWorld({ stageKey }) {
         {/* Sky */}
         <rect x="0" y="0" width="400" height="300" fill="url(#sky)" />
 
-        {/* Stars */}
-        <circle cx="60" cy="40" r="1" fill="#e8dcc0" opacity="0.5" />
-        <circle cx="130" cy="60" r="1.2" fill="#e8dcc0" opacity="0.4" />
-        <circle cx="320" cy="35" r="1" fill="#e8dcc0" opacity="0.6" />
-        <circle cx="360" cy="80" r="1" fill="#e8dcc0" opacity="0.3" />
-        <circle cx="240" cy="50" r="0.8" fill="#e8dcc0" opacity="0.5" />
-        <circle cx="90" cy="90" r="0.8" fill="#e8dcc0" opacity="0.35" />
+        {/* Sun or moon */}
+        <circle cx={celestial.cx} cy={celestial.cy} r={celestial.r * 2.6} fill="url(#celestialGlow)" />
+        {celestial.kind === 'sun' ? (
+          <circle cx={celestial.cx} cy={celestial.cy} r={celestial.r} fill={celestial.color} />
+        ) : (
+          <g>
+            <circle cx={celestial.cx} cy={celestial.cy} r={celestial.r} fill={celestial.color} />
+            <circle cx={celestial.cx + 5} cy={celestial.cy - 3} r={celestial.r} fill="#0b0a08" opacity="0.18" />
+            <circle cx={celestial.cx - 4} cy={celestial.cy + 3} r="2" fill="#b8c2d4" opacity="0.5" />
+            <circle cx={celestial.cx + 3} cy={celestial.cy + 5} r="1.4" fill="#b8c2d4" opacity="0.4" />
+          </g>
+        )}
+
+        {/* Stars (fade out toward day) */}
+        <g opacity={starOp}>
+          <circle cx="60" cy="40" r="1" fill="#e8dcc0" opacity="0.5" />
+          <circle cx="130" cy="60" r="1.2" fill="#e8dcc0" opacity="0.4" />
+          <circle cx="320" cy="35" r="1" fill="#e8dcc0" opacity="0.6" />
+          <circle cx="360" cy="80" r="1" fill="#e8dcc0" opacity="0.3" />
+          <circle cx="240" cy="50" r="0.8" fill="#e8dcc0" opacity="0.5" />
+          <circle cx="90" cy="90" r="0.8" fill="#e8dcc0" opacity="0.35" />
+        </g>
 
         {/* Ground */}
         <rect x="0" y="220" width="400" height="80" fill="url(#ground)" />
