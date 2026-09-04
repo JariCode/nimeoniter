@@ -19,6 +19,8 @@ import './App.css';
 function App() {
   // Check Clerk authentication status
   const { isLoaded, isSignedIn } = useUser();
+  const hasLoadedOnce = useRef(false);
+  if (isLoaded) hasLoadedOnce.current = true;
 
   // Landing shows first; the start button switches to the game
   const [started, setStarted] = useState(false);
@@ -164,9 +166,11 @@ function App() {
   // Which task types are already added on the viewed day (AddTask hides these)
   const addedKeys = dayMissions.map((m) => m.key);
 
-  // Wait until Clerk has finished checking the authentication state.
-  // This prevents the Landing page from flashing during page reload.
-  if (!isLoaded) {
+  // Wait until Clerk has finished checking the authentication state, but
+  // only on the very first load. Clerk briefly flips isLoaded back to
+  // false while a sign-in/sign-out is completing; blanking the screen
+  // every time that happens is what caused Landing to flash back in.
+  if (!isLoaded && !hasLoadedOnce.current) {
     return null;
   }
 

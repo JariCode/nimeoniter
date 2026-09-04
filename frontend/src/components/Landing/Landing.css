@@ -29,6 +29,7 @@
 .landing-image {
   width: 100%;
   height: auto;
+  aspect-ratio: 1536 / 1024;
   display: block;
   border-radius: 12px;
   /* Fade the image edges into the black background */
