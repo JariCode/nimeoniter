@@ -26,40 +26,72 @@ function Landing({ onStart }) {
             border: '1px solid #8a641c',
             boxShadow: 'none',
           },
+
           headerTitle: {
             color: '#e6e0d2',
           },
+
           headerSubtitle: {
             color: '#999999',
           },
+
           formFieldLabel: {
             color: '#e6e0d2',
           },
+
           formFieldInput: {
             background: '#1c1c1c',
             color: '#e6e0d2',
             border: '1px solid #444444',
           },
+
           socialButtonsBlockButton: {
             background: '#1c1c1c',
             color: '#e6e0d2',
             border: '1px solid #444444',
           },
+
           formButtonPrimary: {
             background: '#c58a22',
             color: '#111111',
           },
+
           footerActionText: {
             color: '#999999',
           },
+
           footerActionLink: {
             color: '#c58a22',
           },
+
           formFieldAction: {
             color: '#c58a22',
           },
+
           identityPreviewText: {
             color: '#e6e0d2',
+          },
+
+          alternativeMethodsBlockButton: {
+            background: '#1c1c1c',
+            color: '#e6e0d2',
+            border: '1px solid #444444',
+          },
+
+          alternativeMethodsBlockButtonText: {
+            color: '#e6e0d2',
+          },
+
+          alternativeMethodsBlockButtonIcon: {
+            color: '#c58a22',
+          },
+
+          dividerText: {
+            color: '#999999',
+          },
+
+          dividerLine: {
+            background: '#333333',
           },
         },
       },
