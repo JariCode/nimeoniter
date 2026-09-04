@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useUser, UserButton } from '@clerk/react';
 import Landing from './components/Landing/Landing';
 import Header from './components/Header/Header';
 import EnergyBar from './components/EnergyBar/EnergyBar';
@@ -16,6 +17,9 @@ import { todayKey } from './data/dateUtils';
 import './App.css';
 
 function App() {
+  // Check Clerk authentication status
+  const { isLoaded, isSignedIn } = useUser();
+
   // Landing shows first; the start button switches to the game
   const [started, setStarted] = useState(false);
 
@@ -63,6 +67,7 @@ function App() {
           stone: res.stone + (mission.resources?.stone || 0),
           food: res.food + (mission.resources?.food || 0),
         }));
+
         // Show a "+n" pop on the resources that were earned
         const gainId = Date.now();
         setGain({
@@ -71,6 +76,7 @@ function App() {
           food: mission.resources?.food || 0,
           id: gainId,
         });
+
         setTimeout(() => setGain((cur) => (cur && cur.id === gainId ? null : cur)), 900);
         return { ...mission, done: true };
       })
@@ -158,9 +164,15 @@ function App() {
   // Which task types are already added on the viewed day (AddTask hides these)
   const addedKeys = dayMissions.map((m) => m.key);
 
+  // Wait until Clerk has finished checking the authentication state.
+  // This prevents the Landing page from flashing during page reload.
+  if (!isLoaded) {
+    return null;
+  }
+
   return (
     <>
-      {!started && <Landing onStart={() => setStarted(true)} />}
+      {!started && !isSignedIn && <Landing onStart={() => setStarted(true)} />}
 
       {levelUpShown && (
         <LevelUp level={levelUpShown} onDone={() => setLevelUpShown(null)} />
@@ -173,33 +185,182 @@ function App() {
         />
       )}
 
-      <div className="app">
-        <div className="app-left">
-          <Header name="SURVIVOR" level={level} />
-          <EnergyBar energy={levelProgress} />
-          <DailyProgress xp={todayXp} />
-          <DayNav selectedDate={selectedDate} onChange={setSelectedDate} />
-          <MissionList
-            missions={dayMissions}
-            onComplete={completeMission}
-            onRemove={removeMission}
-          />
-          <AddTask addedKeys={addedKeys} onAdd={addTask} />
-          <ResourceBar resources={resources} gain={gain} />
-        </div>
+      {(started || isSignedIn) && (
+        <>
+          <div className="user-menu">
+            <UserButton
+              appearance={{
+                variables: {
+                  colorBackground: '#151515',
+                  colorForeground: '#e6e0d2',
+                  colorMutedForeground: '#999999',
+                  colorPrimary: '#c58a22',
+                  colorPrimaryForeground: '#111111',
+                  colorBorder: '#8a641c',
+                },
 
-        <div className="app-right">
-          <BaseStatus
-            stageKey={baseStageKey}
-            justBuilt={justBuilt}
-            nextStage={nextStage}
-            resources={resources}
-            level={level}
-            canBuild={canBuild}
-            onBuild={build}
-          />
-        </div>
-      </div>
+                elements: {
+                  userButtonAvatarBox: {
+                    background: '#151515',
+                    border: '1px solid #c58a22',
+                  },
+
+                  userButtonAvatarImage: {
+                    filter: 'grayscale(1) sepia(1) saturate(3) hue-rotate(350deg)',
+                  },
+
+                  userButtonPopoverCard: {
+                    background: '#151515',
+                    border: '1px solid #8a641c',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.5)',
+                  },
+
+                  userButtonPopoverActionButton: {
+                    background: 'transparent',
+                    color: '#e6e0d2',
+
+                    '&:hover': {
+                      background: '#2a2418',
+                      color: '#e6e0d2',
+                    },
+                  },
+
+                  userButtonPopoverActionButtonIcon: {
+                    color: '#c58a22',
+                  },
+
+                  userPreviewMainIdentifier: {
+                    color: '#e6e0d2',
+                  },
+
+                  userPreviewSecondaryIdentifier: {
+                    color: '#999999',
+                  },
+
+                  userPreviewAvatarBox: {
+                    background: '#151515',
+                    border: '1px solid #c58a22',
+                  },
+
+                  userPreviewAvatarImage: {
+                    filter: 'grayscale(1) sepia(1) saturate(3) hue-rotate(350deg)',
+                  },
+                },
+              }}
+
+              userProfileProps={{
+                appearance: {
+                  variables: {
+                    colorBackground: '#151515',
+                    colorForeground: '#e6e0d2',
+                    colorMutedForeground: '#999999',
+                    colorPrimary: '#c58a22',
+                    colorPrimaryForeground: '#111111',
+                    colorBorder: '#8a641c',
+                  },
+
+                  elements: {
+                    card: {
+                      background: '#151515',
+                      border: '1px solid #8a641c',
+                      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.6)',
+                    },
+
+                    navbar: {
+                      background: '#111111',
+                    },
+
+                    navbarButton: {
+                      color: '#999999',
+                    },
+
+                    navbarButton__active: {
+                      color: '#e6e0d2',
+                      background: '#2a2418',
+                    },
+
+                    headerTitle: {
+                      color: '#e6e0d2',
+                    },
+
+                    headerSubtitle: {
+                      color: '#999999',
+                    },
+
+                    profileSectionTitle: {
+                      color: '#e6e0d2',
+                    },
+
+                    profileSectionContent: {
+                      color: '#e6e0d2',
+                    },
+
+                    profileSectionPrimaryButton: {
+                      color: '#c58a22',
+                    },
+
+                    formFieldLabel: {
+                      color: '#e6e0d2',
+                    },
+
+                    formFieldInput: {
+                      background: '#1c1c1c',
+                      color: '#e6e0d2',
+                      border: '1px solid #444444',
+                    },
+
+                    formButtonPrimary: {
+                      background: '#c58a22',
+                      color: '#111111',
+                    },
+
+                    footer: {
+                      background: '#111111',
+                    },
+
+                    avatarBox: {
+                      background: '#151515',
+                      border: '1px solid #c58a22',
+                    },
+
+                    avatarImage: {
+                      filter: 'grayscale(1) sepia(1) saturate(3) hue-rotate(350deg)',
+                    },
+                  },
+                },
+              }}
+            />
+          </div>
+
+          <div className="app">
+            <div className="app-left">
+              <Header name="SURVIVOR" level={level} />
+              <EnergyBar energy={levelProgress} />
+              <DailyProgress xp={todayXp} />
+              <DayNav selectedDate={selectedDate} onChange={setSelectedDate} />
+              <MissionList
+                missions={dayMissions}
+                onComplete={completeMission}
+                onRemove={removeMission}
+              />
+              <AddTask addedKeys={addedKeys} onAdd={addTask} />
+              <ResourceBar resources={resources} gain={gain} />
+            </div>
+
+            <div className="app-right">
+              <BaseStatus
+                stageKey={baseStageKey}
+                justBuilt={justBuilt}
+                nextStage={nextStage}
+                resources={resources}
+                level={level}
+                canBuild={canBuild}
+                onBuild={build}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }

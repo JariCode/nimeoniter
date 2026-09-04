@@ -80,6 +80,10 @@
   box-shadow: 0 0 30px rgba(232, 162, 61, 0.4);
 }
 
+.cl-modalBackdrop {
+  align-items: center;
+}
+
 @media (max-width: 600px) {
   .landing-title {
     font-size: 38px;
