@@ -15,6 +15,11 @@ function daysBetween(a, b) {
   return Math.round((da - db) / 86400000);
 }
 
+// Cap on how many tasks can be marked done for a single day, so a user can't
+// blast through a huge backlog of planned tasks in one sitting. Adding tasks
+// (POST /tasks) is intentionally NOT capped — planning ahead stays free.
+const MAX_COMPLETIONS_PER_DAY = 30;
+
 const router = express.Router();
 
 // All state routes require a logged-in user
@@ -121,13 +126,39 @@ router.post('/tasks/:id/complete', async (req, res, next) => {
       return res.status(400).json({ error: 'Task already completed' });
     }
 
-    // Atomic: only flip done + grant rewards if it's still not done at the
-    // moment of the write. If a concurrent request already completed it,
-    // this matches nothing and rewards are granted exactly once.
+    // Daily cap: count how many tasks for this same day are already done.
+    // This is derived fresh each time (not a stored counter), so undoing a
+    // completion (POST /uncomplete sets done back to false) automatically
+    // frees up a slot for that day.
+    const doneForDay = state.missions.filter(
+      (m) => m.date === mission.date && m.done
+    ).length;
+    if (doneForDay >= MAX_COMPLETIONS_PER_DAY) {
+      return res.status(400).json({ error: 'Daily completion limit reached' });
+    }
+
+    // Atomic: only flip done + grant rewards if it's still not done, and the
+    // day's completion count is still under the cap, at the moment of the
+    // write. Re-checking the cap here (via $expr) closes the race where two
+    // concurrent completions both pass the pre-check above.
     const updated = await PlayerState.findOneAndUpdate(
       {
         clerkUserId: req.userId,
         missions: { $elemMatch: { id: taskId, done: false } },
+        $expr: {
+          $lt: [
+            {
+              $size: {
+                $filter: {
+                  input: '$missions',
+                  as: 'm',
+                  cond: { $and: [{ $eq: ['$$m.date', mission.date] }, { $eq: ['$$m.done', true] }] },
+                },
+              },
+            },
+            MAX_COMPLETIONS_PER_DAY,
+          ],
+        },
       },
       {
         $set: { 'missions.$.done': true },

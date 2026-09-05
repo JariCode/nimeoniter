@@ -11,6 +11,7 @@ import ResourceBar from './components/ResourceBar/ResourceBar';
 import BaseStatus from './components/BaseStatus/BaseStatus';
 import LevelUp from './components/LevelUp/LevelUp';
 import Achievement from './components/Achievement/Achievement';
+import Notice from './components/Notice/Notice';
 import { ACHIEVEMENTS } from './data/achievements';
 import { todayKey } from './data/dateUtils';
 import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi } from './lib/api';
@@ -102,6 +103,11 @@ function App() {
   // Same reasoning as dismissLevelUp above.
   const dismissAchievement = useCallback(() => setAchievementShown(null), []);
 
+  // Small dark-themed notice for backend errors the player should see
+  // (e.g. the daily completion limit), instead of a silent console.error.
+  const [noticeShown, setNoticeShown] = useState(null);
+  const dismissNotice = useCallback(() => setNoticeShown(null), []);
+
   async function addTask(task) {
     try {
       const token = await getToken();
@@ -145,6 +151,9 @@ function App() {
       applyState(data);
     } catch (err) {
       console.error('Complete task failed:', err);
+      if (err.message === 'Daily completion limit reached') {
+        setNoticeShown("Today's quota of 30 tasks is done. Rest up, more awaits tomorrow.");
+      }
     }
   }
 
@@ -287,6 +296,8 @@ function App() {
       {achievementShown && (
         <Achievement achievement={achievementShown} onDone={dismissAchievement} />
       )}
+
+      {noticeShown && <Notice message={noticeShown} onDone={dismissNotice} />}
 
       {(started || isSignedIn) && (
         <>
