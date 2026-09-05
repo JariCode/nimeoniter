@@ -1,7 +1,7 @@
 import './BaseWorld.css';
 import Survivor from '../Survivor/Survivor';
 import { getTimeOfDay, SKY_STOPS, STAR_OPACITY, SKY_IS_RADIAL, CELESTIAL } from '../../data/timeOfDay';
-import { getSeason, GROUND_STOPS, SEASON_OVERLAY, FLOWERS } from '../../data/season';
+import { getSeason, GROUND_STOPS, SEASON_OVERLAY, FLOWERS, getWeather } from '../../data/season';
 
 // How many buildings are built, from the current stage key.
 // 'camp' = 0 built; otherwise index in buildStages + 1.
@@ -20,6 +20,34 @@ const WALL_SEAMS = Array.from({ length: 19 }, (_, i) => {
   return { x, domeH };
 });
 
+// Fixed rain/snow particle positions and timing, spread across the canvas
+// with staggered delays/durations so they don't fall in visible unison.
+const RAIN_DROPS = Array.from({ length: 26 }, (_, i) => ({
+  x: (i * 37 + 13) % 400,
+  delay: (i % 7) * 0.18,
+  duration: 0.7 + (i % 5) * 0.08,
+}));
+
+const SNOW_FLAKES = Array.from({ length: 28 }, (_, i) => ({
+  x: (i * 29 + 8) % 400,
+  r: 1 + (i % 3) * 0.6,
+  delay: (i % 10) * 0.4,
+  duration: 5 + (i % 6) * 1.3,
+}));
+
+// Heavier, faster drops for a thunderstorm downpour
+const STORM_RAIN_DROPS = Array.from({ length: 40 }, (_, i) => ({
+  x: (i * 23 + 7) % 400,
+  delay: (i % 8) * 0.11,
+  duration: 0.45 + (i % 5) * 0.05,
+}));
+
+// Two lightning bolt shapes striking down from different points in the sky
+const LIGHTNING_BOLTS = [
+  { path: 'M 95 -5 L 88 45 L 102 45 L 82 100 L 96 100 L 70 165', delay: 0 },
+  { path: 'M 305 -5 L 296 50 L 312 50 L 290 110 L 306 110 L 278 170', delay: 3.4 },
+];
+
 function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
   const built = builtCountFromKey(buildStages, stageKey);
   const has = (key) => buildStages.slice(0, built).some((s) => s.key === key);
@@ -35,6 +63,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
   const season = getSeason();
   const groundStops = GROUND_STOPS[season];
   const overlay = SEASON_OVERLAY[season];
+
+  // Active weather (rain in autumn, snow in winter) — not every day
+  const weather = getWeather();
 
   return (
     <div className="base-world">
@@ -496,6 +527,77 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
           </g>
         )}
+        {/* Weather: rain in autumn, snow in winter — not every day */}
+        {weather === 'rain' && (
+          <g opacity="0.55">
+            {RAIN_DROPS.map((d, i) => (
+              <line
+                key={i}
+                x1={d.x}
+                y1="-10"
+                x2={d.x - 6}
+                y2="14"
+                stroke="#9fb8cc"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                className="rain-drop"
+                style={{ animationDelay: `${d.delay}s`, animationDuration: `${d.duration}s` }}
+              />
+            ))}
+          </g>
+        )}
+        {weather === 'snow' && (
+          <g opacity="0.85">
+            {SNOW_FLAKES.map((f, i) => (
+              <circle
+                key={i}
+                cx={f.x}
+                cy="-10"
+                r={f.r}
+                fill="#f2f6fa"
+                className="snow-flake"
+                style={{ animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+              />
+            ))}
+          </g>
+        )}
+        {weather === 'thunder' && (
+          <g>
+            {/* Heavy downpour */}
+            <g opacity="0.6">
+              {STORM_RAIN_DROPS.map((d, i) => (
+                <line
+                  key={i}
+                  x1={d.x}
+                  y1="-10"
+                  x2={d.x - 7}
+                  y2="16"
+                  stroke="#9fb8cc"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  className="rain-drop"
+                  style={{ animationDelay: `${d.delay}s`, animationDuration: `${d.duration}s` }}
+                />
+              ))}
+            </g>
+            {/* Lightning bolts, each flickering on its own irregular cycle */}
+            {LIGHTNING_BOLTS.map((b, i) => (
+              <path
+                key={i}
+                d={b.path}
+                fill="none"
+                stroke="#f2f0e0"
+                strokeWidth="2.2"
+                strokeLinejoin="round"
+                className="lightning-bolt"
+                style={{ animationDelay: `${b.delay}s` }}
+              />
+            ))}
+            {/* Whole-scene flash, synced loosely with the bolts */}
+            <rect x="0" y="0" width="400" height="300" fill="#e8ecf5" className="lightning-flash" />
+          </g>
+        )}
+
         {/* NIMEONITER wooden sign (always, front — in the gap right of the
             fence, ahead of the storage shed and watchtower) */}
         <g>

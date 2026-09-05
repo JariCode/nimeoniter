@@ -1,7 +1,9 @@
 // Determine season from the real month, with ground palette and overlay type.
 
+import { getTimeOfDay } from './timeOfDay';
+
 export function getSeason(date = new Date()) {
-  //return 'winter'; // TESTAUS: poista kommentti kokeillaksesi (winter/spring/summer/autumn), poista rivi lopuksi
+ //return 'summer'; // TESTAUS: poista kommentti kokeillaksesi (winter/spring/summer/autumn), poista rivi lopuksi
   const m = date.getMonth(); // 0 = Jan
   if (m === 11 || m <= 1) return 'winter'; // Dec, Jan, Feb
   if (m >= 2 && m <= 4) return 'spring';   // Mar-May
@@ -24,6 +26,31 @@ export const SEASON_OVERLAY = {
   summer: 'flowersDense',
   autumn: 'puddles',
 };
+
+// Deterministic pseudo-random 0..1 from a date + time-of-day segment, so
+// the weather stays stable within that segment (dawn/day/dusk/night) but
+// can change up to a few times a day instead of being fixed for 24h.
+const TOD_INDEX = { dawn: 0, day: 1, dusk: 2, night: 3 };
+
+function periodSeed(date) {
+  const dayKey = date.getFullYear() * 372 + date.getMonth() * 31 + date.getDate();
+  const key = dayKey * 4 + TOD_INDEX[getTimeOfDay(date)];
+  const x = Math.sin(key) * 10000;
+  return x - Math.floor(x);
+}
+
+// Active weather right now: 'rain' sometimes in autumn, 'snow' sometimes
+// in winter, 'thunder' sometimes in summer, otherwise none (spring never
+// gets weather here).
+export function getWeather(date = new Date()) {
+  //return 'thunder'; // TESTAUS: poista kommentti kokeillaksesi ('rain'/'snow'/'thunder'), poista rivi lopuksi
+  const season = getSeason(date);
+  const seed = periodSeed(date);
+  if (season === 'autumn' && seed < 0.35) return 'rain';
+  if (season === 'winter' && seed < 0.45) return 'snow';
+  if (season === 'summer' && seed < 0.25) return 'thunder';
+  return null;
+}
 
 // Fixed flower positions (so they don't jump around on every render)
 export const FLOWERS = [

@@ -101,3 +101,64 @@
   0%, 100% { opacity: 0.25; }
   50%      { opacity: 0.9; }
 }
+
+/* Rain: fast, near-vertical streaks falling straight through the scene */
+.rain-drop {
+  animation-name: rain-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes rain-fall {
+  0%   { transform: translateY(-10px); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(330px); opacity: 0; }
+}
+
+/* Snow: slower flakes that drift side to side on the way down */
+.snow-flake {
+  animation-name: snow-fall;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes snow-fall {
+  0%   { transform: translate(0, -10px); opacity: 0; }
+  10%  { opacity: 0.9; }
+  50%  { transform: translate(8px, 150px); }
+  90%  { opacity: 0.9; }
+  100% { transform: translate(-6px, 330px); opacity: 0; }
+}
+
+/* Thunderstorm: a bolt that's invisible almost the whole cycle, with a
+   quick double-flicker near the middle — each bolt uses its own delay so
+   they don't strike in sync. */
+.lightning-bolt {
+  opacity: 0;
+  filter: drop-shadow(0 0 6px #f2f0e0);
+  animation: lightning-bolt-flicker 6s linear infinite;
+}
+
+@keyframes lightning-bolt-flicker {
+  0%, 46%, 100% { opacity: 0; }
+  47%           { opacity: 1; }
+  48%           { opacity: 0.2; }
+  49%           { opacity: 0.9; }
+  50%           { opacity: 0; }
+}
+
+/* The whole-scene white flash that goes with each strike */
+.lightning-flash {
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: lightning-flash-flicker 6s linear infinite;
+}
+
+@keyframes lightning-flash-flicker {
+  0%, 46%, 100% { opacity: 0; }
+  47%           { opacity: 0.55; }
+  48%           { opacity: 0.05; }
+  49%           { opacity: 0.4; }
+  50%           { opacity: 0; }
+}
