@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
+const { clerkMiddleware } = require('@clerk/express');
 
 const sanitize = require('./middleware/sanitize');
 const limiter = require('./middleware/rateLimiter');
@@ -62,13 +63,16 @@ app.use(sanitize);
 // Rate limiting
 app.use(limiter);
 
+// Clerk: reads the session token and attaches auth info to requests
+app.use(clerkMiddleware());
+
 // Health check
 app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'Nimeoniter backend running' });
 });
 
 // --- Routes ---
-// app.use('/api/state', require('./routes/state'));
+app.use('/api/state', require('./routes/state'));
 
 // Unknown routes: clean 404
 app.use((req, res) => {

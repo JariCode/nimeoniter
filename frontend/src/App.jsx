@@ -14,6 +14,7 @@ import Achievement from './components/Achievement/Achievement';
 import { xpForLevel, BUILD_STAGES } from './data/gameConfig';
 import { ACHIEVEMENTS } from './data/achievements';
 import { todayKey } from './data/dateUtils';
+import { useGameSync } from './hooks/useGameSync';
 import './App.css';
 
 function App() {
@@ -31,6 +32,20 @@ function App() {
   const [justBuilt, setJustBuilt] = useState(null); // key of the building just built, for the pop animation
   const [gain, setGain] = useState(null); // { wood, stone, food } just earned, for the resource pop
   const [missions, setMissions] = useState([]);
+
+  // Bundle the whole game state for saving
+  const gameState = { totalXp, resources, baseStageIndex, missions };
+
+  // Apply a state loaded from the backend into the game
+  const applyLoadedState = useRef((data) => {
+    setTotalXp(data.totalXp ?? 0);
+    setResources(data.resources ?? { wood: 0, stone: 0, food: 0 });
+    setBaseStageIndex(data.baseStageIndex ?? -1);
+    setMissions(Array.isArray(data.missions) ? data.missions : []);
+  }).current;
+
+  // Load on sign-in, save on change
+  useGameSync(gameState, applyLoadedState);
 
   // Which day the user is currently viewing
   const [selectedDate, setSelectedDate] = useState(todayKey());
@@ -59,29 +74,35 @@ function App() {
     ]);
   }
 
-  function completeMission(id) {
+    function completeMission(id) {
+    // Find the mission first (outside any setter) so rewards are given once
+    const mission = missions.find((m) => m.id === id);
+    if (!mission || mission.done) return;
+
+    setTotalXp((xp) => xp + mission.xp);
+    setResources((res) => ({
+      wood: res.wood + (mission.resources?.wood || 0),
+      stone: res.stone + (mission.resources?.stone || 0),
+      food: res.food + (mission.resources?.food || 0),
+    }));
+
+    const gainId = Date.now();
+    setGain({
+      wood: mission.resources?.wood || 0,
+      stone: mission.resources?.stone || 0,
+      food: mission.resources?.food || 0,
+      id: gainId,
+    });
+    setTimeout(() => setGain((cur) => (cur && cur.id === gainId ? null : cur)), 900);
+
     setMissions((prev) =>
-      prev.map((mission) => {
-        if (mission.id !== id || mission.done) return mission;
-        setTotalXp((xp) => xp + mission.xp);
-        setResources((res) => ({
-          wood: res.wood + (mission.resources?.wood || 0),
-          stone: res.stone + (mission.resources?.stone || 0),
-          food: res.food + (mission.resources?.food || 0),
-        }));
+      prev.map((m) => (m.id === id ? { ...m, done: true } : m))
+    );
+  }
 
-        // Show a "+n" pop on the resources that were earned
-        const gainId = Date.now();
-        setGain({
-          wood: mission.resources?.wood || 0,
-          stone: mission.resources?.stone || 0,
-          food: mission.resources?.food || 0,
-          id: gainId,
-        });
-
-        setTimeout(() => setGain((cur) => (cur && cur.id === gainId ? null : cur)), 900);
-        return { ...mission, done: true };
-      })
+  function removeMission(id) {
+    setMissions((prev) =>
+      prev.filter((mission) => mission.id !== id || mission.done)
     );
   }
 
