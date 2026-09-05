@@ -398,6 +398,28 @@ function App() {
                       color: '#e6e0d2',
                     },
 
+                    socialButtonsBlockButton: {
+                      background: '#1c1c1c',
+                      color: '#e6e0d2',
+                      border: '1px solid #444444',
+                    },
+
+                    socialButtonsBlockButtonText: {
+                      color: '#e6e0d2',
+                    },
+
+                    /* Row-style buttons (connected accounts, devices, etc.)
+                       render with a "neutral" data-color that assumes a
+                       light background and renders near-black text —
+                       force it light so it's visible on our dark theme. */
+                    menuItem: {
+                      color: '#e6e0d2',
+                    },
+
+                    menuItem__connectedAccounts: {
+                      color: '#e6e0d2',
+                    },
+
                     profileSectionPrimaryButton: {
                       color: '#c58a22',
                     },
