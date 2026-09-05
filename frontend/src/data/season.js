@@ -1,7 +1,5 @@
 // Determine season from the real month, with ground palette and overlay type.
 
-import { getTimeOfDay } from './timeOfDay';
-
 export function getSeason(date = new Date()) {
  //return 'summer'; // TESTAUS: poista kommentti kokeillaksesi (winter/spring/summer/autumn), poista rivi lopuksi
   const m = date.getMonth(); // 0 = Jan
@@ -27,14 +25,17 @@ export const SEASON_OVERLAY = {
   autumn: 'puddles',
 };
 
-// Deterministic pseudo-random 0..1 from a date + time-of-day segment, so
-// the weather stays stable within that segment (dawn/day/dusk/night) but
-// can change up to a few times a day instead of being fixed for 24h.
-const TOD_INDEX = { dawn: 0, day: 1, dusk: 2, night: 3 };
+// Deterministic pseudo-random 0..1 from a date + short fixed-length block, so
+// weather stays stable within that block but re-rolls often — using the
+// dawn/day/dusk/night segments here would let rain/snow/thunder run for a
+// whole 4-8h segment (and longer if the next segment rolls the same way).
+const WEATHER_BLOCK_HOURS = 2;
+const BLOCKS_PER_DAY = 24 / WEATHER_BLOCK_HOURS;
 
 function periodSeed(date) {
   const dayKey = date.getFullYear() * 372 + date.getMonth() * 31 + date.getDate();
-  const key = dayKey * 4 + TOD_INDEX[getTimeOfDay(date)];
+  const block = Math.floor(date.getHours() / WEATHER_BLOCK_HOURS);
+  const key = dayKey * BLOCKS_PER_DAY + block;
   const x = Math.sin(key) * 10000;
   return x - Math.floor(x);
 }
