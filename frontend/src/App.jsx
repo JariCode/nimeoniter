@@ -467,7 +467,11 @@ function App() {
             <div className="app-left">
               <Header name="SURVIVOR" level={level} streak={streak} />
               <EnergyBar energy={levelProgress} />
-              <DailyProgress xp={todayXp} />
+              <DailyProgress
+                xp={todayXp}
+                done={dayMissions.filter((m) => m.done).length}
+                total={dayMissions.length}
+              />
               <DayNav selectedDate={selectedDate} onChange={setSelectedDate} />
               <MissionList
                 missions={dayMissions}
