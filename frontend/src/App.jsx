@@ -266,6 +266,16 @@ function App() {
     return null;
   }
 
+  // Clerk's own layout doesn't respond to short landscape viewports, so
+  // shrink its spacing/font scale directly for that case (spacing and
+  // fontSize are Clerk's official theme variables — see Landing.jsx).
+  const isCompactLandscape = window.matchMedia(
+    '(orientation: landscape) and (max-height: 500px)'
+  ).matches;
+  const clerkCompactVars = isCompactLandscape
+    ? { spacing: '0.5rem', fontSize: '0.7rem' }
+    : {};
+
   return (
     <>
       {!started && !isSignedIn && <Landing onStart={() => setStarted(true)} />}
@@ -288,6 +298,7 @@ function App() {
                   colorPrimary: '#c58a22',
                   colorPrimaryForeground: '#111111',
                   colorBorder: '#8a641c',
+                  ...clerkCompactVars,
                 },
 
                 elements: {
@@ -348,6 +359,7 @@ function App() {
                     colorPrimary: '#c58a22',
                     colorPrimaryForeground: '#111111',
                     colorBorder: '#8a641c',
+                    ...clerkCompactVars,
                   },
 
                   elements: {

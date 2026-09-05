@@ -201,4 +201,20 @@
   .base-build-button {
     padding: 6px;
   }
+
+  /* Clerk sign-in / profile modals: .cl-modalContent stretches to a tall
+     preferred height regardless of how short its current page's content
+     is, leaving a huge empty gap below. Force it to hug its content
+     (height: auto) and only cap/scroll for the rare case content is
+     actually taller than the viewport. */
+  .cl-modalContent {
+    height: auto !important;
+    max-height: 94vh !important;
+    overflow-y: auto !important;
+  }
+
+  .cl-cardBox,
+  .cl-card {
+    height: auto !important;
+  }
 }

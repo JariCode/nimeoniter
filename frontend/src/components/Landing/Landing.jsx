@@ -7,6 +7,15 @@ function Landing({ onStart }) {
   const clerk = useClerk();
 
   function handleStart() {
+    // Clerk's own layout doesn't respond to short landscape viewports, so
+    // shrink its spacing/font scale directly for that case (spacing and
+    // fontSize are Clerk's official theme variables — they control the
+    // --clerk-spacing / --clerk-font-size custom properties used
+    // throughout every element's padding, gaps, and text size).
+    const isCompactLandscape = window.matchMedia(
+      '(orientation: landscape) and (max-height: 500px)'
+    ).matches;
+
     clerk.openSignIn({
       appearance: {
         variables: {
@@ -19,6 +28,10 @@ function Landing({ onStart }) {
           colorInputForeground: '#e6e0d2',
           colorBorder: '#444444',
           borderRadius: '4px',
+          ...(isCompactLandscape && {
+            spacing: '0.5rem',
+            fontSize: '0.7rem',
+          }),
         },
         elements: {
           card: {
