@@ -145,3 +145,27 @@
   background-color: var(--accent);
   color: #1a1a1a;
 }
+
+/* Live search field, themed to match the dark UI */
+.add-task-search {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  background-color: #1c1c1c;
+  color: var(--text-light);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.add-task-search::placeholder {
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.add-task-search:focus {
+  border-color: var(--accent-dim);
+}

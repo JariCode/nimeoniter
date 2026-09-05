@@ -3,9 +3,21 @@ import './AddTask.css';
 
 function AddTask({ catalog = [], addedKeys, onAdd }) {
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
 
-  // Show only tasks not already added today (catalog comes from the backend)
+  // Tasks not already added today
   const available = catalog.filter((task) => !addedKeys.includes(task.key));
+
+  // Live filter: keep tasks whose name contains the typed text (case-insensitive)
+  const filtered = available.filter((task) =>
+    task.name.toLowerCase().includes(query.trim().toLowerCase())
+  );
+
+  // Reset the search when the modal closes
+  function close() {
+    setOpen(false);
+    setQuery('');
+  }
 
   return (
     <div className="add-task">
@@ -14,26 +26,36 @@ function AddTask({ catalog = [], addedKeys, onAdd }) {
       </button>
 
       {open && (
-        // Overlay covers the screen; clicking the dim background closes it
-        <div className="add-task-overlay" onClick={() => setOpen(false)}>
-          {/* Stop clicks inside the panel from closing it */}
+        <div className="add-task-overlay" onClick={close}>
           <div className="add-task-modal" onClick={(e) => e.stopPropagation()}>
             <div className="add-task-modal-header">
               <p className="add-task-title">CHOOSE A TASK</p>
               <button
                 className="add-task-close"
-                onClick={() => setOpen(false)}
+                onClick={close}
                 aria-label="Close"
               >
                 ✕
               </button>
             </div>
 
+            {/* Live search filter */}
+            <input
+              type="text"
+              className="add-task-search"
+              placeholder="Search tasks..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              autoFocus
+            />
+
             {available.length === 0 ? (
               <p className="add-task-empty">All tasks added for today.</p>
+            ) : filtered.length === 0 ? (
+              <p className="add-task-empty">No tasks match "{query}".</p>
             ) : (
               <ul className="add-task-options">
-                {available.map((task) => (
+                {filtered.map((task) => (
                   <li
                     key={task.key}
                     className="add-task-option"
@@ -47,7 +69,7 @@ function AddTask({ catalog = [], addedKeys, onAdd }) {
               </ul>
             )}
 
-            <button className="add-task-done" onClick={() => setOpen(false)}>
+            <button className="add-task-done" onClick={close}>
               Done
             </button>
           </div>
