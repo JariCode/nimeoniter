@@ -1,7 +1,7 @@
 .app {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 14px 16px;
 }
 
 /* Columns: stacked on mobile */
@@ -27,7 +27,9 @@
   }
 
   .app-right {
-    margin-top: 90px;
+    /* 90px matched the old header height; the streak row (now always
+       reserved, see Header.jsx) adds ~30px on top of that. */
+    margin-top: 120px;
   }
 }
 

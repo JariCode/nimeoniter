@@ -31,28 +31,28 @@
 }
 
 .header-streak {
-  margin-top: 10px;
+  margin-top: 6px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
+  gap: 5px;
+  padding: 3px 10px;
   background-color: var(--bg-panel);
   border: 1px solid var(--accent-dim);
   border-radius: 20px;
 }
 
 .header-streak-fire {
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .header-streak-count {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: bold;
   color: var(--accent);
 }
 
 .header-streak-label {
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 2px;
   color: var(--text-dim);
 }
