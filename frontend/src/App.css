@@ -48,8 +48,13 @@
   }
 
   .user-menu {
-    top: 6px;
-    right: 6px;
+    top: 4px;
+    right: 4px;
+  }
+
+  .cl-userButtonAvatarBox {
+    width: 20px !important;
+    height: 20px !important;
   }
 
   /* Header: one row (greeting + level side by side) instead of stacked, so
@@ -170,6 +175,7 @@
     height: 20px;
     font-size: 11px;
     padding-bottom: 0;
+    padding-right: 28px;
     margin-bottom: 4px;
   }
 
