@@ -46,17 +46,6 @@ function isValidTaskDate(date) {
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === date;
 }
 
-// A task can only be completed once its day has actually arrived — this is
-// what actually stops farming: a player can add tasks for any number of
-// future days, but can't collect the rewards for them ahead of time.
-// The 1-day grace absorbs the gap between the server's UTC clock and the
-// player's local calendar day.
-function isDateReached(date) {
-  const parsed = new Date(`${date}T00:00:00Z`);
-  const oneDayMs = 24 * 60 * 60 * 1000;
-  return parsed.getTime() <= Date.now() + oneDayMs;
-}
-
 // POST /api/state/tasks — add a task to a day.
 // Client sends only { key, date }; the server takes rewards from the catalog.
 router.post('/tasks', async (req, res, next) => {
@@ -119,9 +108,6 @@ router.post('/tasks/:id/complete', async (req, res, next) => {
     }
     if (mission.done) {
       return res.status(400).json({ error: 'Task already completed' });
-    }
-    if (!isDateReached(mission.date)) {
-      return res.status(400).json({ error: "Can't complete a task before its day arrives" });
     }
 
     // Atomic: only flip done + grant rewards if it's still not done at the

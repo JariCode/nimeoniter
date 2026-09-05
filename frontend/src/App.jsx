@@ -11,7 +11,6 @@ import ResourceBar from './components/ResourceBar/ResourceBar';
 import BaseStatus from './components/BaseStatus/BaseStatus';
 import LevelUp from './components/LevelUp/LevelUp';
 import Achievement from './components/Achievement/Achievement';
-import { BUILD_STAGES } from './data/gameConfig';
 import { ACHIEVEMENTS } from './data/achievements';
 import { todayKey } from './data/dateUtils';
 import { fetchConfig, fetchState, addTaskApi, completeTaskApi, removeTaskApi, buildApi } from './lib/api';
@@ -36,8 +35,9 @@ function App() {
   // Auth token getter for backend calls
   const { getToken } = useAuth();
 
-  // Task catalog comes from the backend (single source of truth)
+  // Task catalog and build stages come from the backend (single source of truth)
   const [taskCatalog, setTaskCatalog] = useState([]);
+  const [buildStages, setBuildStages] = useState([]);
 
   // Apply a state object returned by the backend
   function applyState(data) {
@@ -56,6 +56,7 @@ function App() {
       try {
         const config = await fetchConfig();
         setTaskCatalog(config.taskCatalog || []);
+        setBuildStages(config.buildStages || []);
         const token = await getToken();
         const data = await fetchState(token);
         applyState(data);
@@ -157,7 +158,7 @@ function App() {
     prevLevel.current = level;
   }, [level]);
 
-  const nextStage = BUILD_STAGES[baseStageIndex + 1] || null;
+  const nextStage = buildStages[baseStageIndex + 1] || null;
 
   const canBuild =
     !!nextStage &&
@@ -181,12 +182,14 @@ function App() {
   }
 
   const baseStageKey =
-    baseStageIndex >= 0 ? BUILD_STAGES[baseStageIndex].key : 'camp';
+    baseStageIndex >= 0 && buildStages[baseStageIndex]
+      ? buildStages[baseStageIndex].key
+      : 'camp';
 
   // Player stats for achievements
   const tasksDone = missions.filter((m) => m.done).length;
   const buildingsBuilt = baseStageIndex + 1;
-  const buildingsTotal = BUILD_STAGES.length;
+  const buildingsTotal = buildStages.length;
 
   // Detect newly unlocked achievements (show one at a time, once each)
   useEffect(() => {
@@ -403,6 +406,7 @@ function App() {
             <div className="app-right">
               <BaseStatus
                 stageKey={baseStageKey}
+                buildStages={buildStages}
                 justBuilt={justBuilt}
                 nextStage={nextStage}
                 resources={resources}

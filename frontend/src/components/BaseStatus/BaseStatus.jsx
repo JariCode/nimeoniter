@@ -1,12 +1,12 @@
 import './BaseStatus.css';
 import BaseWorld from '../BaseWorld/BaseWorld';
 
-function BaseStatus({ stageKey, nextStage, resources, level, canBuild, onBuild, justBuilt }) {
+function BaseStatus({ stageKey, buildStages, nextStage, resources, level, canBuild, onBuild, justBuilt }) {
   return (
     <div className="base-status">
       <h2 className="base-status-title">YOUR WORLD</h2>
 
-      <BaseWorld stageKey={stageKey} justBuilt={justBuilt} />
+      <BaseWorld stageKey={stageKey} buildStages={buildStages} justBuilt={justBuilt} />
 
       {nextStage ? (
         <div className="base-build">

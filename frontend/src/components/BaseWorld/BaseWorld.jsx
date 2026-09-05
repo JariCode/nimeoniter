@@ -1,14 +1,13 @@
 import './BaseWorld.css';
 import Survivor from '../Survivor/Survivor';
-import { BUILD_STAGES } from '../../data/gameConfig';
 import { getTimeOfDay, SKY_STOPS, STAR_OPACITY, SKY_IS_RADIAL, CELESTIAL } from '../../data/timeOfDay';
 import { getSeason, GROUND_STOPS, SEASON_OVERLAY, FLOWERS } from '../../data/season';
 
 // How many buildings are built, from the current stage key.
-// 'camp' = 0 built; otherwise index in BUILD_STAGES + 1.
-function builtCountFromKey(stageKey) {
+// 'camp' = 0 built; otherwise index in buildStages + 1.
+function builtCountFromKey(buildStages, stageKey) {
   if (stageKey === 'camp') return 0;
-  const i = BUILD_STAGES.findIndex((s) => s.key === stageKey);
+  const i = buildStages.findIndex((s) => s.key === stageKey);
   return i === -1 ? 0 : i + 1;
 }
 
@@ -21,9 +20,9 @@ const WALL_SEAMS = Array.from({ length: 19 }, (_, i) => {
   return { x, domeH };
 });
 
-function BaseWorld({ stageKey, justBuilt }) {
-  const built = builtCountFromKey(stageKey);
-  const has = (key) => BUILD_STAGES.slice(0, built).some((s) => s.key === key);
+function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
+  const built = builtCountFromKey(buildStages, stageKey);
+  const has = (key) => buildStages.slice(0, built).some((s) => s.key === key);
 
   // Time of day drives the sky gradient, star visibility, and sun/moon
   const tod = getTimeOfDay();
