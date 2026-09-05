@@ -81,6 +81,74 @@ const TASK_CATALOG = [
   { key: 'declutter', icon: '♻️', name: 'Declutter something',  xp: 10, resources: { stone: 1, wood: 1 } },
   { key: 'budget',    icon: '💰', name: 'Check your budget',    xp: 10, resources: { stone: 1 } },
   { key: 'errand',    icon: '🏃‍♂️', name: 'Run an errand',        xp: 10, resources: { wood: 1, food: 1 } },
+
+  // --- Sports: ball games & racket sports (stone) ---
+  { key: 'ballgame',  icon: '⚽', name: 'Play a ball game',    xp: 10, resources: { stone: 3 } },
+  { key: 'racket',    icon: '🎾', name: 'Play a racket sport', xp: 10, resources: { stone: 2, wood: 1 } },
+  { key: 'golf',      icon: '⛳', name: 'Play golf',           xp: 10, resources: { wood: 2, stone: 1 } },
+  { key: 'bowling',   icon: '🎳', name: 'Go bowling',          xp: 10, resources: { stone: 1, food: 1 } },
+
+  // --- Sports: martial arts & combat (stone) ---
+  { key: 'martial',   icon: '🥋', name: 'Martial arts training', xp: 10, resources: { stone: 3 } },
+  { key: 'boxing',    icon: '🥊', name: 'Boxing training',      xp: 10, resources: { stone: 3 } },
+
+  // --- Sports: outdoor & endurance (wood) ---
+  { key: 'wintersport', icon: '⛷️', name: 'Winter sports',      xp: 10, resources: { wood: 3, stone: 1 } },
+  { key: 'skating',   icon: '⛸️', name: 'Go skating',          xp: 10, resources: { wood: 2 } },
+  { key: 'climb',     icon: '🧗', name: 'Go climbing',         xp: 10, resources: { stone: 3 } },
+  { key: 'watersport',icon: '🚣', name: 'Water sports',        xp: 10, resources: { wood: 3 } },
+  { key: 'riding',    icon: '🐎', name: 'Go horse riding',     xp: 10, resources: { wood: 2, food: 1 } },
+  { key: 'discgolf',  icon: '🥏', name: 'Play disc golf',      xp: 10, resources: { wood: 2 } },
+  { key: 'team_sport',icon: '🏅', name: 'Team practice',       xp: 10, resources: { stone: 2, wood: 1 } },
+
+  // --- Grooming & appearance (food / self-care) ---
+  { key: 'shave',     icon: '🪒', name: 'Shave',               xp: 10, resources: { food: 1 } },
+  { key: 'haircut',   icon: '💇', name: 'Get a haircut',       xp: 10, resources: { food: 2 } },
+  { key: 'nails',     icon: '💅', name: 'Trim your nails',     xp: 10, resources: { food: 1 } },
+  { key: 'groom',     icon: '🧑‍🦱', name: 'Style your hair',     xp: 10, resources: { food: 1 } },
+
+  // --- Errands & getting around (wood / mixed) ---
+  { key: 'drive',     icon: '🚗', name: 'Drive somewhere',     xp: 10, resources: { wood: 2 } },
+  { key: 'fuel',      icon: '⛽', name: 'Fill up / charge the car', xp: 10, resources: { wood: 1, stone: 1 } },
+  { key: 'carwash',   icon: '🧼', name: 'Wash the car',        xp: 10, resources: { stone: 1, wood: 1 } },
+  { key: 'transit',   icon: '🚌', name: 'Take public transport', xp: 10, resources: { wood: 1 } },
+  { key: 'pharmacy',  icon: '💊', name: 'Go to the pharmacy',  xp: 10, resources: { food: 1, wood: 1 } },
+  { key: 'post',      icon: '📮', name: 'Post office / parcels', xp: 10, resources: { wood: 1 } },
+  { key: 'bank',      icon: '🏦', name: 'Sort out bank stuff', xp: 10, resources: { stone: 1 } },
+  { key: 'bills',     icon: '🧾', name: 'Pay the bills',       xp: 10, resources: { stone: 1 } },
+
+  // --- Health & appointments (mixed) ---
+  { key: 'dentist',   icon: '🦷', name: 'Dentist appointment', xp: 10, resources: { food: 1, stone: 1 } },
+  { key: 'doctor',    icon: '🩺', name: "Doctor's appointment", xp: 10, resources: { food: 1, stone: 1 } },
+  { key: 'restday',   icon: '🛋️', name: 'Take a rest day',     xp: 10, resources: { food: 2 } },
+  { key: 'massage',   icon: '💆', name: 'Get a massage',        xp: 10, resources: { food: 2 } },
+  { key: 'physio',    icon: '🧑‍⚕️', name: 'Physiotherapy',        xp: 10, resources: { food: 1, stone: 1 } },
+  { key: 'vet',       icon: '🐕‍🦺', name: 'Vet appointment',       xp: 10, resources: { food: 1, wood: 1 } },
+
+  // --- Pets (mixed) ---
+  { key: 'feedpet',   icon: '🐈', name: 'Feed the pet',        xp: 10, resources: { food: 2 } },
+  { key: 'petcare',   icon: '🐾', name: 'Clean up after a pet', xp: 10, resources: { stone: 1, food: 1 } },
+
+  // --- Leisure & hobbies (mixed) ---
+  { key: 'videogames',icon: '🎮', name: 'Play video games',    xp: 10, resources: { food: 1, wood: 1 } },
+  { key: 'boardgame', icon: '🎲', name: 'Play a board game',   xp: 10, resources: { food: 2 } },
+  { key: 'movie',     icon: '🎬', name: 'Watch a movie',       xp: 10, resources: { food: 1 } },
+  { key: 'music',     icon: '🎧', name: 'Listen to music',     xp: 10, resources: { food: 1 } },
+  { key: 'photo',     icon: '📷', name: 'Take photos',         xp: 10, resources: { wood: 1, food: 1 } },
+  { key: 'bake',      icon: '🧁', name: 'Bake something',      xp: 10, resources: { food: 3 } },
+  { key: 'craft',     icon: '🧶', name: 'Do a craft',          xp: 10, resources: { wood: 1, food: 1 } },
+  { key: 'fish',      icon: '🎣', name: 'Go fishing',          xp: 10, resources: { wood: 2, food: 1 } },
+
+  // --- Relationships (food) ---
+  { key: 'date',      icon: '❤️', name: 'Go on a date',        xp: 10, resources: { food: 3 } },
+  { key: 'kids',      icon: '🧸', name: 'Time with the kids',  xp: 10, resources: { food: 3 } },
+  { key: 'parents',   icon: '👵', name: 'Visit family / parents', xp: 10, resources: { food: 3 } },
+  { key: 'neighbour', icon: '🏘️', name: 'Help a neighbour',    xp: 10, resources: { food: 2 } },
+
+  // --- Work & productivity (wood / stone) ---
+  { key: 'email',     icon: '📧', name: 'Clear your inbox',    xp: 10, resources: { wood: 1, stone: 1 } },
+  { key: 'meeting',   icon: '👥', name: 'Attend a meeting',    xp: 10, resources: { wood: 1 } },
+  { key: 'apply',     icon: '📄', name: 'Work on an application', xp: 10, resources: { wood: 2 } },
 ];
 
 // Quick lookup by key, for validating rewards on the server
