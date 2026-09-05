@@ -12,7 +12,7 @@ import BaseStatus from './components/BaseStatus/BaseStatus';
 import LevelUp from './components/LevelUp/LevelUp';
 import Achievement from './components/Achievement/Achievement';
 import { ACHIEVEMENTS } from './data/achievements';
-import { todayKey, addDays } from './data/dateUtils';
+import { todayKey } from './data/dateUtils';
 import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi } from './lib/api';
 import './App.css';
 
@@ -38,9 +38,11 @@ function App() {
   // Task catalog and build stages come from the backend (single source of truth)
   const [taskCatalog, setTaskCatalog] = useState([]);
   const [buildStages, setBuildStages] = useState([]);
+  const [streak, setStreak] = useState(0);
 
   // Apply a state object returned by the backend
   function applyState(data) {
+    setStreak(data.streak ?? 0);
     setTotalXp(data.totalXp ?? 0);
     setResources(data.resources ?? { wood: 0, stone: 0, food: 0 });
     setBaseStageIndex(data.baseStageIndex ?? -1);
@@ -225,18 +227,6 @@ function App() {
   const tasksDone = missions.filter((m) => m.done).length;
   const buildingsBuilt = baseStageIndex + 1;
   const buildingsTotal = buildStages.length;
-
-  // Consecutive days (ending today) with at least one completed task
-  const streak = (() => {
-    const doneDates = new Set(missions.filter((m) => m.done).map((m) => m.date));
-    let count = 0;
-    let key = todayKey();
-    while (doneDates.has(key)) {
-      count += 1;
-      key = addDays(key, -1);
-    }
-    return count;
-  })();
 
   // Detect newly unlocked achievements (show one at a time, once each).
   // Undoing a task can revoke the stats an achievement was earned from
