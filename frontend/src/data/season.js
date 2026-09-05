@@ -1,7 +1,7 @@
 // Determine season from the real month, with ground palette and overlay type.
 
 export function getSeason(date = new Date()) {
-  // return 'winter'; // TESTAUS: poista kommentti kokeillaksesi (winter/spring/summer/autumn), poista rivi lopuksi
+  //return 'winter'; // TESTAUS: poista kommentti kokeillaksesi (winter/spring/summer/autumn), poista rivi lopuksi
   const m = date.getMonth(); // 0 = Jan
   if (m === 11 || m <= 1) return 'winter'; // Dec, Jan, Feb
   if (m >= 2 && m <= 4) return 'spring';   // Mar-May

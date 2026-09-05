@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useUser, useAuth, UserButton } from '@clerk/react';
 import Landing from './components/Landing/Landing';
 import Header from './components/Header/Header';
@@ -13,7 +13,7 @@ import LevelUp from './components/LevelUp/LevelUp';
 import Achievement from './components/Achievement/Achievement';
 import { ACHIEVEMENTS } from './data/achievements';
 import { todayKey } from './data/dateUtils';
-import { fetchConfig, fetchState, addTaskApi, completeTaskApi, removeTaskApi, buildApi } from './lib/api';
+import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi } from './lib/api';
 import './App.css';
 
 function App() {
@@ -60,6 +60,24 @@ function App() {
         const token = await getToken();
         const data = await fetchState(token);
         applyState(data);
+
+        // Seed the level-up/achievement baselines from the state we just
+        // loaded, so a returning player's existing progress doesn't look
+        // like a brand-new level-up or achievement unlock on sign-in.
+        const doneCount = Array.isArray(data.missions)
+          ? data.missions.filter((m) => m.done).length
+          : 0;
+        const builtCount = (data.baseStageIndex ?? -1) + 1;
+        prevLevel.current = levelFromXp(data.totalXp ?? 0).level;
+        const stats = {
+          tasksDone: doneCount,
+          level: prevLevel.current,
+          buildingsBuilt: builtCount,
+          buildingsTotal: (config.buildStages || []).length,
+        };
+        for (const a of ACHIEVEMENTS) {
+          if (a.check(stats)) unlockedAchievements.current.add(a.id);
+        }
       } catch (err) {
         console.error('Load failed:', err);
       }
@@ -72,10 +90,15 @@ function App() {
   // Level-up detection
   const [levelUpShown, setLevelUpShown] = useState(null);
   const prevLevel = useRef(1);
+  // Stable reference: LevelUp's auto-dismiss effect depends on this prop, so
+  // a new function identity on every render would keep resetting its timer.
+  const dismissLevelUp = useCallback(() => setLevelUpShown(null), []);
 
   // Achievement detection
   const [achievementShown, setAchievementShown] = useState(null);
   const unlockedAchievements = useRef(new Set());
+  // Same reasoning as dismissLevelUp above.
+  const dismissAchievement = useCallback(() => setAchievementShown(null), []);
 
   async function addTask(task) {
     try {
@@ -89,7 +112,19 @@ function App() {
 
   async function completeMission(id) {
     const mission = missions.find((m) => m.id === id);
-    if (!mission || mission.done) return;
+    if (!mission) return;
+
+    // Already done: clicking again undoes it and revokes the rewards
+    if (mission.done) {
+      try {
+        const token = await getToken();
+        const data = await uncompleteTaskApi(token, id);
+        applyState(data);
+      } catch (err) {
+        console.error('Uncomplete task failed:', err);
+      }
+      return;
+    }
 
     // Show the resource gain pop immediately for responsiveness
     const gainId = Date.now();
@@ -191,9 +226,18 @@ function App() {
   const buildingsBuilt = baseStageIndex + 1;
   const buildingsTotal = buildStages.length;
 
-  // Detect newly unlocked achievements (show one at a time, once each)
+  // Detect newly unlocked achievements (show one at a time, once each).
+  // Undoing a task can revoke the stats an achievement was earned from
+  // (fewer tasks done, a lower level, a building undone) — when that
+  // happens the achievement is un-marked so it pops again if re-earned,
+  // instead of silently staying "seen" until the page is refreshed.
   useEffect(() => {
     const stats = { tasksDone, level, buildingsBuilt, buildingsTotal };
+    for (const a of ACHIEVEMENTS) {
+      if (unlockedAchievements.current.has(a.id) && !a.check(stats)) {
+        unlockedAchievements.current.delete(a.id);
+      }
+    }
     for (const a of ACHIEVEMENTS) {
       if (!unlockedAchievements.current.has(a.id) && a.check(stats)) {
         unlockedAchievements.current.add(a.id);
@@ -226,15 +270,10 @@ function App() {
     <>
       {!started && !isSignedIn && <Landing onStart={() => setStarted(true)} />}
 
-      {levelUpShown && (
-        <LevelUp level={levelUpShown} onDone={() => setLevelUpShown(null)} />
-      )}
+      {levelUpShown && <LevelUp level={levelUpShown} onDone={dismissLevelUp} />}
 
       {achievementShown && (
-        <Achievement
-          achievement={achievementShown}
-          onDone={() => setAchievementShown(null)}
-        />
+        <Achievement achievement={achievementShown} onDone={dismissAchievement} />
       )}
 
       {(started || isSignedIn) && (

@@ -139,6 +139,89 @@ router.post('/tasks/:id/complete', async (req, res, next) => {
   }
 });
 
+// POST /api/state/tasks/:id/uncomplete — undo a completed task; server revokes rewards
+router.post('/tasks/:id/uncomplete', async (req, res, next) => {
+  try {
+    const taskId = Number(req.params.id);
+    const state = await getOrCreateState(req.userId);
+
+    const mission = state.missions.find((m) => m.id === taskId);
+    if (!mission) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+    if (!mission.done) {
+      return res.status(400).json({ error: 'Task is not completed' });
+    }
+
+    // Revoke the task's XP/resources, then unwind (in reverse build order) any
+    // built stage the player no longer qualifies for as a result — either its
+    // resource cost is no longer covered or its level requirement is no
+    // longer met. This mirrors /build's own checks, so undo is the exact
+    // inverse of completing a task plus whatever building it paid for.
+    let xp = Math.max(0, state.totalXp - (mission.xp || 0));
+    const resources = {
+      wood: state.resources.wood - (mission.resources?.wood || 0),
+      stone: state.resources.stone - (mission.resources?.stone || 0),
+      food: state.resources.food - (mission.resources?.food || 0),
+    };
+    let baseStageIndex = state.baseStageIndex;
+
+    while (baseStageIndex >= 0) {
+      const stage = BUILD_STAGES[baseStageIndex];
+      const { level } = levelFromXp(xp);
+      const noLongerQualifies =
+        resources.wood < 0 ||
+        resources.stone < 0 ||
+        resources.food < 0 ||
+        level < stage.requiredLevel;
+      if (!noLongerQualifies) break;
+
+      resources.wood += stage.cost.wood;
+      resources.stone += stage.cost.stone;
+      resources.food += stage.cost.food;
+      baseStageIndex -= 1;
+    }
+    // Safety clamp — once baseStageIndex reaches -1 there's nothing left to
+    // unwind, so this should already be non-negative.
+    resources.wood = Math.max(0, resources.wood);
+    resources.stone = Math.max(0, resources.stone);
+    resources.food = Math.max(0, resources.food);
+
+    // Atomic: only apply if the state is exactly what we read it as, so a
+    // concurrent request (another undo, a build, a completion) can't race
+    // this computation and leave the totals inconsistent.
+    const updated = await PlayerState.findOneAndUpdate(
+      {
+        clerkUserId: req.userId,
+        totalXp: state.totalXp,
+        baseStageIndex: state.baseStageIndex,
+        'resources.wood': state.resources.wood,
+        'resources.stone': state.resources.stone,
+        'resources.food': state.resources.food,
+        missions: { $elemMatch: { id: taskId, done: true } },
+      },
+      {
+        $set: {
+          'missions.$[elem].done': false,
+          totalXp: xp,
+          'resources.wood': resources.wood,
+          'resources.stone': resources.stone,
+          'resources.food': resources.food,
+          baseStageIndex,
+        },
+      },
+      { new: true, arrayFilters: [{ 'elem.id': taskId }] }
+    );
+
+    if (!updated) {
+      return res.status(409).json({ error: 'State changed, please retry' });
+    }
+    res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // DELETE /api/state/tasks/:id — remove a task (only if not completed)
 router.delete('/tasks/:id', async (req, res, next) => {
   try {

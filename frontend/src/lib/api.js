@@ -44,6 +44,11 @@ export function completeTaskApi(token, id) {
   return request(`/api/state/tasks/${id}/complete`, token, { method: 'POST' });
 }
 
+// Undo a completed task (server revokes XP + resources)
+export function uncompleteTaskApi(token, id) {
+  return request(`/api/state/tasks/${id}/uncomplete`, token, { method: 'POST' });
+}
+
 // Remove a task
 export function removeTaskApi(token, id) {
   return request(`/api/state/tasks/${id}`, token, { method: 'DELETE' });
