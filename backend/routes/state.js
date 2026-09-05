@@ -100,7 +100,7 @@ router.post('/tasks', async (req, res, next) => {
           },
         },
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!updated) {
@@ -169,7 +169,7 @@ router.post('/tasks/:id/complete', async (req, res, next) => {
           'resources.food': mission.resources?.food || 0,
         },
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!updated) {
@@ -270,7 +270,7 @@ router.post('/tasks/:id/uncomplete', async (req, res, next) => {
           baseStageIndex,
         },
       },
-      { new: true, arrayFilters: [{ 'elem.id': taskId }] }
+      { returnDocument: 'after', arrayFilters: [{ 'elem.id': taskId }] }
     );
 
     if (!updated) {
@@ -299,7 +299,7 @@ router.delete('/tasks/:id', async (req, res, next) => {
         missions: { $not: { $elemMatch: { id: taskId, done: true } } },
       },
       { $pull: { missions: { id: taskId } } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!updated) {
@@ -353,7 +353,7 @@ router.post('/build', async (req, res, next) => {
           baseStageIndex: 1,
         },
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!updated) {
