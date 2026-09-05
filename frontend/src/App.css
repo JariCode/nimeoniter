@@ -17,6 +17,11 @@
   z-index: 1000;
 }
 
+.cl-userButtonAvatarBox {
+  width: 40px !important;
+  height: 40px !important;
+}
+
 /* Desktop: two columns starting from the same top line */
 @media (min-width: 900px) {
   .app {
@@ -27,9 +32,8 @@
   }
 
   .app-right {
-    /* 90px matched the old header height; the streak row (now always
-       reserved, see Header.jsx) adds ~30px on top of that. */
-    margin-top: 120px;
+    /* Tuned against a screenshot so its divider line matches the header's. */
+    margin-top: 121.5px;
   }
 }
 
