@@ -54,6 +54,9 @@ app.use(cors({
   credentials: true,
 }));
 
+// Clerk webhooks — must come BEFORE express.json() because it needs the raw body
+app.use('/api/webhooks', require('./routes/webhooks'));
+
 // Cap request body size
 app.use(express.json({ limit: '100kb' }));
 
