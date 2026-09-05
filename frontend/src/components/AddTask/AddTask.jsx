@@ -1,14 +1,11 @@
 import { useState } from 'react';
-import { TASK_CATALOG } from '../../data/taskCatalog';
 import './AddTask.css';
 
-function AddTask({ addedKeys, onAdd }) {
+function AddTask({ catalog = [], addedKeys, onAdd }) {
   const [open, setOpen] = useState(false);
 
-  // Show only tasks not already added today
-  const available = TASK_CATALOG.filter(
-    (task) => !addedKeys.includes(task.key)
-  );
+  // Show only tasks not already added today (catalog comes from the backend)
+  const available = catalog.filter((task) => !addedKeys.includes(task.key));
 
   return (
     <div className="add-task">

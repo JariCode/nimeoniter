@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useUser, UserButton } from '@clerk/react';
+import { useUser, useAuth, UserButton } from '@clerk/react';
 import Landing from './components/Landing/Landing';
 import Header from './components/Header/Header';
 import EnergyBar from './components/EnergyBar/EnergyBar';
@@ -11,10 +11,10 @@ import ResourceBar from './components/ResourceBar/ResourceBar';
 import BaseStatus from './components/BaseStatus/BaseStatus';
 import LevelUp from './components/LevelUp/LevelUp';
 import Achievement from './components/Achievement/Achievement';
-import { xpForLevel, BUILD_STAGES } from './data/gameConfig';
+import { BUILD_STAGES } from './data/gameConfig';
 import { ACHIEVEMENTS } from './data/achievements';
 import { todayKey } from './data/dateUtils';
-import { useGameSync } from './hooks/useGameSync';
+import { fetchConfig, fetchState, addTaskApi, completeTaskApi, removeTaskApi, buildApi } from './lib/api';
 import './App.css';
 
 function App() {
@@ -33,19 +33,37 @@ function App() {
   const [gain, setGain] = useState(null); // { wood, stone, food } just earned, for the resource pop
   const [missions, setMissions] = useState([]);
 
-  // Bundle the whole game state for saving
-  const gameState = { totalXp, resources, baseStageIndex, missions };
+  // Auth token getter for backend calls
+  const { getToken } = useAuth();
 
-  // Apply a state loaded from the backend into the game
-  const applyLoadedState = useRef((data) => {
+  // Task catalog comes from the backend (single source of truth)
+  const [taskCatalog, setTaskCatalog] = useState([]);
+
+  // Apply a state object returned by the backend
+  function applyState(data) {
     setTotalXp(data.totalXp ?? 0);
     setResources(data.resources ?? { wood: 0, stone: 0, food: 0 });
     setBaseStageIndex(data.baseStageIndex ?? -1);
     setMissions(Array.isArray(data.missions) ? data.missions : []);
-  }).current;
+  }
 
-  // Load on sign-in, save on change
-  useGameSync(gameState, applyLoadedState);
+  // Load config once, and the player's state on sign-in
+  const hasLoaded = useRef(false);
+  useEffect(() => {
+    if (!isSignedIn || hasLoaded.current) return;
+    hasLoaded.current = true;
+    (async () => {
+      try {
+        const config = await fetchConfig();
+        setTaskCatalog(config.taskCatalog || []);
+        const token = await getToken();
+        const data = await fetchState(token);
+        applyState(data);
+      } catch (err) {
+        console.error('Load failed:', err);
+      }
+    })();
+  }, [isSignedIn, getToken]);
 
   // Which day the user is currently viewing
   const [selectedDate, setSelectedDate] = useState(todayKey());
@@ -58,34 +76,21 @@ function App() {
   const [achievementShown, setAchievementShown] = useState(null);
   const unlockedAchievements = useRef(new Set());
 
-  function addTask(task) {
-    setMissions((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        date: selectedDate, // task belongs to the day being viewed
-        key: task.key,
-        name: task.name,
-        icon: task.icon,
-        xp: task.xp,
-        resources: task.resources,
-        done: false,
-      },
-    ]);
+  async function addTask(task) {
+    try {
+      const token = await getToken();
+      const data = await addTaskApi(token, task.key, selectedDate);
+      applyState(data);
+    } catch (err) {
+      console.error('Add task failed:', err);
+    }
   }
 
-    function completeMission(id) {
-    // Find the mission first (outside any setter) so rewards are given once
+  async function completeMission(id) {
     const mission = missions.find((m) => m.id === id);
     if (!mission || mission.done) return;
 
-    setTotalXp((xp) => xp + mission.xp);
-    setResources((res) => ({
-      wood: res.wood + (mission.resources?.wood || 0),
-      stone: res.stone + (mission.resources?.stone || 0),
-      food: res.food + (mission.resources?.food || 0),
-    }));
-
+    // Show the resource gain pop immediately for responsiveness
     const gainId = Date.now();
     setGain({
       wood: mission.resources?.wood || 0,
@@ -95,21 +100,39 @@ function App() {
     });
     setTimeout(() => setGain((cur) => (cur && cur.id === gainId ? null : cur)), 900);
 
-    setMissions((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, done: true } : m))
-    );
+    // The backend grants the rewards and returns the authoritative state
+    try {
+      const token = await getToken();
+      const data = await completeTaskApi(token, id);
+      applyState(data);
+    } catch (err) {
+      console.error('Complete task failed:', err);
+    }
   }
 
-  function removeMission(id) {
-    setMissions((prev) =>
-      prev.filter((mission) => mission.id !== id || mission.done)
-    );
+  async function removeMission(id) {
+    try {
+      const token = await getToken();
+      const data = await removeTaskApi(token, id);
+      applyState(data);
+    } catch (err) {
+      console.error('Remove task failed:', err);
+    }
   }
 
-  function removeMission(id) {
-    setMissions((prev) =>
-      prev.filter((mission) => mission.id !== id || mission.done)
-    );
+  async function removeMission(id) {
+    try {
+      const token = await getToken();
+      const data = await removeTaskApi(token, id);
+      applyState(data);
+    } catch (err) {
+      console.error('Remove task failed:', err);
+    }
+  }
+
+  // Local copy of the XP curve, for DISPLAY only (backend is authoritative)
+  function xpForLevel(lvl) {
+    return lvl * 100;
   }
 
   // Work out level, progress within the level, and XP needed for the next
@@ -143,17 +166,18 @@ function App() {
     resources.stone >= nextStage.cost.stone &&
     resources.food >= nextStage.cost.food;
 
-  function build() {
+  async function build() {
     if (!canBuild) return;
-    setResources((res) => ({
-      wood: res.wood - nextStage.cost.wood,
-      stone: res.stone - nextStage.cost.stone,
-      food: res.food - nextStage.cost.food,
-    }));
-    setBaseStageIndex((i) => i + 1);
-    // Trigger the pop animation on the newly built building
-    setJustBuilt(nextStage.key);
-    setTimeout(() => setJustBuilt((cur) => (cur === nextStage.key ? null : cur)), 900);
+    const builtKey = nextStage.key;
+    setJustBuilt(builtKey);
+    setTimeout(() => setJustBuilt((cur) => (cur === builtKey ? null : cur)), 900);
+    try {
+      const token = await getToken();
+      const data = await buildApi(token);
+      applyState(data);
+    } catch (err) {
+      console.error('Build failed:', err);
+    }
   }
 
   const baseStageKey =
@@ -372,7 +396,7 @@ function App() {
                 onComplete={completeMission}
                 onRemove={removeMission}
               />
-              <AddTask addedKeys={addedKeys} onAdd={addTask} />
+              <AddTask catalog={taskCatalog} addedKeys={addedKeys} onAdd={addTask} />
               <ResourceBar resources={resources} gain={gain} />
             </div>
 

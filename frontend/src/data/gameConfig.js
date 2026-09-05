@@ -1,12 +1,10 @@
-// All game economy tuning in one place.
+// Build stages — used on the frontend for DISPLAY only.
+// The backend is the source of truth and re-validates everything.
 
-// Total XP needed to go from level N to N+1. Growing cost.
 export function xpForLevel(level) {
   return level * 100;
 }
 
-// Buildings in the order they get built. Each stays permanently once built.
-// The starting camp (tent + fire + survivor) is free and not in this list.
 export const BUILD_STAGES = [
   { key: 'well',       name: 'WELL',       requiredLevel: 2,  cost: { wood: 10, stone: 5,  food: 0 } },
   { key: 'hut',        name: 'HUT',        requiredLevel: 3,  cost: { wood: 20, stone: 10, food: 0 } },
