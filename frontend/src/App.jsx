@@ -424,13 +424,27 @@ function App() {
                     /* Row-style buttons (connected accounts, devices, etc.)
                        render with a "neutral" data-color that assumes a
                        light background and renders near-black text —
-                       force it light so it's visible on our dark theme. */
+                       force it light so it's visible on our dark theme.
+                       Also override :hover, which otherwise falls back to
+                       that same near-black text on a light hover background.
+                       Firefox applies Clerk's own :hover rule after ours
+                       (Chrome doesn't), so !important is needed to win there. */
                     menuItem: {
                       color: '#e6e0d2',
+
+                      '&:hover': {
+                        color: '#e6e0d2 !important',
+                        background: '#2a2418',
+                      },
                     },
 
                     menuItem__connectedAccounts: {
                       color: '#e6e0d2',
+
+                      '&:hover': {
+                        color: '#e6e0d2 !important',
+                        background: '#2a2418',
+                      },
                     },
 
                     profileSectionPrimaryButton: {
