@@ -22,6 +22,17 @@
   height: 40px !important;
 }
 
+/* The "Primary" email badge derives its color from colorPrimary via
+   color-mix(), which Clerk computes inconsistently across browsers and
+   doesn't reliably pick up the appearance prop in every render context
+   (e.g. the profile modal restored after cancelling an OAuth redirect).
+   Override the raw class directly so it always matches, everywhere. */
+.cl-badge[data-color='primary'] {
+  color: #c58a22 !important;
+  background: rgba(197, 138, 34, 0.15) !important;
+  border: 1px solid rgba(197, 138, 34, 0.4) !important;
+}
+
 /* Desktop: two columns starting from the same top line */
 @media (min-width: 900px) {
   .app {

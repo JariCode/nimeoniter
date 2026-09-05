@@ -423,14 +423,28 @@ function App() {
 
                     /* Row-style buttons (connected accounts, devices, etc.)
                        render with a "neutral" data-color that assumes a
-                       light background and renders near-black text —
-                       force it light so it's visible on our dark theme.
-                       Also override :hover, which otherwise falls back to
-                       that same near-black text on a light hover background.
-                       Firefox applies Clerk's own :hover rule after ours
-                       (Chrome doesn't), so !important is needed to win there. */
+                       light background and renders near-black text — Clerk's
+                       own [data-color] attribute selector out-specifies a
+                       plain .cl-menuItem override, so !important is needed
+                       even for the resting state, not just :hover. */
+                    /* The "..." trigger button itself, separate from the
+                       dropdown it opens — also needs an explicit color or
+                       its icon renders dark-on-dark and disappears. */
+                    menuButtonEllipsis: {
+                      color: '#999999 !important',
+
+                      '&:hover': {
+                        color: '#e6e0d2 !important',
+                      },
+                    },
+
+                    menuList: {
+                      background: '#1c1c1c',
+                      border: '1px solid #444444',
+                    },
+
                     menuItem: {
-                      color: '#e6e0d2',
+                      color: '#e6e0d2 !important',
 
                       '&:hover': {
                         color: '#e6e0d2 !important',
@@ -439,12 +453,23 @@ function App() {
                     },
 
                     menuItem__connectedAccounts: {
-                      color: '#e6e0d2',
+                      color: '#e6e0d2 !important',
 
                       '&:hover': {
                         color: '#e6e0d2 !important',
                         background: '#2a2418',
                       },
+                    },
+
+                    /* Clerk derives this badge's color from colorPrimary via
+                       color-mix(), which renders inconsistently between
+                       Chrome and Firefox — use a fixed amber tint (matching
+                       colorPrimary) instead so it's the same golden color
+                       in both browsers. */
+                    badge__primary: {
+                      color: '#c58a22 !important',
+                      background: 'rgba(197, 138, 34, 0.15) !important',
+                      border: '1px solid rgba(197, 138, 34, 0.4)',
                     },
 
                     profileSectionPrimaryButton: {
