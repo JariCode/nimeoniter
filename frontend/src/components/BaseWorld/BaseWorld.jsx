@@ -496,6 +496,24 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
           </g>
         )}
+        {/* NIMEONITER wooden sign (always, front — in the gap right of the
+            fence, ahead of the storage shed and watchtower) */}
+        <g>
+          <ellipse cx="260" cy="294" rx="42" ry="4" fill="#000" opacity="0.4" />
+          {/* posts */}
+          <rect x="237" y="271" width="7" height="24" fill="url(#woodDark)" />
+          <rect x="276" y="271" width="7" height="24" fill="url(#woodDark)" />
+          {/* board */}
+          <rect x="220" y="260" width="80" height="25" rx="3" fill="url(#wood)" stroke="#1c150d" strokeWidth="1.2" />
+          <rect x="222" y="262" width="76" height="21" rx="2" fill="none" stroke="#6b5836" strokeWidth="0.6" opacity="0.4" />
+          {/* nails */}
+          <circle cx="228" cy="266" r="1.2" fill="#8a7350" />
+          <circle cx="292" cy="266" r="1.2" fill="#8a7350" />
+          {/* engraved text: shadow then bright face for relief */}
+          <text x="260.6" y="276.6" fontFamily="Georgia, serif" fontSize="9" fontWeight="bold" letterSpacing="0.6" textAnchor="middle" fill="#140f08">NIMEONITER</text>
+          <text x="260" y="276" fontFamily="Georgia, serif" fontSize="9" fontWeight="bold" letterSpacing="0.6" textAnchor="middle" fill="#d9b06a">NIMEONITER</text>
+        </g>
+
       </svg>
 
       <p className="base-world-stage">{stageKey.toUpperCase()}</p>
