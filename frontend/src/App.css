@@ -30,3 +30,175 @@
     margin-top: 90px;
   }
 }
+
+/* Mobile landscape: a short, wide viewport. Force the two-column layout
+   below the desktop breakpoint and tighten spacing/font sizes so both
+   columns fit on one screen without vertical scrolling. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 6px 10px;
+    align-items: start;
+  }
+
+  .app-right {
+    margin-top: 0;
+  }
+
+  .user-menu {
+    top: 6px;
+    right: 6px;
+  }
+
+  /* Header: one row (greeting + level side by side) instead of stacked, so
+     both fit without extra vertical space. Fixed height + border-bottom
+     matches .base-status-title's box so the two underlines line up. */
+  .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 20px;
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-greeting {
+    font-size: 10px;
+  }
+
+  .header-level {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 4px;
+    margin-top: 0;
+  }
+
+  .header-level-label {
+    font-size: 10px;
+  }
+
+  .header-level-number {
+    font-size: 16px;
+  }
+
+  .energy-bar,
+  .daily-progress,
+  .day-nav,
+  .mission-list,
+  .add-task,
+  .resource-bar {
+    margin-top: 3px;
+  }
+
+  .energy-bar-label {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+
+  .energy-bar-track {
+    height: 8px;
+  }
+
+  .daily-progress,
+  .resource-bar {
+    padding: 4px 6px;
+  }
+
+  .daily-progress-label {
+    font-size: 10px;
+  }
+
+  .daily-progress-value {
+    font-size: 13px;
+  }
+
+  .day-nav-arrow {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
+
+  .day-nav-label {
+    font-size: 11px;
+  }
+
+  .day-nav-date {
+    font-size: 10px;
+  }
+
+  /* Task list: the priority in this layout, gets whatever height the
+     other (shrunk) panels free up */
+  .mission-list-items {
+    max-height: 143px;
+  }
+
+  .mission {
+    padding: 6px 8px;
+  }
+
+  .add-task-button {
+    padding: 6px;
+  }
+
+  .resource {
+    gap: 2px;
+  }
+
+  .resource-icon {
+    font-size: 15px;
+  }
+
+  .resource-value {
+    font-size: 13px;
+  }
+
+  .resource-label {
+    font-size: 8px;
+  }
+
+  /* Right column: the world image was the tallest thing on the page and
+     pushed the build button off-screen — cap its height instead of
+     letting it fill the column width at a 4:3 ratio. Fixed height +
+     border-bottom matches .header's box so the two underlines line up. */
+  .base-status-title {
+    display: flex;
+    align-items: center;
+    height: 20px;
+    font-size: 11px;
+    padding-bottom: 0;
+    margin-bottom: 4px;
+  }
+
+  .base-world-svg {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 238px;
+    margin: 0 auto;
+  }
+
+  .base-world-stage {
+    margin-top: 2px;
+    font-size: 11px;
+  }
+
+  .base-build {
+    margin-top: 4px;
+  }
+
+  .base-build-header {
+    margin-bottom: 4px;
+  }
+
+  .base-build-cost {
+    margin-bottom: 6px;
+  }
+
+  .base-build-button {
+    padding: 6px;
+  }
+}
