@@ -94,3 +94,34 @@
     font-size: 15px;
   }
 }
+
+/* Mobile landscape: a short, wide viewport. Shrink everything so the
+   whole landing page fits on one screen without scrolling. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .landing {
+    padding: 8px;
+  }
+
+  .landing-image-wrap {
+    max-width: 260px;
+  }
+
+  .landing-title {
+    margin-top: 4px;
+    font-size: 22px;
+    letter-spacing: 3px;
+  }
+
+  .landing-punchline {
+    margin-top: 4px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .landing-start {
+    margin-top: 10px;
+    padding: 6px 20px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+}
