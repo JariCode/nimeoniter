@@ -4,6 +4,17 @@ const PlayerState = require('../models/PlayerState');
 const { BUILD_STAGES, levelFromXp, minXpForLevel } = require('../data/gameConfig');
 const { TASK_BY_KEY } = require('../data/taskCatalog');
 
+
+// Compare two YYYY-MM-DD date keys: returns the difference in days (a - b).
+// Uses UTC noon to avoid DST edge cases; the keys are plain calendar dates.
+function daysBetween(a, b) {
+  const [ay, am, ad] = a.split('-').map(Number);
+  const [by, bm, bd] = b.split('-').map(Number);
+  const da = Date.UTC(ay, am - 1, ad);
+  const db = Date.UTC(by, bm - 1, bd);
+  return Math.round((da - db) / 86400000);
+}
+
 const router = express.Router();
 
 // All state routes require a logged-in user
@@ -133,6 +144,24 @@ router.post('/tasks/:id/complete', async (req, res, next) => {
     if (!updated) {
       return res.status(400).json({ error: 'Task already completed' });
     }
+
+    // --- Streak: count consecutive days with at least one completed task ---
+    // The client sends its own local date so the streak follows the user's day.
+    const today = typeof req.body?.date === 'string' ? req.body.date : null;
+    if (today) {
+      const last = updated.lastActiveDate;
+      if (last !== today) {
+        // First completion of a new day: update the streak
+        if (last && daysBetween(today, last) === 1) {
+          updated.streak = (updated.streak || 0) + 1; // consecutive day
+        } else {
+          updated.streak = 1; // first ever, or the chain was broken
+        }
+        updated.lastActiveDate = today;
+        await updated.save();
+      }
+    }
+
     res.json(updated);
   } catch (err) {
     next(err);

@@ -90,6 +90,21 @@
     font-size: 16px;
   }
 
+  .header-streak {
+    margin-top: 0;
+    padding: 1px 6px;
+    gap: 3px;
+  }
+
+  .header-streak-fire,
+  .header-streak-count {
+    font-size: 10px;
+  }
+
+  .header-streak-label {
+    font-size: 8px;
+  }
+
   .energy-bar,
   .daily-progress,
   .day-nav,

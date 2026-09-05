@@ -12,7 +12,7 @@ import BaseStatus from './components/BaseStatus/BaseStatus';
 import LevelUp from './components/LevelUp/LevelUp';
 import Achievement from './components/Achievement/Achievement';
 import { ACHIEVEMENTS } from './data/achievements';
-import { todayKey } from './data/dateUtils';
+import { todayKey, addDays } from './data/dateUtils';
 import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi } from './lib/api';
 import './App.css';
 
@@ -139,7 +139,7 @@ function App() {
     // The backend grants the rewards and returns the authoritative state
     try {
       const token = await getToken();
-      const data = await completeTaskApi(token, id);
+      const data = await completeTaskApi(token, id, todayKey());
       applyState(data);
     } catch (err) {
       console.error('Complete task failed:', err);
@@ -225,6 +225,18 @@ function App() {
   const tasksDone = missions.filter((m) => m.done).length;
   const buildingsBuilt = baseStageIndex + 1;
   const buildingsTotal = buildStages.length;
+
+  // Consecutive days (ending today) with at least one completed task
+  const streak = (() => {
+    const doneDates = new Set(missions.filter((m) => m.done).map((m) => m.date));
+    let count = 0;
+    let key = todayKey();
+    while (doneDates.has(key)) {
+      count += 1;
+      key = addDays(key, -1);
+    }
+    return count;
+  })();
 
   // Detect newly unlocked achievements (show one at a time, once each).
   // Undoing a task can revoke the stats an achievement was earned from
@@ -463,7 +475,7 @@ function App() {
 
           <div className="app">
             <div className="app-left">
-              <Header name="SURVIVOR" level={level} />
+              <Header name="SURVIVOR" level={level} streak={streak} />
               <EnergyBar energy={levelProgress} />
               <DailyProgress xp={todayXp} />
               <DayNav selectedDate={selectedDate} onChange={setSelectedDate} />

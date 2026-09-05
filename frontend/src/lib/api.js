@@ -40,8 +40,11 @@ export function addTaskApi(token, key, date) {
 }
 
 // Complete a task (server grants XP + resources)
-export function completeTaskApi(token, id) {
-  return request(`/api/state/tasks/${id}/complete`, token, { method: 'POST' });
+export function completeTaskApi(token, id, date) {
+  return request(`/api/state/tasks/${id}/complete`, token, {
+    method: 'POST',
+    body: JSON.stringify({ date }),
+  });
 }
 
 // Undo a completed task (server revokes XP + resources)

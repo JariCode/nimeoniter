@@ -29,3 +29,30 @@
   font-weight: bold;
   line-height: 1;
 }
+
+.header-streak {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--accent-dim);
+  border-radius: 20px;
+}
+
+.header-streak-fire {
+  font-size: 15px;
+}
+
+.header-streak-count {
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.header-streak-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}

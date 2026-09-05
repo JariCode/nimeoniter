@@ -19,6 +19,10 @@ const playerStateSchema = new mongoose.Schema(
     baseStageIndex: { type: Number, default: -1 },
     // Tasks are stored as a flexible array; shape matches the frontend
     missions: { type: Array, default: [] },
+    // Streak: consecutive days with at least one completed task
+    streak: { type: Number, default: 0 },
+    // The user's local date (YYYY-MM-DD) of the last completed task
+    lastActiveDate: { type: String, default: null },
   },
   { timestamps: true }
 );
