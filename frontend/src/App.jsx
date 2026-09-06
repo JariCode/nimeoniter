@@ -167,16 +167,6 @@ function App() {
     }
   }
 
-  async function removeMission(id) {
-    try {
-      const token = await getToken();
-      const data = await removeTaskApi(token, id);
-      applyState(data);
-    } catch (err) {
-      console.error('Remove task failed:', err);
-    }
-  }
-
   // Local copy of the XP curve, for DISPLAY only (backend is authoritative)
   function xpForLevel(lvl) {
     return lvl * 100;
