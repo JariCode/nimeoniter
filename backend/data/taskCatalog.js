@@ -128,6 +128,8 @@ const TASK_CATALOG = [
   // --- Pets (mixed) ---
   { key: 'feedpet',   icon: '🐈', name: 'Feed the pet',        xp: 10, resources: { food: 2 } },
   { key: 'petcare',   icon: '🐾', name: 'Clean up after a pet', xp: 10, resources: { stone: 1, food: 1 } },
+  { key: 'petnails',  icon: '🐾', name: 'Trim pet nails',       xp: 10, resources: { food: 1 } },
+  { key: 'petwash',   icon: '🛁', name: 'Wash the pet',         xp: 10, resources: { food: 2, stone: 1 } },
 
   // --- Leisure & hobbies (mixed) ---
   { key: 'videogames',icon: '🎮', name: 'Play video games',    xp: 10, resources: { food: 1, wood: 1 } },
