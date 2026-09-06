@@ -81,15 +81,10 @@ createRoot(document.getElementById('root')).render(
               background: '#2a2418',
             },
           },
-          /* Clerk derives this badge's color from colorPrimary via
-             color-mix(), which renders inconsistently between Chrome and
-             Firefox — use a fixed amber tint (matching colorPrimary)
-             instead so it's the same golden color in both browsers. */
-          badge__primary: {
-            color: '#c58a22 !important',
-            background: 'rgba(197, 138, 34, 0.15) !important',
-            border: '1px solid rgba(197, 138, 34, 0.4)',
-          },
+          /* "Primary" badge color is handled globally in App.css
+             (.cl-badge[data-color='primary']) instead of here — this
+             appearance prop didn't reliably reach every modal instance
+             (e.g. after an OAuth-cancel redirect). */
           formFieldLabel: {
             color: '#e6e0d2',
           },
