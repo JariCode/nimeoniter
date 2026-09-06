@@ -1,11 +1,11 @@
 import './EnergyBar.css';
 
-function EnergyBar({ energy }) {
+function EnergyBar({ energy, xpInto, xpFor }) {
   return (
     <div className="energy-bar">
       <div className="energy-bar-label">
         <span className="energy-bar-icon">⚡</span>
-        <span>{energy} LEVEL PROGRESS</span>
+        <span>LEVEL PROGRESS {xpInto} / {xpFor} XP</span>
       </div>
       <div className="energy-bar-track">
         <div

@@ -510,7 +510,7 @@ function App() {
           <div className="app">
             <div className="app-left">
               <Header name="SURVIVOR" level={level} streak={streak} />
-              <EnergyBar energy={levelProgress} />
+              <EnergyBar energy={levelProgress} xpInto={xpIntoLevel} xpFor={xpForNext} />
               <DailyProgress
                 xp={todayXp}
                 done={dayMissions.filter((m) => m.done).length}
