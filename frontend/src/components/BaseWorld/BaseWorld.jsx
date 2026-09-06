@@ -48,6 +48,14 @@ const LIGHTNING_BOLTS = [
   { path: 'M 305 -5 L 296 50 L 312 50 L 290 110 L 306 110 L 278 170', delay: 3.4 },
 ];
 
+// A few scattered clouds high in the sky, clear of the sun/moon band
+// (celestial cy ranges 55-150) and the buildings below.
+const CLOUD_SHAPES = [
+  { cx: 65, cy: 40, s: 1.5 },
+  { cx: 195, cy: 25, s: 1.7 },
+  { cx: 330, cy: 45, s: 1.4 },
+];
+
 function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
   const built = builtCountFromKey(buildStages, stageKey);
   const has = (key) => buildStages.slice(0, built).some((s) => s.key === key);
@@ -66,6 +74,12 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
   // Active weather (rain in autumn, snow in winter) — not every day
   const weather = getWeather();
+
+  // Clouds only show up with weather: dark and gloomy for rain/thunder,
+  // pale for a snowy sky. Clear weather gets no clouds at all.
+  const showClouds = weather === 'rain' || weather === 'thunder' || weather === 'snow';
+  const cloudColor = weather === 'snow' ? '#9aa5b0' : '#23262b';
+  const cloudOpacity = weather === 'snow' ? 0.55 : 0.9;
 
   return (
     <div className="base-world">
@@ -167,6 +181,18 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           <circle className="star" cx="240" cy="50" r="0.8" fill="#e8dcc0" opacity="0.5" />
           <circle className="star" cx="90" cy="90" r="0.8" fill="#e8dcc0" opacity="0.35" />
         </g>
+
+        {/* Clouds: only on rain/thunder (dark, gloomy) or snow (pale) —
+            clear skies get none. */}
+        {showClouds && CLOUD_SHAPES.map((c, i) => (
+          <g key={i} fill={cloudColor} opacity={cloudOpacity}>
+            <ellipse cx={c.cx} cy={c.cy} rx={20 * c.s} ry={9 * c.s} />
+            <ellipse cx={c.cx - 18 * c.s} cy={c.cy + 3 * c.s} rx={13 * c.s} ry={7 * c.s} />
+            <ellipse cx={c.cx + 19 * c.s} cy={c.cy + 3 * c.s} rx={14 * c.s} ry={7.5 * c.s} />
+            <ellipse cx={c.cx + 3 * c.s} cy={c.cy - 5 * c.s} rx={12 * c.s} ry={7 * c.s} />
+            <ellipse cx={c.cx - 6 * c.s} cy={c.cy - 4 * c.s} rx={9 * c.s} ry={6 * c.s} />
+          </g>
+        ))}
 
         {/* Ground */}
         <rect x="0" y="220" width="400" height="80" fill="url(#ground)" />

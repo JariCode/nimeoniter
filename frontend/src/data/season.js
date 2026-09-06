@@ -29,7 +29,7 @@ export const SEASON_OVERLAY = {
 // weather stays stable within that block but re-rolls often — using the
 // dawn/day/dusk/night segments here would let rain/snow/thunder run for a
 // whole 4-8h segment (and longer if the next segment rolls the same way).
-const WEATHER_BLOCK_HOURS = 2;
+const WEATHER_BLOCK_HOURS = 2;// 2h blocks, so 12 blocks per day
 const BLOCKS_PER_DAY = 24 / WEATHER_BLOCK_HOURS;
 
 function periodSeed(date) {
