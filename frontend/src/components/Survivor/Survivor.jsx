@@ -27,11 +27,13 @@ function Survivor() {
           {/* Cool lit edge on the back */}
           <path d="M 233 189 Q 227 200 232 214" stroke="#5e6040" strokeWidth="1.4" fill="none" opacity="0.5" />
 
-          {/* Upper arm + forearm reaching to fire */}
-          <path d="M 240 192 L 252 197 L 250 201 L 238 197 Z" fill="#5e6040" stroke="#15110a" strokeWidth="0.6" />
-          <path d="M 250 197 L 265 203 L 263 207 L 248 202 Z" fill="#4a4b32" stroke="#15110a" strokeWidth="0.6" />
-          {/* Hand */}
-          <circle cx="267" cy="205" r="2.8" fill="#6e5943" />
+          {/* Upper arm + forearm reaching to fire — occasionally pokes it */}
+          <g className="survivor-arm">
+            <path d="M 240 192 L 252 197 L 250 201 L 238 197 Z" fill="#5e6040" stroke="#15110a" strokeWidth="0.6" />
+            <path d="M 250 197 L 265 203 L 263 207 L 248 202 Z" fill="#4a4b32" stroke="#15110a" strokeWidth="0.6" />
+            {/* Hand */}
+            <circle cx="267" cy="205" r="2.8" fill="#6e5943" />
+          </g>
 
           {/* Head */}
           <circle cx="240" cy="178" r="8" fill="#6e5943" stroke="#15110a" strokeWidth="0.8" />

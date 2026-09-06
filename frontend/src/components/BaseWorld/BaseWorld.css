@@ -162,3 +162,85 @@
   49%           { opacity: 0.4; }
   50%           { opacity: 0; }
 }
+
+/* Campfire sparks: small embers rising and fading, drifting sideways */
+.spark {
+  opacity: 0;
+  animation-name: spark-rise;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes spark-rise {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  15%  { opacity: 1; }
+  100% { transform: translate(var(--drift, 0px), -38px); opacity: 0; }
+}
+
+/* Shooting stars: invisible almost the whole cycle, quick streak near the end */
+.shooting-star {
+  opacity: 0;
+  filter: drop-shadow(0 0 3px #f5f0e0);
+  animation-name: shooting-star;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes shooting-star {
+  0%, 92%, 100% { opacity: 0; transform: translate(0, 0); }
+  93%           { opacity: 1; transform: translate(0, 0); }
+  96%           { opacity: 1; transform: translate(calc(var(--dx) * 1px), calc(var(--dy) * 1px)); }
+  97%           { opacity: 0; transform: translate(calc(var(--dx) * 1.1px), calc(var(--dy) * 1.1px)); }
+}
+
+/* Birds: drift across the whole sky, wings flapping the whole way */
+.bird {
+  transform: translateX(-20px);
+  animation-name: bird-fly;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes bird-fly {
+  0%   { transform: translateX(-20px); opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { transform: translateX(420px); opacity: 0; }
+}
+
+.bird-wings {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bird-flap 0.5s ease-in-out infinite;
+}
+
+@keyframes bird-flap {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(0.4); }
+}
+
+/* Butterflies: gentle looping drift with fast-flapping wings */
+.butterfly {
+  animation-name: butterfly-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes butterfly-drift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(6px, -4px); }
+  50%  { transform: translate(0, -7px); }
+  75%  { transform: translate(-6px, -3px); }
+  100% { transform: translate(0, 0); }
+}
+
+.butterfly-wing {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: butterfly-flap 0.3s ease-in-out infinite;
+}
+
+@keyframes butterfly-flap {
+  0%, 100% { transform: scaleX(1); }
+  50%      { transform: scaleX(0.3); }
+}

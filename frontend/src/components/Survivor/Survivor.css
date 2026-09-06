@@ -9,3 +9,17 @@
   50%  { transform: rotate(-1.5deg) translateY(-0.5px); }
   100% { transform: rotate(0deg) translateY(0px); }
 }
+
+/* Every so often, the reaching arm dips further in to poke the fire */
+.survivor-arm {
+  transform-origin: 240px 192px;
+  animation: survivor-poke 9s ease-in-out infinite;
+}
+
+@keyframes survivor-poke {
+  0%, 82%, 100% { transform: rotate(0deg); }
+  86%           { transform: rotate(7deg); }
+  90%           { transform: rotate(-2deg); }
+  94%           { transform: rotate(4deg); }
+  97%           { transform: rotate(0deg); }
+}

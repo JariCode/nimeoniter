@@ -56,6 +56,36 @@ const CLOUD_SHAPES = [
   { cx: 330, cy: 45, s: 1.4 },
 ];
 
+// Embers drifting up from the campfire, on top of the existing flicker
+const SPARKS = [
+  { x: 274, drift: -5, delay: 0, duration: 2.2 },
+  { x: 281, drift: 4, delay: 0.8, duration: 1.9 },
+  { x: 287, drift: -3, delay: 1.5, duration: 2.4 },
+  { x: 278, drift: 6, delay: 2.3, duration: 2 },
+];
+
+// Meteors that streak across the night sky now and then — different cycle
+// lengths (co-prime-ish) so the two never line up.
+const SHOOTING_STARS = [
+  { x: 55, y: 26, dx: 60, dy: 30, duration: 17, delay: 2 },
+  { x: 250, y: 20, dx: -55, dy: 28, duration: 23, delay: 9 },
+];
+
+// Birds drifting across the daytime sky now and then, each its own height
+// and timing so they don't fly in formation.
+const BIRDS = [
+  { y: 48, duration: 24, delay: 1 },
+  { y: 66, duration: 29, delay: 11 },
+  { y: 38, duration: 21, delay: 19 },
+];
+
+// Butterflies fluttering near the summer flowers.
+const BUTTERFLIES = [
+  { x: 82, y: 231, delay: 0, duration: 4.6, cL: '#e86a8a', cR: '#f0e8f0' },
+  { x: 212, y: 236, delay: 1.4, duration: 5.1, cL: '#f0c840', cR: '#fff6d8' },
+  { x: 302, y: 229, delay: 2.7, duration: 4.9, cL: '#e8e8f0', cR: '#e86a8a' },
+];
+
 function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
   const built = builtCountFromKey(buildStages, stageKey);
   const has = (key) => buildStages.slice(0, built).some((s) => s.key === key);
@@ -181,6 +211,36 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           <circle className="star" cx="240" cy="50" r="0.8" fill="#e8dcc0" opacity="0.5" />
           <circle className="star" cx="90" cy="90" r="0.8" fill="#e8dcc0" opacity="0.35" />
         </g>
+
+        {/* Shooting stars: rare streaks across the night sky */}
+        {tod === 'night' && SHOOTING_STARS.map((s, i) => (
+          <line
+            key={i}
+            x1={s.x}
+            y1={s.y}
+            x2={s.x + 16}
+            y2={s.y + 8}
+            stroke="#f5f0e0"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            className="shooting-star"
+            style={{ '--dx': s.dx, '--dy': s.dy, animationDuration: `${s.duration}s`, animationDelay: `${s.delay}s` }}
+          />
+        ))}
+
+        {/* Birds drifting across the daytime sky now and then */}
+        {tod === 'day' && BIRDS.map((b, i) => (
+          <g key={i} className="bird" style={{ animationDuration: `${b.duration}s`, animationDelay: `${b.delay}s` }}>
+            <path
+              d={`M -5 ${b.y} Q -2.5 ${b.y - 3} 0 ${b.y} Q 2.5 ${b.y - 3} 5 ${b.y}`}
+              className="bird-wings"
+              stroke="#241f19"
+              strokeWidth="1.2"
+              fill="none"
+              strokeLinecap="round"
+            />
+          </g>
+        ))}
 
         {/* Clouds: only on rain/thunder (dark, gloomy) or snow (pale) —
             clear skies get none. */}
@@ -462,6 +522,15 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* Butterflies fluttering near the summer flowers — drawn in the
+            front layer so they stay clear of buildings, not hidden behind them */}
+        {season === 'summer' && BUTTERFLIES.map((b, i) => (
+          <g key={i} className="butterfly" style={{ animationDuration: `${b.duration}s`, animationDelay: `${b.delay}s` }}>
+            <ellipse cx={b.x - 1.5} cy={b.y} rx="2" ry="1.4" fill={b.cL} className="butterfly-wing" />
+            <ellipse cx={b.x + 1.5} cy={b.y} rx="2" ry="1.4" fill={b.cR} className="butterfly-wing" />
+          </g>
+        ))}
+
         {/* SURVIVOR (always) */}
         <g transform="translate(0, 20)">
           <Survivor />
@@ -479,6 +548,17 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           <circle cx="272" cy="196" r="1" fill="#f0b429" opacity="0.8" />
           <circle cx="288" cy="192" r="0.8" fill="#f0b429" opacity="0.7" />
           <ellipse cx="280" cy="216" rx="58" ry="13" fill="#c8641e" opacity="0.15" />
+          {SPARKS.map((s, i) => (
+            <circle
+              key={i}
+              cx={s.x}
+              cy="205"
+              r="1"
+              fill="#f0b429"
+              className="spark"
+              style={{ '--drift': `${s.drift}px`, animationDuration: `${s.duration}s`, animationDelay: `${s.delay}s` }}
+            />
+          ))}
         </g>
 
         {/* STORAGE (drawn after the campfire so its glow stays behind the building) */}
