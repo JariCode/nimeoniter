@@ -27,8 +27,8 @@ const TASK_CATALOG = [
   { key: 'shovel',    icon: '⛏️', name: 'Yard work',            xp: 10, resources: { stone: 2, wood: 1 } },
 
   // --- Food & self-care (food) ---
-  { key: 'shop',      icon: '🛒', name: 'Buy groceries',        xp: 10, resources: { food: 3 } },
-  { key: 'cook',      icon: '🍳', name: 'Cook a meal',          xp: 10, resources: { food: 3 } },
+  { key: 'shop',      icon: '🛒', name: 'Buy groceries',        xp: 10, resources: { food: 2 } },
+  { key: 'cook',      icon: '🍳', name: 'Cook a meal',          xp: 10, resources: { food: 2 } },
   { key: 'water',     icon: '💧', name: 'Drink water',          xp: 10, resources: { food: 1 } },
   { key: 'healthy',   icon: '🥗', name: 'Eat something healthy', xp: 10, resources: { food: 2 } },
   { key: 'breakfast', icon: '🥣', name: 'Eat breakfast',        xp: 10, resources: { food: 2 } },
@@ -67,8 +67,8 @@ const TASK_CATALOG = [
 
   // --- Social & connection (food) ---
   { key: 'call',      icon: '📞', name: 'Call someone',         xp: 10, resources: { food: 2 } },
-  { key: 'friend',    icon: '🤝', name: 'Meet a friend',        xp: 10, resources: { food: 3 } },
-  { key: 'family',    icon: '👨‍👩‍👧', name: 'Time with family',      xp: 10, resources: { food: 3 } },
+  { key: 'friend',    icon: '🤝', name: 'Meet a friend',        xp: 10, resources: { food: 2 } },
+  { key: 'family',    icon: '👨‍👩‍👧', name: 'Time with family',      xp: 10, resources: { food: 2 } },
   { key: 'message',   icon: '💬', name: 'Reach out to someone', xp: 10, resources: { food: 1 } },
   { key: 'gratitude', icon: '🙏', name: 'Thank someone',        xp: 10, resources: { food: 1 } },
   { key: 'help',      icon: '❤️', name: 'Help someone',         xp: 10, resources: { food: 2 } },
