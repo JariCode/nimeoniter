@@ -116,6 +116,9 @@ const TASK_CATALOG = [
   { key: 'post',      icon: '📮', name: 'Post office / parcels', xp: 10, resources: { wood: 1 } },
   { key: 'bank',      icon: '🏦', name: 'Sort out bank stuff', xp: 10, resources: { stone: 1 } },
   { key: 'bills',     icon: '🧾', name: 'Pay the bills',       xp: 10, resources: { stone: 1 } },
+  { key: 'carservice', icon: '🛠️', name: 'Car service / maintenance', xp: 10, resources: { stone: 2, wood: 1 } },
+  { key: 'bikeservice', icon: '🚲', name: 'Bike service / maintenance', xp: 10, resources: { stone: 1, wood: 1 } },
+  { key: 'changetires', icon: '🚙', name: 'Change car tires',    xp: 10, resources: { stone: 2, wood: 1 } },
 
   // --- Health & appointments (mixed) ---
   { key: 'dentist',   icon: '🦷', name: 'Dentist appointment', xp: 10, resources: { food: 1, stone: 1 } },
