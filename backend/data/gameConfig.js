@@ -8,14 +8,14 @@ function xpForLevel(level) {
 // Buildings in the order they get built. Each stays permanently once built.
 // The starting camp is free and not in this list.
 const BUILD_STAGES = [
-  { key: 'well',       name: 'WELL',       requiredLevel: 2,  cost: { wood: 10, stone: 5,  food: 5 } },
-  { key: 'hut',        name: 'HUT',        requiredLevel: 3,  cost: { wood: 20, stone: 10, food: 5 } },
-  { key: 'house',      name: 'HOUSE',      requiredLevel: 5,  cost: { wood: 35, stone: 20, food: 5 } },
-  { key: 'field',      name: 'FIELD',      requiredLevel: 7,  cost: { wood: 20, stone: 10, food: 10 } },
-  { key: 'storage',    name: 'STORAGE',    requiredLevel: 9,  cost: { wood: 30, stone: 25, food: 15 } },
-  { key: 'fence',      name: 'FENCE',      requiredLevel: 11, cost: { wood: 30, stone: 20, food: 20 } },
-  { key: 'watchtower', name: 'WATCHTOWER', requiredLevel: 14, cost: { wood: 40, stone: 40, food: 25 } },
-  { key: 'wall',       name: 'WALL',       requiredLevel: 18, cost: { wood: 90, stone: 80, food: 30 } },
+  { key: 'well',       name: 'WELL',       requiredLevel: 2,  cost: { wood: 10, stone: 5,  food: 25 } },
+  { key: 'hut',        name: 'HUT',        requiredLevel: 3,  cost: { wood: 20, stone: 10, food: 30 } },
+  { key: 'house',      name: 'HOUSE',      requiredLevel: 5,  cost: { wood: 35, stone: 20, food: 30 } },
+  { key: 'field',      name: 'FIELD',      requiredLevel: 7,  cost: { wood: 20, stone: 10, food: 35 } },
+  { key: 'storage',    name: 'STORAGE',    requiredLevel: 9,  cost: { wood: 30, stone: 25, food: 40 } },
+  { key: 'fence',      name: 'FENCE',      requiredLevel: 11, cost: { wood: 30, stone: 20, food: 45 } },
+  { key: 'watchtower', name: 'WATCHTOWER', requiredLevel: 14, cost: { wood: 40, stone: 40, food: 50 } },
+  { key: 'wall',       name: 'WALL',       requiredLevel: 18, cost: { wood: 90, stone: 80, food: 55 } },
 ];
 
 // Level, progress within the level, and XP needed for the next — from total XP
