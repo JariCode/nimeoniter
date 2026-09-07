@@ -71,7 +71,7 @@ const TASK_CATALOG = [
   { key: 'family',    icon: '👨‍👩‍👧', name: 'Time with family',      xp: 10, resources: { food: 1 } },
   { key: 'message',   icon: '💬', name: 'Reach out to someone', xp: 10, resources: { food: 1 } },
   { key: 'gratitude', icon: '🙏', name: 'Thank someone',        xp: 10, resources: { food: 1 } },
-  { key: 'help',      icon: '❤️', name: 'Help someone',         xp: 10, resources: { food: 1 } },
+  { key: 'help',      icon: '❤️', name: 'Help someone',         xp: 10, resources: { food: 1, wood: 1, stone: 1 } },
 
   // --- Wellbeing & balance (mixed) ---
   { key: 'digital_detox', icon: '📵', name: 'Take a screen break', xp: 10, resources: { food: 1, wood: 1 } },
@@ -111,9 +111,9 @@ const TASK_CATALOG = [
   { key: 'drive',     icon: '🚗', name: 'Drive somewhere',     xp: 10, resources: { wood: 2 } },
   { key: 'fuel',      icon: '⛽', name: 'Fill up / charge the car', xp: 10, resources: { wood: 1, stone: 1 } },
   { key: 'carwash',   icon: '🧼', name: 'Wash the car',        xp: 10, resources: { stone: 1, wood: 1 } },
-  { key: 'transit',   icon: '🚌', name: 'Take public transport', xp: 10, resources: { wood: 1 } },
+  { key: 'transit',   icon: '🚌', name: 'Take public transport', xp: 10, resources: { wood: 1, stone: 1 } },
   { key: 'pharmacy',  icon: '💊', name: 'Go to the pharmacy',  xp: 10, resources: { food: 1, wood: 1 } },
-  { key: 'post',      icon: '📮', name: 'Post office / parcels', xp: 10, resources: { wood: 1 } },
+  { key: 'post',      icon: '📮', name: 'Post office / parcels', xp: 10, resources: { wood: 1, stone: 1 } },
   { key: 'bank',      icon: '🏦', name: 'Sort out bank stuff', xp: 10, resources: { stone: 1 } },
   { key: 'bills',     icon: '🧾', name: 'Pay the bills',       xp: 10, resources: { stone: 1 } },
   { key: 'carservice', icon: '🛠️', name: 'Car service / maintenance', xp: 10, resources: { stone: 2, wood: 1 } },
@@ -124,14 +124,14 @@ const TASK_CATALOG = [
   { key: 'dentist',   icon: '🦷', name: 'Dentist appointment', xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'doctor',    icon: '🩺', name: "Doctor's appointment", xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'restday',   icon: '🛋️', name: 'Take a rest day',     xp: 10, resources: { food: 1 } },
-  { key: 'massage',   icon: '💆', name: 'Get a massage',        xp: 10, resources: { food: 1 } },
+  { key: 'massage',   icon: '💆', name: 'Get a massage',        xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'physio',    icon: '🧑‍⚕️', name: 'Physiotherapy',        xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'vet',       icon: '🐕‍🦺', name: 'Vet appointment',       xp: 10, resources: { food: 1, wood: 1 } },
 
   // --- Pets (mixed) ---
-  { key: 'feedpet',   icon: '🐈', name: 'Feed the pet',        xp: 10, resources: { food: 1 } },
+  { key: 'feedpet',   icon: '🐈', name: 'Feed the pet',        xp: 10, resources: { food: 1, } },
   { key: 'petcare',   icon: '🐾', name: 'Clean up after a pet', xp: 10, resources: { stone: 1, food: 1 } },
-  { key: 'petnails',  icon: '🐾', name: 'Trim pet nails',       xp: 10, resources: { food: 1 } },
+  { key: 'petnails',  icon: '🐾', name: 'Trim pet nails',       xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'petwash',   icon: '🛁', name: 'Wash the pet',         xp: 10, resources: { food: 2, stone: 1 } },
 
   // --- Leisure & hobbies (mixed) ---
