@@ -1,5 +1,5 @@
 // The task catalog — the backend is the source of truth for rewards.
-// All give 10 XP; resources vary by the task's nature:
+// Tasks give XP based on effort; most give 10 XP, harder tasks give more.
 //   movement / outdoors        -> wood
 //   strength / hard effort     -> stone
 //   food / self-care / social  -> food
@@ -7,24 +7,26 @@
 const TASK_CATALOG = [
   // --- Movement & outdoors (wood) ---
   { key: 'walk',      icon: '🚶', name: 'Go for a walk',        xp: 10, resources: { wood: 2 } },
-  { key: 'run',       icon: '🏃', name: 'Go for a run',         xp: 10, resources: { wood: 3 } },
-  { key: 'bike',      icon: '🚴', name: 'Ride a bike',          xp: 10, resources: { wood: 3 } },
-  { key: 'hike',      icon: '🥾', name: 'Go for a hike',        xp: 10, resources: { wood: 4 } },
+  { key: 'run',       icon: '🏃', name: 'Go for a run',         xp: 20, resources: { wood: 3 } },
+  { key: 'bike',      icon: '🚴', name: 'Ride a bike',          xp: 20, resources: { wood: 3 } },
+  { key: 'hike',      icon: '🥾', name: 'Go for a hike',        xp: 20, resources: { wood: 4 } },
   { key: 'outdoors',  icon: '🌲', name: 'Spend time outside',   xp: 10, resources: { wood: 2, food: 1, stone: 1 } },
   { key: 'garden',    icon: '🌱', name: 'Do some gardening',    xp: 10, resources: { wood: 2, food: 1, stone: 1 } },
-  { key: 'swim',      icon: '🏊', name: 'Go swimming',          xp: 10, resources: { wood: 3 } },
+  { key: 'swim',      icon: '🏊', name: 'Go swimming',          xp: 20, resources: { wood: 3 } },
   { key: 'dogwalk',   icon: '🐕', name: 'Walk the dog',         xp: 10, resources: { wood: 2 } },
   { key: 'stairs',    icon: '🧗', name: 'Take the stairs',      xp: 10, resources: { wood: 1, stone: 1 } },
   { key: 'dance',     icon: '💃', name: 'Dance',                xp: 10, resources: { wood: 2 } },
 
   // --- Strength & hard effort (stone) ---
-  { key: 'exercise',  icon: '🏋️', name: 'Exercise',             xp: 10, resources: { stone: 2 } },
-  { key: 'gym',       icon: '💪', name: 'Go to the gym',        xp: 10, resources: { stone: 3 } },
+  { key: 'exercise',  icon: '🏋️', name: 'Exercise',             xp: 20, resources: { stone: 2 } },
+  { key: 'gym',       icon: '💪', name: 'Go to the gym',        xp: 20, resources: { stone: 3 } },
   { key: 'stretch',   icon: '🧘', name: 'Stretch or yoga',      xp: 10, resources: { stone: 1, food: 1 } },
-  { key: 'chores',    icon: '🔨', name: 'Do heavy chores',      xp: 10, resources: { stone: 2, wood: 1 } },
-  { key: 'pushups',   icon: '🤸', name: 'Do a workout set',     xp: 10, resources: { stone: 2 } },
-  { key: 'carry',     icon: '📦', name: 'Move something heavy', xp: 10, resources: { stone: 2 } },
-  { key: 'shovel',    icon: '⛏️', name: 'Yard work',            xp: 10, resources: { stone: 2, wood: 1 } },
+  { key: 'chores',    icon: '🔨', name: 'Do heavy chores',      xp: 20, resources: { stone: 2, wood: 1 } },
+  { key: 'pushups',   icon: '🤸', name: 'Do a workout set',     xp: 20, resources: { stone: 2 } },
+  { key: 'carry',     icon: '📦', name: 'Move something heavy', xp: 20, resources: { stone: 2 } },
+  { key: 'shovel',    icon: '⛏️', name: 'Yard work',            xp: 25, resources: { stone: 2, wood: 1 } },
+  { key: 'firewood',  icon: '🪵', name: 'Gather firewood',      xp: 25, resources: { stone: 1, wood: 2 } },
+  { key: 'building',  icon: '🏗️', name: 'Building',             xp: 25, resources: { wood: 2, stone: 2 } },
 
   // --- Food & self-care (food) ---
   { key: 'shop',      icon: '🛒', name: 'Buy groceries',        xp: 10, resources: { food: 1 } },
@@ -39,6 +41,7 @@ const TASK_CATALOG = [
   { key: 'bath',      icon: '🛁', name: 'Take a relaxing bath', xp: 10, resources: { food: 1 } },
   { key: 'skincare',  icon: '🧴', name: 'Skincare routine',     xp: 10, resources: { food: 1 } },
   { key: 'meal_prep', icon: '🍱', name: 'Meal prep',            xp: 10, resources: { food: 2 } },
+  { key: 'grilling',  icon: '🔥', name: 'Grilling',             xp: 10, resources: { food: 2 } },
 
   // --- Home & tidying (mixed) ---
   { key: 'clean',     icon: '🧹', name: 'Clean',                xp: 10, resources: { stone: 1, food: 1 } },
@@ -49,21 +52,23 @@ const TASK_CATALOG = [
   { key: 'vacuum',    icon: '🧽', name: 'Vacuum',               xp: 10, resources: { stone: 1, wood: 1 } },
   { key: 'plants',    icon: '🪴', name: 'Water the plants',     xp: 10, resources: { wood: 1, food: 1 } },
   { key: 'organize',  icon: '🗂️', name: 'Organize a space',     xp: 10, resources: { wood: 1, stone: 1 } },
-  { key: 'repair',    icon: '🔧', name: 'Fix something',        xp: 10, resources: { stone: 2 } },
+  { key: 'repair',    icon: '🔧', name: 'Fix something',        xp: 20, resources: { stone: 2 } },
   { key: 'makebed',   icon: '🛏️', name: 'Make the bed',         xp: 10, resources: { food: 1 } },
+  { key: 'sweep',     icon: '🧹', name: 'Sweep / mop',          xp: 20, resources: { stone: 1, wood: 1 } },
+  { key: 'painting',  icon: '🎨', name: 'Painting',             xp: 20, resources: { wood: 2, stone: 1 } },
 
   // --- Mind & growth (wood + food) ---
-  { key: 'study',     icon: '📚', name: 'Study',                xp: 10, resources: { wood: 1, stone: 1 } },
+  { key: 'study',     icon: '📚', name: 'Study',                xp: 20, resources: { wood: 1, stone: 1 } },
   { key: 'read',      icon: '📖', name: 'Read',                 xp: 10, resources: { wood: 1 } },
-  { key: 'work',      icon: '💻', name: 'Focused work',         xp: 10, resources: { wood: 2, stone: 1 } },
+  { key: 'work',      icon: '💻', name: 'Focused work',         xp: 20, resources: { wood: 2, stone: 1 } },
   { key: 'journal',   icon: '📝', name: 'Write / journal',      xp: 10, resources: { wood: 1, food: 1 } },
   { key: 'meditate',  icon: '🧠', name: 'Meditate',             xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'language',  icon: '🗣️', name: 'Practice a language',  xp: 10, resources: { wood: 1, stone: 1 } },
   { key: 'instrument',icon: '🎸', name: 'Practice an instrument', xp: 10, resources: { wood: 1, food: 1 } },
-  { key: 'course',    icon: '🎓', name: 'Take a course lesson', xp: 10, resources: { wood: 2 } },
+  { key: 'course',    icon: '🎓', name: 'Take a course lesson', xp: 20, resources: { wood: 2 } },
   { key: 'draw',      icon: '🎨', name: 'Draw or paint',        xp: 10, resources: { wood: 1, food: 1 } },
   { key: 'plan',      icon: '🗒️', name: 'Plan your day',        xp: 10, resources: { wood: 1 } },
-  { key: 'code',      icon: '⌨️', name: 'Work on a project',    xp: 10, resources: { wood: 2, stone: 1 } },
+  { key: 'code',      icon: '⌨️', name: 'Work on a project',    xp: 20, resources: { wood: 2, stone: 1 } },
 
   // --- Social & connection (food) ---
   { key: 'call',      icon: '📞', name: 'Call someone',         xp: 10, resources: { food: 1 } },
@@ -71,7 +76,7 @@ const TASK_CATALOG = [
   { key: 'family',    icon: '👨‍👩‍👧', name: 'Time with family',      xp: 10, resources: { food: 1 } },
   { key: 'message',   icon: '💬', name: 'Reach out to someone', xp: 10, resources: { food: 1 } },
   { key: 'gratitude', icon: '🙏', name: 'Thank someone',        xp: 10, resources: { food: 1 } },
-  { key: 'help',      icon: '❤️', name: 'Help someone',         xp: 10, resources: { food: 1, wood: 1, stone: 1 } },
+  { key: 'help',      icon: '❤️', name: 'Help someone',         xp: 20, resources: { food: 1, wood: 1, stone: 1 } },
 
   // --- Wellbeing & balance (mixed) ---
   { key: 'digital_detox', icon: '📵', name: 'Take a screen break', xp: 10, resources: { food: 1, wood: 1 } },
@@ -83,23 +88,23 @@ const TASK_CATALOG = [
   { key: 'errand',    icon: '🏃‍♂️', name: 'Run an errand',        xp: 10, resources: { wood: 1, food: 1 } },
 
   // --- Sports: ball games & racket sports (stone) ---
-  { key: 'ballgame',  icon: '⚽', name: 'Play a ball game',    xp: 10, resources: { stone: 3 } },
-  { key: 'racket',    icon: '🎾', name: 'Play a racket sport', xp: 10, resources: { stone: 2, wood: 1 } },
-  { key: 'golf',      icon: '⛳', name: 'Play golf',           xp: 10, resources: { wood: 2, stone: 1 } },
-  { key: 'bowling',   icon: '🎳', name: 'Go bowling',          xp: 10, resources: { stone: 1, food: 1 } },
+  { key: 'ballgame',  icon: '⚽', name: 'Play a ball game',    xp: 20, resources: { stone: 3 } },
+  { key: 'racket',    icon: '🎾', name: 'Play a racket sport', xp: 20, resources: { stone: 2, wood: 1 } },
+  { key: 'golf',      icon: '⛳', name: 'Play golf',           xp: 20, resources: { wood: 2, stone: 1 } },
+  { key: 'bowling',   icon: '🎳', name: 'Go bowling',          xp: 20, resources: { stone: 1, food: 1 } },
 
   // --- Sports: martial arts & combat (stone) ---
-  { key: 'martial',   icon: '🥋', name: 'Martial arts training', xp: 10, resources: { stone: 3 } },
-  { key: 'boxing',    icon: '🥊', name: 'Boxing training',      xp: 10, resources: { stone: 3 } },
+  { key: 'martial',   icon: '🥋', name: 'Martial arts training', xp: 25, resources: { stone: 3 } },
+  { key: 'boxing',    icon: '🥊', name: 'Boxing training',      xp: 25, resources: { stone: 3 } },
 
   // --- Sports: outdoor & endurance (wood) ---
-  { key: 'wintersport', icon: '⛷️', name: 'Winter sports',      xp: 10, resources: { wood: 3, stone: 1 } },
-  { key: 'skating',   icon: '⛸️', name: 'Go skating',          xp: 10, resources: { wood: 2 } },
-  { key: 'climb',     icon: '🧗', name: 'Go climbing',         xp: 10, resources: { stone: 3 } },
-  { key: 'watersport',icon: '🚣', name: 'Water sports',        xp: 10, resources: { wood: 3 } },
-  { key: 'riding',    icon: '🐎', name: 'Go horse riding',     xp: 10, resources: { wood: 2, food: 1 } },
-  { key: 'discgolf',  icon: '🥏', name: 'Play disc golf',      xp: 10, resources: { wood: 2 } },
-  { key: 'team_sport',icon: '🏅', name: 'Team practice',       xp: 10, resources: { stone: 2, wood: 1 } },
+  { key: 'wintersport', icon: '⛷️', name: 'Winter sports',      xp: 25, resources: { wood: 3, stone: 1 } },
+  { key: 'skating',   icon: '⛸️', name: 'Go skating',          xp: 20, resources: { wood: 2 } },
+  { key: 'climb',     icon: '🧗', name: 'Go climbing',         xp: 20, resources: { stone: 3 } },
+  { key: 'watersport',icon: '🚣', name: 'Water sports',        xp: 20, resources: { wood: 3 } },
+  { key: 'riding',    icon: '🐎', name: 'Go horse riding',     xp: 20, resources: { wood: 2, food: 1 } },
+  { key: 'discgolf',  icon: '🥏', name: 'Play disc golf',      xp: 20, resources: { wood: 2 } },
+  { key: 'team_sport',icon: '🏅', name: 'Team practice',       xp: 20, resources: { stone: 2, wood: 1 } },
 
   // --- Grooming & appearance (food / self-care) ---
   { key: 'shave',     icon: '🪒', name: 'Shave',               xp: 10, resources: { food: 1, stone: 1 } },
@@ -116,9 +121,9 @@ const TASK_CATALOG = [
   { key: 'post',      icon: '📮', name: 'Post office / parcels', xp: 10, resources: { wood: 1, stone: 1 } },
   { key: 'bank',      icon: '🏦', name: 'Sort out bank stuff', xp: 10, resources: { stone: 1 } },
   { key: 'bills',     icon: '🧾', name: 'Pay the bills',       xp: 10, resources: { stone: 1 } },
-  { key: 'carservice', icon: '🛠️', name: 'Car service / maintenance', xp: 10, resources: { stone: 2, wood: 1 } },
-  { key: 'bikeservice', icon: '🚲', name: 'Bike service / maintenance', xp: 10, resources: { stone: 1, wood: 1 } },
-  { key: 'changetires', icon: '🚙', name: 'Change car tires',    xp: 10, resources: { stone: 2, wood: 1 } },
+  { key: 'carservice', icon: '🛠️', name: 'Car service / maintenance', xp: 20, resources: { stone: 2, wood: 1 } },
+  { key: 'bikeservice', icon: '🚲', name: 'Bike service / maintenance', xp: 20, resources: { stone: 1, wood: 1 } },
+  { key: 'changetires', icon: '🚙', name: 'Change car tires',    xp: 20, resources: { stone: 2, wood: 1 } },
 
   // --- Health & appointments (mixed) ---
   { key: 'dentist',   icon: '🦷', name: 'Dentist appointment', xp: 10, resources: { food: 1, stone: 1 } },
@@ -145,15 +150,23 @@ const TASK_CATALOG = [
   { key: 'fish',      icon: '🎣', name: 'Go fishing',          xp: 10, resources: { wood: 2, food: 1 } },
 
   // --- Relationships (food) ---
-  { key: 'date',      icon: '❤️', name: 'Go on a date',        xp: 10, resources: { food: 3 } },
-  { key: 'kids',      icon: '🧸', name: 'Time with the kids',  xp: 10, resources: { food: 3 } },
-  { key: 'parents',   icon: '👵', name: 'Visit family / parents', xp: 10, resources: { food: 3 } },
-  { key: 'neighbour', icon: '🏘️', name: 'Help a neighbour',    xp: 10, resources: { food: 2 } },
+  { key: 'date',      icon: '❤️', name: 'Go on a date',        xp: 20, resources: { food: 3 } },
+  { key: 'kids',      icon: '🧸', name: 'Time with the kids',  xp: 20, resources: { food: 3 } },
+  { key: 'parents',   icon: '👵', name: 'Visit family / parents', xp: 20, resources: { food: 3 } },
+  { key: 'neighbour', icon: '🏘️', name: 'Help a neighbour',    xp: 20, resources: { food: 2 } },
 
   // --- Work & productivity (wood / stone) ---
   { key: 'email',     icon: '📧', name: 'Clear your inbox',    xp: 10, resources: { wood: 1, stone: 1 } },
   { key: 'meeting',   icon: '👥', name: 'Attend a meeting',    xp: 10, resources: { wood: 1 } },
-  { key: 'apply',     icon: '📄', name: 'Work on an application', xp: 10, resources: { wood: 2 } },
+  { key: 'apply',     icon: '📄', name: 'Work on an application', xp: 20, resources: { wood: 2 } },
+  { key: 'jobhunting', icon: '💼', name: 'Job hunting', xp: 20, resources: { wood: 2, stone: 1 } },
+
+  // ---Travel & holidays (wood / food) ---
+{ key: 'vacation',  icon: '🏖️', name: 'Vacation',    xp: 10, resources: { food: 2, wood: 1 } },
+{ key: 'trip',      icon: '🧳', name: 'Trip',        xp: 10, resources: { wood: 2, food: 1 } },
+{ key: 'train',     icon: '🚆', name: 'Travel by train', xp: 10, resources: { wood: 2 } },
+{ key: 'ship',      icon: '🚢', name: 'Travel by ship',  xp: 10, resources: { wood: 2, food: 1 } },
+{ key: 'plane',     icon: '✈️', name: 'Travel by plane',  xp: 10, resources: { wood: 2, food: 1 } },
 ];
 
 // Quick lookup by key, for validating rewards on the server
