@@ -97,6 +97,24 @@
   50% { transform: scaleY(1.12); }
 }
 
+/* Panel wraps the echoed question + bubble + ask input together */
+.assistant__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+/* The player's echoed question, above the reply bubble */
+.assistant__you {
+  max-width: 340px;
+  align-self: flex-start;
+  color: #b9b3a2;
+  font-size: 0.82rem;
+  font-style: italic;
+  opacity: 0.85;
+}
+
 /* Speech bubble */
 .assistant__bubble {
   max-width: 340px;
@@ -121,6 +139,46 @@
   border-top: 9px solid #6a7a4c;
 }
 
+/* Ask input under the bubble */
+.assistant__ask {
+  display: flex;
+  gap: 0.4rem;
+  width: 100%;
+  max-width: 340px;
+}
+
+.assistant__input {
+  flex: 1;
+  background: #151a0f;
+  color: #e6e0d2;
+  border: 1px solid #6a7a4c;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  outline: none;
+}
+.assistant__input::placeholder {
+  color: #8a8a7a;
+}
+.assistant__input:focus {
+  border-color: #9ab06a;
+}
+
+.assistant__send {
+  background: #6a7a4c;
+  color: #111;
+  border: none;
+  border-radius: 10px;
+  width: 42px;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.assistant__send:hover {
+  background: #9ab06a;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .face__breathe,
   .face__eyes,
@@ -131,7 +189,8 @@
 
 /* Mobile landscape: a short, wide viewport — shrink the companion and bubble
    so they don't cover the play area, matching App.css's own breakpoint. Lift
-   it up off the bottom so it clears the build button. */
+   it up off the bottom so it clears the build button. When open, keep the
+   whole panel inside the short viewport and let it scroll if needed. */
 @media (orientation: landscape) and (max-height: 500px) {
   .assistant {
     right: 0.6rem;
@@ -143,14 +202,39 @@
     height: 79px;
   }
 
+  .assistant--open .assistant__stage {
+    gap: 0.5rem;
+    max-height: 94vh;
+    padding: 0.5rem;
+    overflow-y: auto;
+  }
+
   .assistant--open .assistant__figure {
-    width: 150px;
-    height: 195px;
+    width: 96px;
+    height: 125px;
+  }
+
+  .assistant__you {
+    font-size: 0.72rem;
   }
 
   .assistant__bubble {
     max-width: 260px;
-    font-size: 0.85rem;
-    padding: 0.6rem 0.8rem;
+    font-size: 0.82rem;
+    padding: 0.5rem 0.7rem;
+  }
+
+  .assistant__ask {
+    max-width: 260px;
+  }
+
+  .assistant__input {
+    font-size: 0.82rem;
+    padding: 0.45rem 0.6rem;
+  }
+
+  .assistant__send {
+    width: 36px;
+    font-size: 1.2rem;
   }
 }

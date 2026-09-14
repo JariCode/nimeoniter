@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './Assistant.css';
 
 // The survivor companion. A hand-drawn SVG so the character can breathe,
@@ -6,8 +7,16 @@ import './Assistant.css';
 // green), shown as a bust with clear shoulders and a hood pulled over the
 // head. The backend is the source of truth: this component only asks for a
 // line of text and shows it. It never computes rewards or game state.
-function Assistant({ speaking, message, onClose, onPoke }) {
+function Assistant({ speaking, message, lastQuestion, onClose, onPoke, onAsk }) {
   const isOpen = !!message;
+  const [draft, setDraft] = useState('');
+
+  function submitQuestion() {
+    const q = draft.trim();
+    if (!q) return;
+    setDraft('');
+    onAsk(q);
+  }
 
   return (
     <div className={`assistant ${isOpen ? 'assistant--open' : ''}`}>
@@ -15,8 +24,36 @@ function Assistant({ speaking, message, onClose, onPoke }) {
 
       <div className="assistant__stage">
         {isOpen && message && (
-          <div className="assistant__bubble" role="status">
-            {message}
+          <div className="assistant__panel">
+            {/* Echo the player's own question above the reply, so the bubble
+                doesn't look like an answer to nothing. */}
+            {lastQuestion && (
+              <div className="assistant__you">You: {lastQuestion}</div>
+            )}
+            <div className="assistant__bubble" role="status">
+              {message}
+            </div>
+            {/* Ask the companion a question about the game state. The backend
+                answers from the saved state only — it never changes anything. */}
+            <div className="assistant__ask">
+              <input
+                className="assistant__input"
+                type="text"
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') submitQuestion(); }}
+                placeholder="Ask the survivor..."
+                maxLength={200}
+              />
+              <button
+                type="button"
+                className="assistant__send"
+                onClick={submitQuestion}
+                aria-label="Send question"
+              >
+                ›
+              </button>
+            </div>
           </div>
         )}
 

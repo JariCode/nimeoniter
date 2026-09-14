@@ -42,8 +42,10 @@ function App() {
   const [buildStages, setBuildStages] = useState([]);
   const [streak, setStreak] = useState(0);
 
-  // AI assistant: the current line to show, and whether it's mid-"speech"
+  // AI assistant: the current line to show, the player's own last question,
+  // and whether it's mid-"speech"
   const [assistantMessage, setAssistantMessage] = useState(null);
+  const [assistantQuestion, setAssistantQuestion] = useState(null);
   const [assistantSpeaking, setAssistantSpeaking] = useState(false);
   const greetedRef = useRef(false); // greet only once per session
 
@@ -119,6 +121,9 @@ function App() {
   // resources or buildings.
   const talkToAssistant = useCallback(async (mode, question) => {
     try {
+      // Show the player's own question (for the 'question' mode); clear it for
+      // greetings/advice so a stale question doesn't linger above the reply.
+      setAssistantQuestion(mode === 'question' ? question : null);
       const token = await getToken();
       const data = await askAssistantApi(token, mode, question);
       setAssistantMessage(data.message);
@@ -566,8 +571,10 @@ function App() {
           <Assistant
             speaking={assistantSpeaking}
             message={assistantMessage}
-            onClose={() => { setAssistantMessage(null); setAssistantSpeaking(false); }}
+            lastQuestion={assistantQuestion}
+            onClose={() => { setAssistantMessage(null); setAssistantSpeaking(false); setAssistantQuestion(null); }}
             onPoke={() => talkToAssistant('advice')}
+            onAsk={(question) => talkToAssistant('question', question)}
           />
         </>
       )}
