@@ -77,6 +77,7 @@ app.get('/', (req, res) => {
 // --- Routes ---
 app.use('/api/config', require('./routes/config'));
 app.use('/api/state', require('./routes/state'));
+app.use('/api/assistant', require('./routes/assistant'));
 
 // Unknown routes: clean 404
 app.use((req, res) => {

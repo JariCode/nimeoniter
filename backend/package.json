@@ -19,6 +19,7 @@
     "express-rate-limit": "^8.7.0",
     "helmet": "^8.3.0",
     "mongoose": "^9.9.4",
+    "openai": "^7.15.0",
     "svix": "^2.3.0"
   },
   "devDependencies": {
