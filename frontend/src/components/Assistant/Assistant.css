@@ -1,0 +1,156 @@
+/* Resting spot in the corner; grows toward center when speaking. */
+.assistant {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 0;
+  z-index: 40;
+}
+
+.assistant__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 8, 6, 0.72);
+  z-index: 41;
+}
+
+.assistant__stage {
+  position: relative;
+  z-index: 42;
+}
+
+.assistant__figure {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 150px;
+  height: 195px;
+  display: block;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.65));
+  transition: transform 0.35s ease, width 0.35s ease, height 0.35s ease;
+}
+
+.assistant__figure:hover {
+  transform: translateY(-3px);
+}
+
+/* When open, pin the whole thing to center and enlarge the figure. */
+.assistant--open {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.assistant--open .assistant__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.assistant--open .assistant__figure {
+  width: 300px;
+  height: 390px;
+}
+
+.assistant--open .assistant__figure:hover {
+  transform: none;
+}
+
+.face {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* --- Idle life --- */
+.face__breathe {
+  transform-origin: 100px 210px;
+  animation: breathe 4.2s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-1.5px) scale(1.008); }
+}
+
+/* Blink: squash the eyes briefly at intervals. */
+.face__eyes {
+  transform-origin: 100px 123px;
+  animation: blink 6s ease-in-out infinite;
+}
+@keyframes blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+/* --- Speaking: the beard nudges from its root, so the jaw appears to move --- */
+.face--speaking .face__mouth {
+  transform-origin: 100px 150px;
+  animation: talk 0.32s ease-in-out infinite;
+}
+@keyframes talk {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.12); }
+}
+
+/* Speech bubble */
+.assistant__bubble {
+  max-width: 340px;
+  background: #151a0f;
+  color: #e6e0d2;
+  border: 1px solid #6a7a4c;
+  border-radius: 12px;
+  padding: 0.9rem 1.1rem;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+.assistant__bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 9px solid #6a7a4c;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .face__breathe,
+  .face__eyes,
+  .face--speaking .face__mouth {
+    animation: none;
+  }
+}
+
+/* Mobile landscape: a short, wide viewport — shrink the companion and bubble
+   so they don't cover the play area, matching App.css's own breakpoint. Lift
+   it up off the bottom so it clears the build button. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .assistant {
+    right: 0.6rem;
+    bottom: 2.5rem;
+  }
+
+  .assistant__figure {
+    width: 60px;
+    height: 79px;
+  }
+
+  .assistant--open .assistant__figure {
+    width: 150px;
+    height: 195px;
+  }
+
+  .assistant__bubble {
+    max-width: 260px;
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem;
+  }
+}

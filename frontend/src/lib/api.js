@@ -61,3 +61,11 @@ export function removeTaskApi(token, id) {
 export function buildApi(token) {
   return request('/api/state/build', token, { method: 'POST' });
 }
+
+// Ask the AI assistant. mode: 'greeting' | 'advice' | 'question' | 'daily_challenge'
+export function askAssistantApi(token, mode, question) {
+  return request('/api/assistant', token, {
+    method: 'POST',
+    body: JSON.stringify({ mode, question }),
+  });
+}

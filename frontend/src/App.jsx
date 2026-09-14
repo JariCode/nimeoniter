@@ -12,9 +12,10 @@ import BaseStatus from './components/BaseStatus/BaseStatus';
 import LevelUp from './components/LevelUp/LevelUp';
 import Achievement from './components/Achievement/Achievement';
 import Notice from './components/Notice/Notice';
+import Assistant from './components/Assistant/Assistant';
 import { ACHIEVEMENTS } from './data/achievements';
 import { todayKey } from './data/dateUtils';
-import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi } from './lib/api';
+import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi, askAssistantApi } from './lib/api';
 import './App.css';
 
 function App() {
@@ -40,6 +41,11 @@ function App() {
   const [taskCatalog, setTaskCatalog] = useState([]);
   const [buildStages, setBuildStages] = useState([]);
   const [streak, setStreak] = useState(0);
+
+  // AI assistant: the current line to show, and whether it's mid-"speech"
+  const [assistantMessage, setAssistantMessage] = useState(null);
+  const [assistantSpeaking, setAssistantSpeaking] = useState(false);
+  const greetedRef = useRef(false); // greet only once per session
 
   // Apply a state object returned by the backend
   function applyState(data) {
@@ -107,6 +113,24 @@ function App() {
   // (e.g. the daily completion limit), instead of a silent console.error.
   const [noticeShown, setNoticeShown] = useState(null);
   const dismissNotice = useCallback(() => setNoticeShown(null), []);
+
+  // Ask the backend for a line and "speak" it. The backend is authoritative:
+  // it reads the saved state and returns text only — this never touches XP,
+  // resources or buildings.
+  const talkToAssistant = useCallback(async (mode, question) => {
+    try {
+      const token = await getToken();
+      const data = await askAssistantApi(token, mode, question);
+      setAssistantMessage(data.message);
+      setAssistantSpeaking(true);
+      // Stop the mouth animation after a rough reading time; bubble stays open
+      const readMs = Math.min(9000, 1800 + (data.message?.length || 0) * 45);
+      setTimeout(() => setAssistantSpeaking(false), readMs);
+    } catch (err) {
+      console.error('Assistant failed:', err);
+      // On failure the companion just stays silent — no bubble
+    }
+  }, [getToken]);
 
   async function addTask(task) {
     try {
@@ -193,6 +217,15 @@ function App() {
     }
     prevLevel.current = level;
   }, [level]);
+
+  // Greet once, shortly after the player's state has loaded on sign-in
+  useEffect(() => {
+    if (!isSignedIn || greetedRef.current) return;
+    if (missions.length === 0 && totalXp === 0) return; // wait until state is in
+    greetedRef.current = true;
+    const t = setTimeout(() => talkToAssistant('greeting'), 1200);
+    return () => clearTimeout(t);
+  }, [isSignedIn, missions.length, totalXp, talkToAssistant]);
 
   const nextStage = buildStages[baseStageIndex + 1] || null;
 
@@ -529,6 +562,13 @@ function App() {
               />
             </div>
           </div>
+
+          <Assistant
+            speaking={assistantSpeaking}
+            message={assistantMessage}
+            onClose={() => { setAssistantMessage(null); setAssistantSpeaking(false); }}
+            onPoke={() => talkToAssistant('advice')}
+          />
         </>
       )}
     </>
