@@ -244,3 +244,71 @@
   0%, 100% { transform: scaleX(1); }
   50%      { transform: scaleX(0.3); }
 }
+
+/* Halloween ghost: floats gently up and down. The float animation lives on
+   an inner <g> with no positioning transform of its own, so it doesn't
+   clobber the outer <g>'s translate/scale placement attribute. */
+.ghost-float {
+  animation-name: ghost-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes ghost-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+/* Halloween candles: flame flickers, same idea as the campfire flicker above */
+.candle-flame {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: candle-flicker 1.4s ease-in-out infinite;
+}
+
+@keyframes candle-flicker {
+  0%   { transform: scaleY(1) scaleX(1) skewX(0deg); opacity: 1; }
+  30%  { transform: scaleY(1.1) scaleX(0.9) skewX(-3deg); opacity: 0.9; }
+  60%  { transform: scaleY(0.9) scaleX(1.05) skewX(3deg); opacity: 1; }
+  100% { transform: scaleY(1) scaleX(1) skewX(0deg); opacity: 0.95; }
+}
+
+/* ===== Halloween decorations ===== */
+/* Bats fly across a wide arc and return, wings flapping the whole way. */
+.bat {
+  animation-name: bat-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes bat-drift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-40px, -12px); }
+  50%  { transform: translate(30px, 4px); }
+  75%  { transform: translate(-25px, -8px); }
+  100% { transform: translate(0, 0); }
+}
+.bat-body {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bat-flap 0.4s ease-in-out infinite;
+}
+@keyframes bat-flap {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.55); }
+}
+
+/* Carved pumpkin faces flicker like candlelight. */
+.pumpkin-glow {
+  animation: pumpkin-flicker 2.4s ease-in-out infinite;
+}
+@keyframes pumpkin-flicker {
+  0%, 100% { opacity: 1; }
+  45% { opacity: 0.7; }
+  70% { opacity: 0.9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bat, .bat-body, .pumpkin-glow, .ghost-float, .candle-flame {
+    animation: none;
+  }
+}

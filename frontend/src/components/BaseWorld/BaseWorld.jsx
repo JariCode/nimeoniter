@@ -2,6 +2,7 @@ import './BaseWorld.css';
 import Survivor from '../Survivor/Survivor';
 import { getTimeOfDay, SKY_STOPS, STAR_OPACITY, SKY_IS_RADIAL, CELESTIAL } from '../../data/timeOfDay';
 import { getSeason, GROUND_STOPS, SEASON_OVERLAY, FLOWERS, getWeather } from '../../data/season';
+import { getHoliday, HALLOWEEN_PUMPKINS, HALLOWEEN_COBWEBS, HALLOWEEN_BATS, HALLOWEEN_GLOW, HALLOWEEN_SKELETONS, HALLOWEEN_GHOSTS, HALLOWEEN_CANDLES } from '../../data/holiday';
 
 // How many buildings are built, from the current stage key.
 // 'camp' = 0 built; otherwise index in buildStages + 1.
@@ -104,6 +105,10 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
   // Active weather (rain in autumn, snow in winter) — not every day
   const weather = getWeather();
+
+  // Active holiday (Halloween week, etc.) — an extra decoration layer only,
+  // it never changes the season/time/weather systems or any game mechanic.
+  const holiday = getHoliday();
 
   // Clouds only show up with weather: dark and gloomy for rain/thunder,
   // pale for a snowy sky. Clear weather gets no clouds at all.
@@ -285,6 +290,56 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
               <g key={i}>
                 <line x1={fl.x} y1={fl.y} x2={fl.x} y2={fl.y + 4} stroke="#4a5a28" strokeWidth="1" />
                 <circle cx={fl.x} cy={fl.y} r="1.8" fill={fl.c} />
+              </g>
+            ))}
+          </g>
+        )}
+
+        {/* ===== HALLOWEEN: sky-layer decorations (glow, cobwebs, bats) ===== */}
+        {holiday === 'halloween' && (
+          <g>
+            {/* Orange glow tint over the whole sky */}
+            <rect
+              x="0" y="0" width="400" height="230"
+              fill={HALLOWEEN_GLOW.color}
+              opacity={HALLOWEEN_GLOW.opacity}
+            />
+            {/* Cobwebs in the top corners */}
+            {HALLOWEEN_COBWEBS.map((web, i) => {
+              const left = web.corner === 'left';
+              const ox = left ? 0 : 400;
+              const dir = left ? 1 : -1;
+              return (
+                <g key={i} stroke="#c8ccd4" strokeWidth="0.7" fill="none" opacity="0.5">
+                  {/* radial threads */}
+                  <line x1={ox} y1="0" x2={ox + dir * 60} y2="6" />
+                  <line x1={ox} y1="0" x2={ox + dir * 55} y2="30" />
+                  <line x1={ox} y1="0" x2={ox + dir * 30} y2="55" />
+                  <line x1={ox} y1="0" x2={ox + dir * 6} y2="60" />
+                  {/* connecting arcs */}
+                  <path d={`M ${ox + dir * 18} 4 Q ${ox + dir * 20} 18 ${ox + dir * 6} 20`} />
+                  <path d={`M ${ox + dir * 40} 8 Q ${ox + dir * 42} 34 ${ox + dir * 12} 40`} />
+                  <path d={`M ${ox + dir * 58} 12 Q ${ox + dir * 60} 50 ${ox + dir * 20} 58`} />
+                </g>
+              );
+            })}
+            {/* Bats drifting across the sky */}
+            {HALLOWEEN_BATS.map((bat, i) => (
+              // Outer <g> holds the position (attribute transform); inner <g>
+              // holds the CSS-animated transform. A CSS transform animation
+              // on the same element as an SVG transform attribute overrides
+              // it entirely rather than composing, so they must be split.
+              <g key={i} transform={`translate(${bat.x}, ${bat.y}) scale(${bat.scale})`}>
+                <g
+                  className="bat"
+                  style={{ animationDuration: `${bat.duration}s`, animationDelay: `${bat.delay}s` }}
+                >
+                  <path
+                    className="bat-body"
+                    d="M0 0 C -4 -4, -8 -3, -11 0 C -8 -1, -6 1, -4 3 C -2 1, -1 1, 0 2 C 1 1, 2 1, 4 3 C 6 1, 8 -1, 11 0 C 8 -3, 4 -4, 0 0 Z"
+                    fill="#14100a"
+                  />
+                </g>
               </g>
             ))}
           </g>
@@ -531,6 +586,63 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
+        {/* ===== HALLOWEEN: ground-layer decorations (jack-o'-lanterns) ===== */}
+        {holiday === 'halloween' && HALLOWEEN_PUMPKINS.map((p, i) => (
+          <g key={i} transform={`translate(${p.x}, ${p.y}) scale(${p.scale})`}>
+            {/* stalk */}
+            <rect x="-1.5" y="-11" width="3" height="4" rx="1" fill="#3f5225" />
+            {/* body */}
+            <ellipse cx="0" cy="0" rx="9" ry="7" fill="#d9721e" />
+            <ellipse cx="-3.5" cy="0" rx="3.5" ry="6.5" fill="#c4611a" opacity="0.6" />
+            <ellipse cx="3.5" cy="0" rx="3.5" ry="6.5" fill="#c4611a" opacity="0.6" />
+            {/* glowing carved face */}
+            <path d="M -5 -2 L -2 -2 L -3.5 1 Z" fill="#ffd24a" className="pumpkin-glow" />
+            <path d="M 5 -2 L 2 -2 L 3.5 1 Z" fill="#ffd24a" className="pumpkin-glow" />
+            <path d="M -4 3 L -2 5 L 0 3 L 2 5 L 4 3 L 3 4.5 L -3 4.5 Z" fill="#ffd24a" className="pumpkin-glow" />
+          </g>
+        ))}
+
+        {/* A skeleton resting on the ground, off to the side */}
+        {holiday === 'halloween' && HALLOWEEN_SKELETONS.map((sk, i) => (
+          <g key={i} transform={`translate(${sk.x}, ${sk.y}) scale(${sk.scale})`}>
+            {/* skull */}
+            <circle cx="0" cy="-10" r="4" fill="#d8d8cc" />
+            <circle cx="-1.4" cy="-10.5" r="0.8" fill="#2a2a26" />
+            <circle cx="1.4" cy="-10.5" r="0.8" fill="#2a2a26" />
+            <rect x="-0.9" y="-8.6" width="1.8" height="1.3" fill="#2a2a26" />
+            {/* ribcage */}
+            <path d="M -3 -6 L -3.5 2 L 3.5 2 L 3 -6 Z" fill="none" stroke="#d8d8cc" strokeWidth="0.8" />
+            <line x1="-2.6" y1="-4" x2="2.6" y2="-4" stroke="#d8d8cc" strokeWidth="0.6" />
+            <line x1="-2.8" y1="-2" x2="2.8" y2="-2" stroke="#d8d8cc" strokeWidth="0.6" />
+            <line x1="-3" y1="0" x2="3" y2="0" stroke="#d8d8cc" strokeWidth="0.6" />
+            {/* arms resting on the ground */}
+            <line x1="-3" y1="-5" x2="-7" y2="2" stroke="#d8d8cc" strokeWidth="1" strokeLinecap="round" />
+            <line x1="3" y1="-5" x2="6" y2="1" stroke="#d8d8cc" strokeWidth="1" strokeLinecap="round" />
+            {/* legs, sitting pose */}
+            <line x1="-2" y1="2" x2="-6" y2="5" stroke="#d8d8cc" strokeWidth="1.1" strokeLinecap="round" />
+            <line x1="-6" y1="5" x2="-9" y2="4" stroke="#d8d8cc" strokeWidth="1.1" strokeLinecap="round" />
+            <line x1="2" y1="2" x2="7" y2="4" stroke="#d8d8cc" strokeWidth="1.1" strokeLinecap="round" />
+          </g>
+        ))}
+
+        {/* Small candles keeping the pumpkins company, flames flickering */}
+        {holiday === 'halloween' && HALLOWEEN_CANDLES.map((c, i) => (
+          <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
+            {/* wax body */}
+            <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill="#e8dcc0" />
+            <ellipse cx="0" cy="-6" rx="1.6" ry="0.6" fill="#f4ecd8" />
+            {/* wick */}
+            <line x1="0" y1="-6" x2="0" y2="-7.2" stroke="#3a2f22" strokeWidth="0.5" />
+            {/* flame */}
+            <path
+              className="candle-flame"
+              style={{ animationDelay: `${c.delay}s` }}
+              d="M 0 -7.2 C 1.4 -8.6 1.2 -10.4 0 -11.6 C -1.2 -10.4 -1.4 -8.6 0 -7.2 Z"
+              fill="#ffb347"
+            />
+          </g>
+        ))}
+
         {/* SURVIVOR (always) */}
         <g transform="translate(0, 20)">
           <Survivor />
@@ -560,6 +672,27 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             />
           ))}
         </g>
+
+        {/* HALLOWEEN GHOST (drawn in the foreground, after the buildings and
+            campfire, so it isn't clipped by the wall/tower/storage) */}
+        {holiday === 'halloween' && HALLOWEEN_GHOSTS.map((g, i) => (
+          <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
+            <g
+              className="ghost-float"
+              style={{ animationDuration: `${g.duration}s`, animationDelay: `${g.delay}s` }}
+            >
+              <path
+                d="M -7 -4 C -7 -13, -4 -18, 0 -18 C 4 -18, 7 -13, 7 -4 L 7 5
+                   C 7 5, 5.5 2, 4 5 C 2.5 8, 1 3, 0 6
+                   C -1 3, -2.5 8, -4 5 C -5.5 2, -7 5, -7 5 Z"
+                fill="#f4f4f2"
+                opacity="0.5"
+              />
+              <ellipse cx="-2.5" cy="-8" rx="1.1" ry="1.5" fill="#1a1a1a" opacity="0.5" />
+              <ellipse cx="2.5" cy="-8" rx="1.1" ry="1.5" fill="#1a1a1a" opacity="0.5" />
+            </g>
+          </g>
+        ))}
 
         {/* STORAGE (drawn after the campfire so its glow stays behind the building) */}
         {has('storage') && (

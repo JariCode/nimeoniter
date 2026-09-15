@@ -1,7 +1,7 @@
 // Determine season from the real month, with ground palette and overlay type.
 
 export function getSeason(date = new Date()) {
- //return 'summer'; // TESTAUS: poista kommentti kokeillaksesi (winter/spring/summer/autumn), poista rivi lopuksi
+  // return 'summer'; // TEST: uncomment to force a season (winter/spring/summer/autumn); remove this line afterwards
   const m = date.getMonth(); // 0 = Jan
   if (m === 11 || m <= 1) return 'winter'; // Dec, Jan, Feb
   if (m >= 2 && m <= 4) return 'spring';   // Mar-May
@@ -44,7 +44,7 @@ function periodSeed(date) {
 // in winter, 'thunder' sometimes in summer, otherwise none (spring never
 // gets weather here).
 export function getWeather(date = new Date()) {
-  //return 'thunder'; // TESTAUS: poista kommentti kokeillaksesi ('rain'/'snow'/'thunder'), poista rivi lopuksi
+  // return 'thunder'; // TEST: uncomment to force weather ('rain'/'snow'/'thunder'); remove this line afterwards
   const season = getSeason(date);
   const seed = periodSeed(date);
   if (season === 'autumn' && seed < 0.35) return 'rain';

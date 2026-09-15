@@ -1,7 +1,7 @@
 // Determine time of day from the real clock, with matching greeting.
 
 export function getTimeOfDay(date = new Date()) {
-  //return 'night'; // TESTAUS: poista kommentti kokeillaksesi (dawn/day/dusk/night), poista rivi lopuksi
+  // return 'night'; // TEST: uncomment to force time of day (dawn/day/dusk/night); remove this line afterwards
   const h = date.getHours();
   if (h >= 5 && h < 11) return 'dawn';
   if (h >= 11 && h < 17) return 'day';
