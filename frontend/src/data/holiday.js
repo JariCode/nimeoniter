@@ -187,3 +187,61 @@ export const CHRISTMAS_SNOWDRIFTS = [
 // A pine wreath with a bow, hung above the NIMEONITER sign board (board top
 // edge at y=260, centered at x=260).
 export const CHRISTMAS_WREATH = { x: 260, y: 253, scale: 1.0 };
+
+// ---------------------------------------------------------------------------
+// New Year decoration data (hand-drawn SVG, same technique as Halloween and
+// Christmas above). New Year coincides with winter, so the snowy ground and
+// falling snow already come from the season/weather systems — these only add
+// the celebration itself: fireworks, a banner, sparkle, and a toast.
+// ---------------------------------------------------------------------------
+
+// Fireworks bursting high in the sky, each with its own rocket rising into
+// it. `rise` is how far below the burst point (in px) the rocket starts;
+// `duration`/`delay` are staggered so the three never pop in unison. Kept
+// well above y=182 (the wall's top edge) so the rocket trail never needs to
+// cross behind a building.
+export const NEWYEAR_FIREWORKS = [
+  { x: 90, burstY: 55, rise: 110, color: '#f0c14a', duration: 4.2, delay: 0 },
+  { x: 230, burstY: 45, rise: 125, color: '#d94a3c', duration: 4.6, delay: 1.4 },
+  { x: 330, burstY: 65, rise: 95, color: '#3f9a5c', duration: 4.0, delay: 2.6 },
+];
+
+// Small golden sparkle points scattered through the sky for ambience,
+// twinkling like the existing stars but warmer and on their own rhythm.
+export const NEWYEAR_SPARKLES = [
+  { x: 20, y: 120, delay: 0 },
+  { x: 130, y: 85, delay: 0.6 },
+  { x: 190, y: 130, delay: 1.2 },
+  { x: 270, y: 100, delay: 0.3 },
+  { x: 350, y: 130, delay: 0.9 },
+  { x: 60, y: 150, delay: 1.5 },
+];
+
+// A faint golden glow tint layered over the sky, lighter than the Halloween
+// tint since it's meant to feel festive rather than ominous.
+export const NEWYEAR_GLOW = {
+  color: '#f0c14a',
+  opacity: 0.08,
+};
+
+// A pennant banner strung across the very top of the scene, above where the
+// fireworks burst. Wire sag follows the same technique as the Christmas
+// light garlands.
+export const NEWYEAR_BUNTING = [
+  { x: 20, y: 8.6, color: '#f0c14a' },
+  { x: 80, y: 9.9, color: '#d94a3c' },
+  { x: 140, y: 10.7, color: '#3f9a5c' },
+  { x: 200, y: 11.0, color: '#f0c14a' },
+  { x: 260, y: 10.7, color: '#d94a3c' },
+  { x: 320, y: 9.9, color: '#3f9a5c' },
+  { x: 380, y: 8.6, color: '#f0c14a' },
+];
+
+// A champagne toast — bottle and two clinking glasses — standing on the
+// ground right beside the campfire, the same spot the Halloween ghost and
+// Christmas snowman use (survivor sits left of the fire). Drawn in the
+// foreground, after the buildings and campfire, so it isn't clipped by the
+// wall/tower/storage.
+export const NEWYEAR_TOASTS = [
+  { x: 300, y: 228, scale: 0.85 },
+];

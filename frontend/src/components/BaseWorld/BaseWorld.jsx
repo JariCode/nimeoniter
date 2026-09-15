@@ -6,6 +6,7 @@ import {
   getHoliday,
   HALLOWEEN_PUMPKINS, HALLOWEEN_COBWEBS, HALLOWEEN_BATS, HALLOWEEN_GLOW, HALLOWEEN_SKELETONS, HALLOWEEN_GHOSTS, HALLOWEEN_CANDLES,
   CHRISTMAS_LIGHTS, CHRISTMAS_EAVES_LIGHTS, CHRISTMAS_SNOWMEN, CHRISTMAS_TREES, CHRISTMAS_GIFTS, CHRISTMAS_CANDLES, CHRISTMAS_SNOWDRIFTS, CHRISTMAS_WREATH,
+  NEWYEAR_FIREWORKS, NEWYEAR_SPARKLES, NEWYEAR_GLOW, NEWYEAR_BUNTING, NEWYEAR_TOASTS,
 } from '../../data/holiday';
 
 // How many buildings are built, from the current stage key.
@@ -83,6 +84,9 @@ const BIRDS = [
   { y: 66, duration: 29, delay: 11 },
   { y: 38, duration: 21, delay: 19 },
 ];
+
+// Ray angles for a firework burst (8 evenly spaced spokes radiating out).
+const FIREWORK_RAY_ANGLES = Array.from({ length: 8 }, (_, i) => (i / 8) * Math.PI * 2);
 
 // Butterflies fluttering near the summer flowers.
 const BUTTERFLIES = [
@@ -390,6 +394,79 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
                 className="christmas-light-glow"
                 style={{ animationDelay: `${l.delay}s` }}
               />
+            ))}
+          </g>
+        )}
+
+        {/* ===== NEW YEAR: sky-layer decorations (glow, bunting, sparkle, fireworks) ===== */}
+        {holiday === 'newyear' && (
+          <g>
+            {/* Faint golden glow tint over the whole sky */}
+            <rect
+              x="0" y="0" width="400" height="230"
+              fill={NEWYEAR_GLOW.color}
+              opacity={NEWYEAR_GLOW.opacity}
+            />
+            {/* Pennant banner strung across the very top */}
+            <path
+              d="M 0 8 Q 200 22 400 8"
+              fill="none"
+              stroke="#2a2018"
+              strokeWidth="0.6"
+              opacity="0.55"
+            />
+            {NEWYEAR_BUNTING.map((p, i) => (
+              <g key={i} transform={`translate(${p.x}, ${p.y})`}>
+                <g className="bunting-flag">
+                  <path d="M -3.2 0 L 3.2 0 L 0 6.5 Z" fill={p.color} />
+                </g>
+              </g>
+            ))}
+            {/* Scattered golden sparkle points */}
+            {NEWYEAR_SPARKLES.map((s, i) => (
+              <circle
+                key={i}
+                cx={s.x}
+                cy={s.y}
+                r="1"
+                fill="#f0dca0"
+                className="newyear-sparkle"
+                style={{ animationDelay: `${s.delay}s` }}
+              />
+            ))}
+            {/* Fireworks: a rocket rises into each burst point, then explodes */}
+            {NEWYEAR_FIREWORKS.map((f, i) => (
+              <g key={i} transform={`translate(${f.x}, ${f.burstY})`}>
+                {/* rocket trail rising up from below into the burst point */}
+                <g
+                  className="newyear-rocket-trail"
+                  style={{ '--rise': `${f.rise}px`, animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+                >
+                  <path d="M 0 14 Q 1.5 7 0 0" fill="none" stroke={f.color} strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
+                  <circle cx="0" cy="0" r="1.3" fill="#fff6d8" />
+                </g>
+                {/* burst: rays radiating from the center, scaling and fading as a unit */}
+                <g
+                  className="newyear-firework"
+                  style={{ animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+                >
+                  {FIREWORK_RAY_ANGLES.map((a, j) => (
+                    <line
+                      key={j}
+                      x1="0" y1="0"
+                      x2={Math.cos(a) * 12}
+                      y2={Math.sin(a) * 12}
+                      stroke={f.color}
+                      strokeWidth="1.1"
+                      strokeLinecap="round"
+                    />
+                  ))}
+                  {FIREWORK_RAY_ANGLES.map((a, j) => (
+                    <circle key={j} cx={Math.cos(a) * 12} cy={Math.sin(a) * 12} r="0.9" fill={f.color} />
+                  ))}
+                  <circle cx="0" cy="0" r="1.6" fill="#fff6d8" opacity="0.9" />
+                </g>
+              </g>
             ))}
           </g>
         )}
@@ -837,6 +914,48 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             <ellipse cx="0" cy="-29" rx="5" ry="1.3" fill="#1c1c1c" />
             <rect x="-3" y="-36" width="6" height="7" rx="1" fill="#1c1c1c" />
             <rect x="-3" y="-31.2" width="6" height="1.8" fill="#b5342a" />
+          </g>
+        ))}
+
+        {/* NEW YEAR TOAST — champagne bottle and two clinking glasses (drawn
+            in the foreground, after the buildings and campfire, so it isn't
+            clipped by the wall/tower/storage) */}
+        {holiday === 'newyear' && NEWYEAR_TOASTS.map((t, i) => (
+          <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
+            {/* left flute, tilted toward the right glass */}
+            <line x1="-6" y1="0" x2="-5" y2="-9" stroke="#c9b98a" strokeWidth="1" />
+            <ellipse cx="-6" cy="0" rx="2" ry="0.7" fill="#c9b98a" opacity="0.8" />
+            <path d="M -7.2 -9 L -2.8 -9 L -3.6 -16.5 L -6.4 -15.5 Z" fill="none" stroke="#cfe3ea" strokeWidth="0.7" />
+            <path d="M -6.8 -10.3 L -3.2 -10.3 L -3.6 -16.5 L -6.4 -15.5 Z" fill="#f0c14a" opacity="0.55" />
+            <circle cx="-5.6" cy="-13" r="0.35" fill="#fff6d8" opacity="0.8" />
+            <circle cx="-4.6" cy="-12" r="0.3" fill="#fff6d8" opacity="0.7" />
+            {/* right flute, tilted toward the left glass */}
+            <line x1="4" y1="0" x2="3" y2="-9" stroke="#c9b98a" strokeWidth="1" />
+            <ellipse cx="4" cy="0" rx="2" ry="0.7" fill="#c9b98a" opacity="0.8" />
+            <path d="M 2.8 -9 L 7.2 -9 L 6.4 -15.5 L 3.6 -16.5 Z" fill="none" stroke="#cfe3ea" strokeWidth="0.7" />
+            <path d="M 3.2 -10.3 L 6.8 -10.3 L 6.4 -15.5 L 3.6 -16.5 Z" fill="#f0c14a" opacity="0.55" />
+            <circle cx="4.4" cy="-13" r="0.35" fill="#fff6d8" opacity="0.8" />
+            <circle cx="5.4" cy="-12" r="0.3" fill="#fff6d8" opacity="0.7" />
+            {/* clink spark, right where the two rims almost meet */}
+            <path
+              d="M 0 -17.6 L 0.5 -16.3 L 1.8 -16 L 0.5 -15.7 L 0 -14.4 L -0.5 -15.7 L -1.8 -16 L -0.5 -16.3 Z"
+              fill="#fff6d8"
+              className="newyear-sparkle"
+              style={{ animationDelay: '0.4s' }}
+            />
+            {/* champagne bottle, standing to the right */}
+            <rect x="9" y="-18" width="5" height="15" rx="1" fill="#1f4a30" />
+            <rect x="9.5" y="-12" width="4" height="3" fill="#e8dcc0" opacity="0.85" />
+            <rect x="10.3" y="-23" width="2.4" height="6" fill="#1f4a30" />
+            <rect x="10" y="-24.5" width="3" height="2" fill="#d9b06a" />
+            <ellipse cx="11.5" cy="-18" rx="2.5" ry="1" fill="#2a5c3a" opacity="0.5" />
+            {/* cork-pop sparkle above the cap */}
+            <path
+              d="M 11.5 -25 L 11.9 -27.4 L 12.3 -25 L 14.5 -25.6 L 12.6 -24.4 L 14 -22.8 L 11.9 -23.7 L 11.5 -21.4 L 11.1 -23.7 L 9 -22.8 L 10.4 -24.4 L 8.5 -25.6 Z"
+              fill="#f0c14a"
+              className="newyear-sparkle"
+              style={{ animationDelay: '0s' }}
+            />
           </g>
         ))}
 
