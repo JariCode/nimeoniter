@@ -225,21 +225,28 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           <circle className="star" cx="90" cy="90" r="0.8" fill="#e8dcc0" opacity="0.35" />
         </g>
 
-        {/* Shooting stars: rare streaks across the night sky */}
-        {tod === 'night' && SHOOTING_STARS.map((s, i) => (
-          <line
-            key={i}
-            x1={s.x}
-            y1={s.y}
-            x2={s.x + 16}
-            y2={s.y + 8}
-            stroke="#f5f0e0"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            className="shooting-star"
-            style={{ '--dx': s.dx, '--dy': s.dy, animationDuration: `${s.duration}s`, animationDelay: `${s.delay}s` }}
-          />
-        ))}
+        {/* Shooting stars: rare streaks across the night sky. The tail end is
+            placed opposite the travel vector (dx, dy) so it always trails
+            behind the star, head first, whichever way it's flying. */}
+        {tod === 'night' && SHOOTING_STARS.map((s, i) => {
+          const len = Math.hypot(s.dx, s.dy);
+          const tailX = s.x - (s.dx / len) * 18;
+          const tailY = s.y - (s.dy / len) * 18;
+          return (
+            <line
+              key={i}
+              x1={s.x}
+              y1={s.y}
+              x2={tailX}
+              y2={tailY}
+              stroke="#f5f0e0"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              className="shooting-star"
+              style={{ '--dx': s.dx, '--dy': s.dy, animationDuration: `${s.duration}s`, animationDelay: `${s.delay}s` }}
+            />
+          );
+        })}
 
         {/* Birds drifting across the daytime sky now and then */}
         {tod === 'day' && BIRDS.map((b, i) => (
