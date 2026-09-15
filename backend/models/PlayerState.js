@@ -27,6 +27,9 @@ const playerStateSchema = new mongoose.Schema(
     // where role is 'user' or 'assistant'. Trimmed to the most recent messages
     // by the assistant route so the document and prompt size stay bounded.
     chatHistory: { type: Array, default: [] },
+    // Ids of achievements already earned AND rewarded. Each is granted once;
+    // once its id is here the reward is never granted again (no undo/redo farm).
+    unlockedAchievements: { type: [String], default: [] },
   },
   { timestamps: true }
 );

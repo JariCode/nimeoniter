@@ -49,3 +49,10 @@
     transform: translateX(-50%) translateY(0);
   }
 }
+
+.achievement-reward {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--accent);
+  margin-top: 3px;
+}

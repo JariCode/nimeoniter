@@ -13,7 +13,6 @@ import LevelUp from './components/LevelUp/LevelUp';
 import Achievement from './components/Achievement/Achievement';
 import Notice from './components/Notice/Notice';
 import Assistant from './components/Assistant/Assistant';
-import { ACHIEVEMENTS } from './data/achievements';
 import { todayKey } from './data/dateUtils';
 import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi, askAssistantApi, fetchAssistantHistory } from './lib/api';
 import './App.css';
@@ -40,6 +39,8 @@ function App() {
   // Task catalog and build stages come from the backend (single source of truth)
   const [taskCatalog, setTaskCatalog] = useState([]);
   const [buildStages, setBuildStages] = useState([]);
+  // Achievement display data (id -> {icon,title,desc,reward}) from the backend
+  const [achievementsById, setAchievementsById] = useState({});
   const [streak, setStreak] = useState(0);
 
   // AI assistant: whether the chat is open, the saved conversation, whether a
@@ -69,27 +70,18 @@ function App() {
         const config = await fetchConfig();
         setTaskCatalog(config.taskCatalog || []);
         setBuildStages(config.buildStages || []);
+        setAchievementsById(
+          Object.fromEntries((config.achievements || []).map((a) => [a.id, a]))
+        );
         const token = await getToken();
         const data = await fetchState(token);
         applyState(data);
 
-        // Seed the level-up/achievement baselines from the state we just
-        // loaded, so a returning player's existing progress doesn't look
-        // like a brand-new level-up or achievement unlock on sign-in.
-        const doneCount = Array.isArray(data.missions)
-          ? data.missions.filter((m) => m.done).length
-          : 0;
-        const builtCount = (data.baseStageIndex ?? -1) + 1;
+        // Seed the level-up baseline from the state we just loaded, so a
+        // returning player's existing level doesn't trigger a level-up popup
+        // on sign-in. Achievements are granted by the backend, so there is
+        // nothing to seed for them here.
         prevLevel.current = levelFromXp(data.totalXp ?? 0).level;
-        const stats = {
-          tasksDone: doneCount,
-          level: prevLevel.current,
-          buildingsBuilt: builtCount,
-          buildingsTotal: (config.buildStages || []).length,
-        };
-        for (const a of ACHIEVEMENTS) {
-          if (a.check(stats)) unlockedAchievements.current.add(a.id);
-        }
       } catch (err) {
         console.error('Load failed:', err);
       }
@@ -106,11 +98,21 @@ function App() {
   // a new function identity on every render would keep resetting its timer.
   const dismissLevelUp = useCallback(() => setLevelUpShown(null), []);
 
-  // Achievement detection
+  // Achievements are granted by the backend, which returns the ids newly
+  // unlocked by a completion/build in its `unlockedNow` field. We queue those
+  // ids and show them one popup at a time.
   const [achievementShown, setAchievementShown] = useState(null);
-  const unlockedAchievements = useRef(new Set());
-  // Same reasoning as dismissLevelUp above.
+  const [achievementQueue, setAchievementQueue] = useState([]);
   const dismissAchievement = useCallback(() => setAchievementShown(null), []);
+
+  // Enqueue any ids the backend says were just unlocked (looked up for display).
+  function queueUnlocked(unlockedNow) {
+    if (!Array.isArray(unlockedNow) || unlockedNow.length === 0) return;
+    const items = unlockedNow
+      .map((id) => achievementsById[id])
+      .filter(Boolean);
+    if (items.length) setAchievementQueue((q) => [...q, ...items]);
+  }
 
   // Small dark-themed notice for backend errors the player should see
   // (e.g. the daily completion limit), instead of a silent console.error.
@@ -146,8 +148,8 @@ function App() {
     }
   }, [getToken]);
 
-   // Open the chat and load the saved conversation. Greeting is handled by the
-  // sign-in effect below, so opening by click never triggers another greeting.
+  // Open the chat and load the saved conversation. Greeting is handled by the
+  // sign-in effect, so opening by click never triggers another greeting.
   const openAssistant = useCallback(async () => {
     setAssistantOpen(true);
     try {
@@ -214,6 +216,7 @@ function App() {
       const token = await getToken();
       const data = await completeTaskApi(token, id, todayKey());
       applyState(data);
+      queueUnlocked(data.unlockedNow);
     } catch (err) {
       console.error('Complete task failed:', err);
       if (err.message === 'Daily completion limit reached') {
@@ -277,6 +280,7 @@ function App() {
       const token = await getToken();
       const data = await buildApi(token);
       applyState(data);
+      queueUnlocked(data.unlockedNow);
     } catch (err) {
       console.error('Build failed:', err);
     }
@@ -287,31 +291,13 @@ function App() {
       ? buildStages[baseStageIndex].key
       : 'camp';
 
-  // Player stats for achievements
-  const tasksDone = missions.filter((m) => m.done).length;
-  const buildingsBuilt = baseStageIndex + 1;
-  const buildingsTotal = buildStages.length;
-
-  // Detect newly unlocked achievements (show one at a time, once each).
-  // Undoing a task can revoke the stats an achievement was earned from
-  // (fewer tasks done, a lower level, a building undone) — when that
-  // happens the achievement is un-marked so it pops again if re-earned,
-  // instead of silently staying "seen" until the page is refreshed.
+  // Show queued achievement popups one at a time: when nothing is showing and
+  // the queue has items, pop the first off the queue and display it.
   useEffect(() => {
-    const stats = { tasksDone, level, buildingsBuilt, buildingsTotal };
-    for (const a of ACHIEVEMENTS) {
-      if (unlockedAchievements.current.has(a.id) && !a.check(stats)) {
-        unlockedAchievements.current.delete(a.id);
-      }
-    }
-    for (const a of ACHIEVEMENTS) {
-      if (!unlockedAchievements.current.has(a.id) && a.check(stats)) {
-        unlockedAchievements.current.add(a.id);
-        setAchievementShown(a);
-        break; // show one; the next will appear on the following change
-      }
-    }
-  }, [tasksDone, level, buildingsBuilt, buildingsTotal]);
+    if (achievementShown || achievementQueue.length === 0) return;
+    setAchievementShown(achievementQueue[0]);
+    setAchievementQueue((q) => q.slice(1));
+  }, [achievementShown, achievementQueue]);
 
   // Tasks for the day being viewed
   const dayMissions = missions.filter((m) => m.date === selectedDate);

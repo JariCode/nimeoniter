@@ -1,6 +1,7 @@
 const express = require('express');
 const { BUILD_STAGES } = require('../data/gameConfig');
 const { TASK_CATALOG } = require('../data/taskCatalog');
+const { ACHIEVEMENTS_PUBLIC } = require('../data/achievements');
 
 const router = express.Router();
 
@@ -10,6 +11,7 @@ router.get('/', (req, res) => {
   res.json({
     taskCatalog: TASK_CATALOG,
     buildStages: BUILD_STAGES,
+    achievements: ACHIEVEMENTS_PUBLIC,
   });
 });
 

@@ -3,6 +3,7 @@ const requireAuth = require('../middleware/requireAuth');
 const PlayerState = require('../models/PlayerState');
 const { BUILD_STAGES, levelFromXp, minXpForLevel } = require('../data/gameConfig');
 const { TASK_BY_KEY } = require('../data/taskCatalog');
+const { newlyEarned } = require('../data/achievements');
 
 
 // Compare two YYYY-MM-DD date keys: returns the difference in days (a - b).
@@ -41,6 +42,46 @@ async function getOrCreateState(userId) {
     }
   }
   return state;
+}
+
+// Grant every newly-earned achievement's reward exactly once. Reads the given
+// state, works out which achievements are earned but not yet unlocked, and for
+// each one does an atomic update guarded by unlockedAchievements: { $ne: id } —
+// so even two concurrent requests can't grant the same reward twice. Returns
+// the final state document (with any rewards applied) and the list of newly
+// unlocked achievement ids, so the response can tell the client what to pop.
+async function grantAchievements(userId, stateDoc) {
+  let current = stateDoc;
+  const unlocked = [];
+  // Re-evaluate after each grant, because a reward's XP can push the player
+  // over a level threshold that earns a further achievement in the same call.
+  // Bounded: newlyEarned shrinks each pass, so this terminates.
+  for (;;) {
+    const earned = newlyEarned(current);
+    if (earned.length === 0) break;
+    const a = earned[0];
+    const updated = await PlayerState.findOneAndUpdate(
+      { clerkUserId: userId, unlockedAchievements: { $ne: a.id } },
+      {
+        $addToSet: { unlockedAchievements: a.id },
+        $inc: {
+          totalXp: a.reward.xp || 0,
+          'resources.wood': a.reward.wood || 0,
+          'resources.stone': a.reward.stone || 0,
+          'resources.food': a.reward.food || 0,
+        },
+      },
+      { returnDocument: 'after' }
+    );
+    if (!updated) {
+      // Another request already granted this one; reload and continue.
+      current = await PlayerState.findOne({ clerkUserId: userId });
+      continue;
+    }
+    unlocked.push(a.id);
+    current = updated;
+  }
+  return { state: current, unlocked };
 }
 
 // GET /api/state — fetch the current user's game state
@@ -193,7 +234,9 @@ router.post('/tasks/:id/complete', async (req, res, next) => {
       }
     }
 
-    res.json(updated);
+    // Grant any achievements this completion (and its streak bump) earned.
+    const { state: afterAch, unlocked } = await grantAchievements(req.userId, updated);
+    res.json({ ...afterAch.toObject(), unlockedNow: unlocked });
   } catch (err) {
     next(err);
   }
@@ -359,7 +402,9 @@ router.post('/build', async (req, res, next) => {
     if (!updated) {
       return res.status(400).json({ error: 'Build conditions no longer met' });
     }
-    res.json(updated);
+    // Grant any achievements this build earned (first building, base complete, …).
+    const { state: afterAch, unlocked } = await grantAchievements(req.userId, updated);
+    res.json({ ...afterAch.toObject(), unlockedNow: unlocked });
   } catch (err) {
     next(err);
   }
