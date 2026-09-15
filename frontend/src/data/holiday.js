@@ -245,3 +245,58 @@ export const NEWYEAR_BUNTING = [
 export const NEWYEAR_TOASTS = [
   { x: 300, y: 228, scale: 0.85 },
 ];
+
+// ---------------------------------------------------------------------------
+// Valentine's decoration data (hand-drawn SVG, same technique as the other
+// holidays above). Valentine's falls in winter too, so the snowy ground and
+// falling snow already come from the season/weather systems — these only add
+// the romance: floating hearts, a warm glow, a garland, and roses.
+// ---------------------------------------------------------------------------
+
+// Floating hearts drifting slowly upward through the sky, fading in and out
+// on a loop — the main Valentine's element. Different sizes/colors/timings
+// so they read as a gentle drift rather than a uniform grid.
+export const VALENTINES_HEARTS = [
+  { x: 40, y: 130, scale: 0.7, color: '#e85a78', duration: 8, delay: 0 },
+  { x: 110, y: 90, scale: 1.0, color: '#f08aa0', duration: 10, delay: 1.5 },
+  { x: 180, y: 140, scale: 0.55, color: '#d9425e', duration: 7, delay: 3 },
+  { x: 250, y: 75, scale: 0.85, color: '#e85a78', duration: 9, delay: 0.8 },
+  { x: 310, y: 120, scale: 0.65, color: '#f08aa0', duration: 8.5, delay: 2.2 },
+  { x: 360, y: 95, scale: 0.75, color: '#d9425e', duration: 9.5, delay: 1 },
+];
+
+// A warm pink glow tint layered over the sky, lighter than the Halloween
+// tint since it's meant to feel romantic rather than ominous.
+export const VALENTINES_GLOW = {
+  color: '#e85a7a',
+  opacity: 0.1,
+};
+
+// A heart garland strung across the very top of the scene, sag following
+// the same wire technique as the Christmas light garlands.
+export const VALENTINES_GARLAND = [
+  { x: 20, y: 15.5, color: '#d9425e' },
+  { x: 80, y: 19.1, color: '#f08aa0' },
+  { x: 140, y: 21.3, color: '#d9425e' },
+  { x: 200, y: 22.0, color: '#f08aa0' },
+  { x: 260, y: 21.3, color: '#d9425e' },
+  { x: 320, y: 19.1, color: '#f08aa0' },
+  { x: 380, y: 15.5, color: '#d9425e' },
+];
+
+// A couple of roses on the ground, at the same spots the Christmas candles
+// use — already proven clear of the well (x < ~47), the hut/field/fence
+// footprints, and x > ~290 where the storage shed and watchtower stand once
+// built.
+export const VALENTINES_ROSES = [
+  { x: 150, y: 258, scale: 1.0, rotate: -6 },
+  { x: 225, y: 252, scale: 0.85, rotate: 8 },
+];
+
+// A softly pulsing heart-shaped glow near the campfire, on the survivor's
+// opposite side — the same spot the Halloween ghost, Christmas snowman, and
+// New Year toast use. Drawn in the foreground, after the buildings and
+// campfire, so it isn't clipped by the wall/tower/storage.
+export const VALENTINES_HEART_GLOWS = [
+  { x: 300, y: 228, scale: 0.9 },
+];

@@ -372,9 +372,47 @@
   100%    { opacity: 0; transform: scale(1.3); }
 }
 
+/* ===== Valentine's decorations ===== */
+/* Floating hearts drift slowly upward, fading in then out on a loop. */
+.valentine-heart-float {
+  animation-name: valentine-heart-rise;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes valentine-heart-rise {
+  0%   { transform: translateY(0); opacity: 0; }
+  15%  { opacity: 0.9; }
+  50%  { transform: translateY(-14px); opacity: 0.9; }
+  85%  { opacity: 0; }
+  100% { transform: translateY(-22px); opacity: 0; }
+}
+
+/* Garland hearts pulse gently, same idea as the pumpkin glow flicker. */
+.valentine-garland-heart {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: valentine-garland-pulse 2.6s ease-in-out infinite;
+}
+@keyframes valentine-garland-pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50%      { opacity: 1; transform: scale(1.12); }
+}
+
+/* The campfire-side heart glows softly in and out. */
+.valentine-heart-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: valentine-heart-glow-pulse 2.8s ease-in-out infinite;
+}
+@keyframes valentine-heart-glow-pulse {
+  0%, 100% { opacity: 0.75; transform: scale(1); }
+  50%      { opacity: 1; transform: scale(1.08); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bat, .bat-body, .pumpkin-glow, .ghost-float, .candle-flame, .christmas-light-glow,
-  .bunting-flag, .newyear-sparkle, .newyear-rocket-trail, .newyear-firework {
+  .bunting-flag, .newyear-sparkle, .newyear-rocket-trail, .newyear-firework,
+  .valentine-heart-float, .valentine-garland-heart, .valentine-heart-glow {
     animation: none;
   }
 }

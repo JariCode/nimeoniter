@@ -7,6 +7,7 @@ import {
   HALLOWEEN_PUMPKINS, HALLOWEEN_COBWEBS, HALLOWEEN_BATS, HALLOWEEN_GLOW, HALLOWEEN_SKELETONS, HALLOWEEN_GHOSTS, HALLOWEEN_CANDLES,
   CHRISTMAS_LIGHTS, CHRISTMAS_EAVES_LIGHTS, CHRISTMAS_SNOWMEN, CHRISTMAS_TREES, CHRISTMAS_GIFTS, CHRISTMAS_CANDLES, CHRISTMAS_SNOWDRIFTS, CHRISTMAS_WREATH,
   NEWYEAR_FIREWORKS, NEWYEAR_SPARKLES, NEWYEAR_GLOW, NEWYEAR_BUNTING, NEWYEAR_TOASTS,
+  VALENTINES_HEARTS, VALENTINES_GLOW, VALENTINES_GARLAND, VALENTINES_ROSES, VALENTINES_HEART_GLOWS,
 } from '../../data/holiday';
 
 // How many buildings are built, from the current stage key.
@@ -87,6 +88,10 @@ const BIRDS = [
 
 // Ray angles for a firework burst (8 evenly spaced spokes radiating out).
 const FIREWORK_RAY_ANGLES = Array.from({ length: 8 }, (_, i) => (i / 8) * Math.PI * 2);
+
+// Shared heart shape (roughly 16 wide, 18 tall), centered on its bottom
+// point, reused for the Valentine's floating hearts, garland, and glow.
+const HEART_PATH = 'M 0 6 C -2 3 -8 -1 -8 -6 C -8 -10 -4 -12 0 -8 C 4 -12 8 -10 8 -6 C 8 -1 2 3 0 6 Z';
 
 // Butterflies fluttering near the summer flowers.
 const BUTTERFLIES = [
@@ -478,6 +483,42 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== VALENTINE'S: sky-layer decorations (glow, garland, floating hearts) ===== */}
+        {holiday === 'valentines' && (
+          <g>
+            {/* Warm pink glow tint over the whole sky */}
+            <rect
+              x="0" y="0" width="400" height="230"
+              fill={VALENTINES_GLOW.color}
+              opacity={VALENTINES_GLOW.opacity}
+            />
+            {/* Heart garland strung across the top */}
+            <path
+              d="M 0 14 Q 200 30 400 14"
+              fill="none"
+              stroke="#2a2018"
+              strokeWidth="0.6"
+              opacity="0.5"
+            />
+            {VALENTINES_GARLAND.map((h, i) => (
+              <g key={i} transform={`translate(${h.x}, ${h.y}) scale(0.45)`}>
+                <path d={HEART_PATH} fill={h.color} className="valentine-garland-heart" style={{ animationDelay: `${i * 0.3}s` }} />
+              </g>
+            ))}
+            {/* Hearts drifting slowly upward, fading in and out on a loop */}
+            {VALENTINES_HEARTS.map((h, i) => (
+              <g key={i} transform={`translate(${h.x}, ${h.y}) scale(${h.scale})`}>
+                <g
+                  className="valentine-heart-float"
+                  style={{ animationDuration: `${h.duration}s`, animationDelay: `${h.delay}s` }}
+                >
+                  <path d={HEART_PATH} fill={h.color} opacity="0.85" />
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
         {/* ===== BACK LAYER ===== */}
 
         {/* WALL + big corner tower — final build */}
@@ -838,6 +879,35 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
+        {/* A couple of red roses on the ground */}
+        {holiday === 'valentines' && VALENTINES_ROSES.map((r, i) => (
+          <g key={i} transform={`translate(${r.x}, ${r.y}) scale(${r.scale}) rotate(${r.rotate})`}>
+            {/* stem, curving slightly */}
+            <path d="M 0 0 C 1 -6 -1 -10 0 -16" fill="none" stroke="#3f6b3a" strokeWidth="1.1" strokeLinecap="round" />
+            {/* leaves */}
+            <ellipse cx="-2.2" cy="-7" rx="2.4" ry="1.1" fill="#4a7a44" transform="rotate(-35 -2.2 -7)" />
+            <ellipse cx="1.8" cy="-10" rx="2.2" ry="1" fill="#4a7a44" transform="rotate(30 1.8 -10)" />
+            {/* bloom: petals arranged around the center */}
+            {Array.from({ length: 6 }, (_, j) => {
+              const a = (j / 6) * Math.PI * 2;
+              const px = Math.cos(a) * 2;
+              const py = -16 + Math.sin(a) * 2;
+              return (
+                <ellipse
+                  key={j}
+                  cx={px}
+                  cy={py}
+                  rx="2.4"
+                  ry="1.6"
+                  fill="#c8283e"
+                  transform={`rotate(${(a * 180) / Math.PI} ${px} ${py})`}
+                />
+              );
+            })}
+            <circle cx="0" cy="-16" r="1.6" fill="#8a1a2a" />
+          </g>
+        ))}
+
         {/* SURVIVOR (always) */}
         <g transform="translate(0, 20)">
           <Survivor />
@@ -963,6 +1033,20 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
               className="newyear-sparkle"
               style={{ animationDelay: '0s' }}
             />
+          </g>
+        ))}
+
+        {/* VALENTINE'S HEART GLOW — a softly pulsing heart near the campfire
+            (drawn in the foreground, after the buildings and campfire, so it
+            isn't clipped by the wall/tower/storage) */}
+        {holiday === 'valentines' && VALENTINES_HEART_GLOWS.map((hg, i) => (
+          <g key={i} transform={`translate(${hg.x}, ${hg.y}) scale(${hg.scale})`}>
+            {/* soft blurred backdrop for the glow */}
+            <path d={HEART_PATH} transform="translate(0, -14) scale(2)" fill="#e85a7a" opacity="0.3" filter="url(#softGlow)" />
+            <g className="valentine-heart-glow">
+              <path d={HEART_PATH} transform="translate(0, -14) scale(1.1)" fill="#d9425e" />
+              <path d={HEART_PATH} transform="translate(-2.5, -17) scale(0.5)" fill="#f4a8b8" opacity="0.6" />
+            </g>
           </g>
         ))}
 
