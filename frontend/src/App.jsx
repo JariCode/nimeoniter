@@ -163,12 +163,16 @@ function App() {
     }
   }, [getToken, talkToAssistant]);
 
-    // Greet automatically once the game state has loaded on sign-in: open the
-  // companion and let it greet based on the current situation. Runs once per
-  // session (greetedRef, set inside openAssistant, prevents repeats).
+  // Greet automatically once per browser tab session — not on every refresh.
+  // sessionStorage holds only a tiny non-sensitive flag ("have we greeted in
+  // this tab yet"): no tokens, no game data. It clears when the tab closes, so
+  // a real sign-in (fresh tab/session) greets, while a page refresh within the
+  // same tab does not. The backend stays the source of truth for everything.
   useEffect(() => {
-    if (!isSignedIn || greetedRef.current) return;
+    if (!isSignedIn) return;
     if (missions.length === 0 && totalXp === 0) return; // wait until state is in
+    if (sessionStorage.getItem('nimeoniter_greeted') === '1') return;
+    sessionStorage.setItem('nimeoniter_greeted', '1');
     openAssistant();
   }, [isSignedIn, missions.length, totalXp, openAssistant]);
 
