@@ -307,8 +307,18 @@
   70% { opacity: 0.9; }
 }
 
+/* ===== Christmas decorations ===== */
+/* String lights twinkle on their own rhythm, each bulb offset by its delay. */
+.christmas-light-glow {
+  animation: christmas-light-twinkle 1.6s ease-in-out infinite;
+}
+@keyframes christmas-light-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .bat, .bat-body, .pumpkin-glow, .ghost-float, .candle-flame {
+  .bat, .bat-body, .pumpkin-glow, .ghost-float, .candle-flame, .christmas-light-glow {
     animation: none;
   }
 }

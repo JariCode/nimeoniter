@@ -2,7 +2,11 @@ import './BaseWorld.css';
 import Survivor from '../Survivor/Survivor';
 import { getTimeOfDay, SKY_STOPS, STAR_OPACITY, SKY_IS_RADIAL, CELESTIAL } from '../../data/timeOfDay';
 import { getSeason, GROUND_STOPS, SEASON_OVERLAY, FLOWERS, getWeather } from '../../data/season';
-import { getHoliday, HALLOWEEN_PUMPKINS, HALLOWEEN_COBWEBS, HALLOWEEN_BATS, HALLOWEEN_GLOW, HALLOWEEN_SKELETONS, HALLOWEEN_GHOSTS, HALLOWEEN_CANDLES } from '../../data/holiday';
+import {
+  getHoliday,
+  HALLOWEEN_PUMPKINS, HALLOWEEN_COBWEBS, HALLOWEEN_BATS, HALLOWEEN_GLOW, HALLOWEEN_SKELETONS, HALLOWEEN_GHOSTS, HALLOWEEN_CANDLES,
+  CHRISTMAS_LIGHTS, CHRISTMAS_EAVES_LIGHTS, CHRISTMAS_SNOWMEN, CHRISTMAS_TREES, CHRISTMAS_GIFTS, CHRISTMAS_CANDLES, CHRISTMAS_SNOWDRIFTS, CHRISTMAS_WREATH,
+} from '../../data/holiday';
 
 // How many buildings are built, from the current stage key.
 // 'camp' = 0 built; otherwise index in buildStages + 1.
@@ -345,6 +349,51 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== CHRISTMAS: sky-layer decorations (string lights) ===== */}
+        {holiday === 'christmas' && (
+          <g>
+            {/* garland wire, swagged in two dips across the top of the scene */}
+            <path
+              d="M 0 16 Q 100 34 200 18 Q 300 34 400 16"
+              fill="none"
+              stroke="#2a2018"
+              strokeWidth="0.6"
+              opacity="0.55"
+            />
+            {/* bulbs hanging along the wire, glowing on their own rhythm */}
+            {CHRISTMAS_LIGHTS.map((l, i) => (
+              <circle
+                key={i}
+                cx={l.x}
+                cy={l.y}
+                r="2.2"
+                fill={l.color}
+                className="christmas-light-glow"
+                style={{ animationDelay: `${l.delay}s` }}
+              />
+            ))}
+            {/* second, lower garland wire so the top edge reads fuller */}
+            <path
+              d="M 0 30 Q 100 48 200 32 Q 300 48 400 30"
+              fill="none"
+              stroke="#2a2018"
+              strokeWidth="0.6"
+              opacity="0.45"
+            />
+            {CHRISTMAS_EAVES_LIGHTS.map((l, i) => (
+              <circle
+                key={i}
+                cx={l.x}
+                cy={l.y}
+                r="1.8"
+                fill={l.color}
+                className="christmas-light-glow"
+                style={{ animationDelay: `${l.delay}s` }}
+              />
+            ))}
+          </g>
+        )}
+
         {/* ===== BACK LAYER ===== */}
 
         {/* WALL + big corner tower — final build */}
@@ -643,6 +692,68 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
+        {/* ===== CHRISTMAS: ground-layer decorations (tree, gifts, candles, snow mounds) ===== */}
+        {/* Faint snow mounds for ground texture, drawn first so everything else sits on top */}
+        {holiday === 'christmas' && CHRISTMAS_SNOWDRIFTS.map((d, i) => (
+          <ellipse key={i} cx={d.x} cy={d.y} rx={d.rx} ry={d.ry} fill="#eef3f8" opacity={d.opacity} />
+        ))}
+
+        {/* A small decorated tree, ornaments glowing softly */}
+        {holiday === 'christmas' && CHRISTMAS_TREES.map((t, i) => (
+          <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
+            {/* trunk */}
+            <rect x="-1.5" y="-4" width="3" height="4" fill="#4a2f1a" />
+            {/* three stacked tiers */}
+            <path d="M -9 -4 L 0 -14 L 9 -4 Z" fill="#2f5c3a" />
+            <path d="M -7 -10 L 0 -19 L 7 -10 Z" fill="#356b40" />
+            <path d="M -5 -15 L 0 -23 L 5 -15 Z" fill="#3f7a4a" />
+            {/* ornaments, each twinkling on its own rhythm */}
+            <circle cx="-4" cy="-6" r="1" fill="#d94a3c" className="christmas-light-glow" style={{ animationDelay: '0.1s' }} />
+            <circle cx="4" cy="-7" r="1" fill="#4a86c8" className="christmas-light-glow" style={{ animationDelay: '0.5s' }} />
+            <circle cx="-3" cy="-12" r="0.9" fill="#f0c14a" className="christmas-light-glow" style={{ animationDelay: '0.9s' }} />
+            <circle cx="3" cy="-13" r="0.9" fill="#d94a3c" className="christmas-light-glow" style={{ animationDelay: '0.3s' }} />
+            <circle cx="0" cy="-17" r="0.8" fill="#4a86c8" className="christmas-light-glow" style={{ animationDelay: '0.7s' }} />
+            {/* star on top */}
+            <path
+              d="M 0 -27 L 1.1 -24.3 L 4 -24 L 1.8 -22 L 2.4 -19.2 L 0 -20.7 L -2.4 -19.2 L -1.8 -22 L -4 -24 L -1.1 -24.3 Z"
+              fill="#f0c14a"
+              className="christmas-light-glow"
+              style={{ animationDelay: '0s' }}
+            />
+          </g>
+        ))}
+
+        {/* Wrapped gifts at the foot of the tree */}
+        {holiday === 'christmas' && CHRISTMAS_GIFTS.map((g, i) => (
+          <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
+            <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill={g.box} />
+            <rect x="-1" y="-6" width="2" height="6" fill={g.ribbon} />
+            <rect x="-4" y="-3.5" width="8" height="1.5" fill={g.ribbon} />
+            {/* bow */}
+            <path d="M -2.2 -6 Q -3.2 -8 -0.6 -7.4 Z" fill={g.ribbon} />
+            <path d="M 2.2 -6 Q 3.2 -8 0.6 -7.4 Z" fill={g.ribbon} />
+          </g>
+        ))}
+
+        {/* Warm candles keeping watch nearby, flames flickering (same shape as
+            the Halloween candles, festive wax colors) */}
+        {holiday === 'christmas' && CHRISTMAS_CANDLES.map((c, i) => (
+          <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
+            {/* wax body */}
+            <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill={c.wax} />
+            <ellipse cx="0" cy="-6" rx="1.6" ry="0.6" fill="#f4ecd8" />
+            {/* wick */}
+            <line x1="0" y1="-6" x2="0" y2="-7.2" stroke="#3a2f22" strokeWidth="0.5" />
+            {/* flame */}
+            <path
+              className="candle-flame"
+              style={{ animationDelay: `${c.delay}s` }}
+              d="M 0 -7.2 C 1.4 -8.6 1.2 -10.4 0 -11.6 C -1.2 -10.4 -1.4 -8.6 0 -7.2 Z"
+              fill="#ffb347"
+            />
+          </g>
+        ))}
+
         {/* SURVIVOR (always) */}
         <g transform="translate(0, 20)">
           <Survivor />
@@ -691,6 +802,41 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
               <ellipse cx="-2.5" cy="-8" rx="1.1" ry="1.5" fill="#1a1a1a" opacity="0.5" />
               <ellipse cx="2.5" cy="-8" rx="1.1" ry="1.5" fill="#1a1a1a" opacity="0.5" />
             </g>
+          </g>
+        ))}
+
+        {/* CHRISTMAS SNOWMAN (drawn in the foreground, after the buildings and
+            campfire, so it isn't clipped by the wall/tower/storage) */}
+        {holiday === 'christmas' && CHRISTMAS_SNOWMEN.map((s, i) => (
+          <g key={i} transform={`translate(${s.x}, ${s.y}) scale(${s.scale})`}>
+            {/* three stacked snowballs, slightly overlapping */}
+            <circle cx="0" cy="-7" r="7" fill="#eef3f6" />
+            <circle cx="0" cy="-17" r="5.5" fill="#eef3f6" />
+            <circle cx="0" cy="-25" r="4" fill="#eef3f6" />
+            {/* soft shading, same trick as the celestial bodies */}
+            <ellipse cx="2.5" cy="-6" rx="4.5" ry="6" fill="#c8d4da" opacity="0.35" />
+            <ellipse cx="2" cy="-16" rx="3.4" ry="4.6" fill="#c8d4da" opacity="0.35" />
+            {/* twig arms */}
+            <line x1="-5" y1="-17" x2="-13" y2="-22" stroke="#5c4028" strokeWidth="1" strokeLinecap="round" />
+            <line x1="-13" y1="-22" x2="-16" y2="-19" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
+            <line x1="-13" y1="-22" x2="-15" y2="-24" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
+            <line x1="5" y1="-17" x2="13" y2="-13" stroke="#5c4028" strokeWidth="1" strokeLinecap="round" />
+            <line x1="13" y1="-13" x2="16" y2="-15" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
+            <line x1="13" y1="-13" x2="15" y2="-11" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
+            {/* coal buttons */}
+            <circle cx="0" cy="-9" r="0.6" fill="#1a1a1a" />
+            <circle cx="0" cy="-14" r="0.6" fill="#1a1a1a" />
+            {/* scarf, knotted at the neck with a dangling tail */}
+            <path d="M -4 -21 Q 0 -19 4 -21 L 4 -19.3 Q 0 -17.3 -4 -19.3 Z" fill="#b5342a" />
+            <rect x="1.8" y="-19.3" width="2.2" height="7" rx="1" fill="#b5342a" transform="rotate(18 2.9 -19.3)" />
+            {/* coal eyes and carrot nose */}
+            <circle cx="-1.4" cy="-26" r="0.7" fill="#1a1a1a" />
+            <circle cx="1.4" cy="-26" r="0.7" fill="#1a1a1a" />
+            <path d="M 4 -25 L 9 -24.3 L 4 -23.6 Z" fill="#e2822a" />
+            {/* top hat */}
+            <ellipse cx="0" cy="-29" rx="5" ry="1.3" fill="#1c1c1c" />
+            <rect x="-3" y="-36" width="6" height="7" rx="1" fill="#1c1c1c" />
+            <rect x="-3" y="-31.2" width="6" height="1.8" fill="#b5342a" />
           </g>
         ))}
 
@@ -854,6 +1000,24 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           <text x="260.6" y="276.6" fontFamily="Georgia, serif" fontSize="9" fontWeight="bold" letterSpacing="0.6" textAnchor="middle" fill="#140f08">NIMEONITER</text>
           <text x="260" y="276" fontFamily="Georgia, serif" fontSize="9" fontWeight="bold" letterSpacing="0.6" textAnchor="middle" fill="#d9b06a">NIMEONITER</text>
         </g>
+
+        {/* CHRISTMAS WREATH, hung above the sign board */}
+        {holiday === 'christmas' && (
+          <g transform={`translate(${CHRISTMAS_WREATH.x}, ${CHRISTMAS_WREATH.y}) scale(${CHRISTMAS_WREATH.scale})`}>
+            {/* pine ring */}
+            <circle cx="0" cy="0" r="6.5" fill="none" stroke="#2f5c3a" strokeWidth="3.2" />
+            <circle cx="0" cy="0" r="6.5" fill="none" stroke="#1f4028" strokeWidth="1" strokeDasharray="1.6 1.4" opacity="0.6" />
+            {/* berries */}
+            <circle cx="-3.5" cy="-5.4" r="0.7" fill="#c8402e" />
+            <circle cx="5.8" cy="-2" r="0.7" fill="#c8402e" />
+            <circle cx="-5.8" cy="2" r="0.7" fill="#c8402e" />
+            {/* bow at the bottom */}
+            <path d="M -2.2 6.2 Q -4 4 -0.6 5.2 Z" fill="#b5342a" />
+            <path d="M 2.2 6.2 Q 4 4 0.6 5.2 Z" fill="#b5342a" />
+            <circle cx="0" cy="5.6" r="1" fill="#8a2620" />
+            <rect x="-0.6" y="6" width="1.2" height="4" fill="#b5342a" transform="rotate(8 0 6)" />
+          </g>
+        )}
 
       </svg>
 
