@@ -8,9 +8,12 @@ function AddTask({ catalog = [], addedKeys, onAdd }) {
   // Tasks not already added today
   const available = catalog.filter((task) => !addedKeys.includes(task.key));
 
-  // Live filter: keep tasks whose name contains the typed text (case-insensitive)
+  // Live filter: keep tasks whose name contains the typed text (case-insensitive).
+  // Purely client-side over the in-memory catalog — the text is never sent to the
+  // backend, a database, or the DOM as HTML, so there's no injection surface here.
+  const trimmedQuery = query.trim().toLowerCase();
   const filtered = available.filter((task) =>
-    task.name.toLowerCase().includes(query.trim().toLowerCase())
+    task.name.toLowerCase().includes(trimmedQuery)
   );
 
   // Reset the search when the modal closes
@@ -39,13 +42,16 @@ function AddTask({ catalog = [], addedKeys, onAdd }) {
               </button>
             </div>
 
-            {/* Live search filter */}
+            {/* Live search filter (client-side only) */}
             <input
               type="text"
               className="add-task-search"
               placeholder="Search tasks..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Escape') close(); }}
+              maxLength={50}
+              aria-label="Search tasks"
               autoFocus
             />
 
