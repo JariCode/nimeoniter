@@ -409,10 +409,26 @@
   50%      { opacity: 1; transform: scale(1.08); }
 }
 
+/* ===== Easter decorations ===== */
+/* Garland eggs sway gently, same idea as the New Year bunting flags. */
+.easter-egg-sway {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: easter-egg-sway 2.4s ease-in-out infinite;
+}
+@keyframes easter-egg-sway {
+  0%   { transform: rotate(0deg); }
+  25%  { transform: rotate(-4deg); }
+  50%  { transform: rotate(0deg); }
+  75%  { transform: rotate(4deg); }
+  100% { transform: rotate(0deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bat, .bat-body, .pumpkin-glow, .ghost-float, .candle-flame, .christmas-light-glow,
   .bunting-flag, .newyear-sparkle, .newyear-rocket-trail, .newyear-firework,
-  .valentine-heart-float, .valentine-garland-heart, .valentine-heart-glow {
+  .valentine-heart-float, .valentine-garland-heart, .valentine-heart-glow,
+  .easter-egg-sway {
     animation: none;
   }
 }

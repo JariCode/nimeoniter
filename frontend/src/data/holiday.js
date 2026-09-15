@@ -22,7 +22,8 @@ export const HOLIDAY_RANGES = {
   newyear: { startMonth: 12, startDay: 31, endMonth: 1, endDay: 1 },
   // Valentine's, a few days around the 14th.
   valentines: { startMonth: 2, startDay: 11, endMonth: 2, endDay: 14 },
-  // Easter moves every year; dates are filled in per year when built.
+  // Easter is a moving feast (see computeEasterSunday below) and is checked
+  // separately in getHoliday, so it's deliberately not listed here.
 };
 
 // True if (month, day) falls within a holiday's range. Handles ranges that
@@ -39,6 +40,52 @@ function inRange(month, day, range) {
   return afterStart || beforeEnd;
 }
 
+// Compute the date of Gregorian Easter Sunday for a given year, using the
+// "anonymous Gregorian algorithm" (Computus). This is a well-established
+// algorithm that works for any year without needing yearly maintenance.
+// Returns { month, day } with month 1-12 (Easter always falls in March or
+// April).
+function computeEasterSunday(year) {
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const monthDay = h + l - 7 * m + 114;
+  const month = Math.floor(monthDay / 31); // 3 = March, 4 = April
+  const day = (monthDay % 31) + 1;
+  return { month, day };
+}
+
+// The active Easter window for a given year: Palm Sunday (Easter Sunday - 7
+// days) through Easter Monday (Easter Sunday + 1 day), about 9 days. Uses
+// Date's own day-rollover arithmetic so the range computes correctly even
+// when Palm Sunday falls in March while Easter Sunday is in April.
+function easterRange(year) {
+  const { month, day } = computeEasterSunday(year);
+  const sunday = new Date(year, month - 1, day);
+  const start = new Date(sunday);
+  start.setDate(start.getDate() - 7); // Palm Sunday
+  const end = new Date(sunday);
+  end.setDate(end.getDate() + 1); // Easter Monday
+  return { start, end };
+}
+
+// True if `date` falls within that year's Easter window (Palm Sunday
+// through Easter Monday), comparing by calendar day only.
+function isEaster(date) {
+  const { start, end } = easterRange(date.getFullYear());
+  const day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  return day >= start && day <= end;
+}
+
 // The active holiday key right now, or null. TEST_HOLIDAY overrides the date.
 export function getHoliday(date = new Date()) {
   if (TEST_HOLIDAY) return TEST_HOLIDAY;
@@ -47,6 +94,7 @@ export function getHoliday(date = new Date()) {
   for (const [key, range] of Object.entries(HOLIDAY_RANGES)) {
     if (inRange(month, day, range)) return key;
   }
+  if (isEaster(date)) return 'easter';
   return null;
 }
 
@@ -298,5 +346,66 @@ export const VALENTINES_ROSES = [
 // New Year toast use. Drawn in the foreground, after the buildings and
 // campfire, so it isn't clipped by the wall/tower/storage.
 export const VALENTINES_HEART_GLOWS = [
+  { x: 300, y: 228, scale: 0.9 },
+];
+
+// ---------------------------------------------------------------------------
+// Easter decoration data (hand-drawn SVG, same technique as the other
+// holidays above). Easter is a spring holiday, so there's no season/weather
+// overlay to avoid duplicating — these bring the spring feel themselves:
+// eggs, flowers, a pastel glow, and a bunny.
+// ---------------------------------------------------------------------------
+
+// Decorated eggs on the ground, at the same spots the Halloween pumpkins and
+// candles use — already proven clear of the well, hut/field/fence
+// footprints, and x > ~290 where the storage shed and watchtower stand once
+// built. Each has a pastel base color and a simple stripe/dot pattern. The
+// leftmost egg is brought forward into the open foreground apron (y ~272,
+// the same trick used for the Christmas tree) so it clears the hut's
+// roofline instead of sitting against it.
+export const EASTER_EGGS = [
+  { x: 70, y: 272, scale: 0.85, base: '#f4d9e0', pattern: 'dots', patternColor: '#e85a9a' },
+  { x: 150, y: 258, scale: 0.75, base: '#d9f0e8', pattern: 'stripes', patternColor: '#4aa87a' },
+  { x: 213, y: 253, scale: 0.8, base: '#fff0c8', pattern: 'dots', patternColor: '#e8b23a' },
+  { x: 270, y: 250, scale: 0.65, base: '#d9e8f8', pattern: 'stripes', patternColor: '#5a8ac8' },
+  { x: 110, y: 257, scale: 0.7, base: '#f4e0f0', pattern: 'dots', patternColor: '#a85ac8' },
+];
+
+// Small spring flowers scattered on the ground, in the same style as the
+// summer FLOWERS in season.js but with an Easter-pastel palette. The third
+// flower is kept away from the well's roof (x ~4.5-46.5, y ~245-260) — its
+// four pale petals read as a stray white star sitting on the roof when this
+// close to it.
+export const EASTER_FLOWERS = [
+  { x: 130, y: 262, scale: 0.9, petal: '#f08aa0', center: '#f0c14a' },
+  { x: 240, y: 258, scale: 0.8, petal: '#f4e0f0', center: '#e8b23a' },
+  { x: 100, y: 270, scale: 0.75, petal: '#c8e8f0', center: '#f0c14a' },
+];
+
+// A pale spring glow tint layered over the sky — warm and soft, unlike the
+// Halloween tint it's meant to feel gentle rather than ominous.
+export const EASTER_GLOW = {
+  color: '#f0e6a0',
+  opacity: 0.09,
+};
+
+// A garland of small pastel eggs strung across the very top of the scene,
+// sag following the same wire technique as the other holiday garlands.
+export const EASTER_GARLAND = [
+  { x: 20, y: 15.5, color: '#f08aa0' },
+  { x: 80, y: 19.1, color: '#a8e0c8' },
+  { x: 140, y: 21.3, color: '#f0e0a0' },
+  { x: 200, y: 22.0, color: '#c8b8e8' },
+  { x: 260, y: 21.3, color: '#f08aa0' },
+  { x: 320, y: 19.1, color: '#a8e0c8' },
+  { x: 380, y: 15.5, color: '#f0e0a0' },
+];
+
+// The Easter bunny, sitting on the ground right beside the campfire on the
+// survivor's opposite side — the same spot the Halloween ghost, Christmas
+// snowman, New Year toast, and Valentine's heart glow use. Drawn in the
+// foreground, after the buildings and campfire, so it isn't clipped by the
+// wall/tower/storage.
+export const EASTER_BUNNIES = [
   { x: 300, y: 228, scale: 0.9 },
 ];

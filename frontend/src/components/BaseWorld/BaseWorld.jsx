@@ -8,6 +8,7 @@ import {
   CHRISTMAS_LIGHTS, CHRISTMAS_EAVES_LIGHTS, CHRISTMAS_SNOWMEN, CHRISTMAS_TREES, CHRISTMAS_GIFTS, CHRISTMAS_CANDLES, CHRISTMAS_SNOWDRIFTS, CHRISTMAS_WREATH,
   NEWYEAR_FIREWORKS, NEWYEAR_SPARKLES, NEWYEAR_GLOW, NEWYEAR_BUNTING, NEWYEAR_TOASTS,
   VALENTINES_HEARTS, VALENTINES_GLOW, VALENTINES_GARLAND, VALENTINES_ROSES, VALENTINES_HEART_GLOWS,
+  EASTER_EGGS, EASTER_FLOWERS, EASTER_GLOW, EASTER_GARLAND, EASTER_BUNNIES,
 } from '../../data/holiday';
 
 // How many buildings are built, from the current stage key.
@@ -519,6 +520,35 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== EASTER: sky-layer decorations (glow, egg garland) ===== */}
+        {holiday === 'easter' && (
+          <g>
+            {/* Pale spring glow tint over the whole sky */}
+            <rect
+              x="0" y="0" width="400" height="230"
+              fill={EASTER_GLOW.color}
+              opacity={EASTER_GLOW.opacity}
+            />
+            {/* Egg garland strung across the top */}
+            <path
+              d="M 0 14 Q 200 30 400 14"
+              fill="none"
+              stroke="#2a2018"
+              strokeWidth="0.6"
+              opacity="0.5"
+            />
+            {EASTER_GARLAND.map((e, i) => (
+              <g key={i} transform={`translate(${e.x}, ${e.y}) scale(0.45)`}>
+                <g className="easter-egg-sway" style={{ animationDelay: `${i * 0.25}s` }}>
+                  <ellipse cx="0" cy="0" rx="3.2" ry="4.4" fill={e.color} />
+                  <circle cx="-1" cy="-1" r="0.6" fill="#fff" opacity="0.6" />
+                  <circle cx="1.2" cy="1.4" r="0.6" fill="#fff" opacity="0.6" />
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
         {/* ===== BACK LAYER ===== */}
 
         {/* WALL + big corner tower — final build */}
@@ -908,6 +938,54 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
+        {/* Decorated Easter eggs on the ground, pastel bases with a
+            stripe/dot pattern */}
+        {holiday === 'easter' && EASTER_EGGS.map((e, i) => (
+          <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
+            <path
+              d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z"
+              fill={e.base}
+            />
+            {e.pattern === 'dots' && (
+              <>
+                <circle cx="-1.8" cy="-2" r="0.9" fill={e.patternColor} />
+                <circle cx="2" cy="0" r="0.9" fill={e.patternColor} />
+                <circle cx="-1" cy="3.5" r="0.9" fill={e.patternColor} />
+                <circle cx="1.8" cy="4.5" r="0.9" fill={e.patternColor} />
+              </>
+            )}
+            {e.pattern === 'stripes' && (
+              <>
+                <path d="M -4.6 -3 Q 0 -1.5 4.6 -3" fill="none" stroke={e.patternColor} strokeWidth="1.1" />
+                <path d="M -5 1 Q 0 2.5 5 1" fill="none" stroke={e.patternColor} strokeWidth="1.1" />
+                <path d="M -4 5.2 Q 0 6.5 4 5.2" fill="none" stroke={e.patternColor} strokeWidth="1.1" />
+              </>
+            )}
+          </g>
+        ))}
+
+        {/* Small spring flowers on the ground */}
+        {holiday === 'easter' && EASTER_FLOWERS.map((fl, i) => (
+          <g key={i} transform={`translate(${fl.x}, ${fl.y}) scale(${fl.scale})`}>
+            <line x1="0" y1="0" x2="0" y2="-5" stroke="#4a7a44" strokeWidth="1" />
+            {Array.from({ length: 4 }, (_, j) => {
+              const a = (j / 4) * Math.PI * 2;
+              return (
+                <ellipse
+                  key={j}
+                  cx={Math.cos(a) * 2}
+                  cy={-5 + Math.sin(a) * 2}
+                  rx="1.8"
+                  ry="1.2"
+                  fill={fl.petal}
+                  transform={`rotate(${(a * 180) / Math.PI} ${Math.cos(a) * 2} ${-5 + Math.sin(a) * 2})`}
+                />
+              );
+            })}
+            <circle cx="0" cy="-5" r="1.1" fill={fl.center} />
+          </g>
+        ))}
+
         {/* SURVIVOR (always) */}
         <g transform="translate(0, 20)">
           <Survivor />
@@ -1047,6 +1125,32 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
               <path d={HEART_PATH} transform="translate(0, -14) scale(1.1)" fill="#d9425e" />
               <path d={HEART_PATH} transform="translate(-2.5, -17) scale(0.5)" fill="#f4a8b8" opacity="0.6" />
             </g>
+          </g>
+        ))}
+
+        {/* EASTER BUNNY — sitting upright, ears up (drawn in the foreground,
+            after the buildings and campfire, so it isn't clipped by the
+            wall/tower/storage) */}
+        {holiday === 'easter' && EASTER_BUNNIES.map((b, i) => (
+          <g key={i} transform={`translate(${b.x}, ${b.y}) scale(${b.scale})`}>
+            {/* tail */}
+            <circle cx="-5.5" cy="-2" r="2" fill="#fff" />
+            {/* body */}
+            <ellipse cx="0" cy="-7" rx="6" ry="7.5" fill="#f7f2ea" />
+            {/* front paws */}
+            <ellipse cx="-3" cy="-1.2" rx="1.8" ry="1.3" fill="#f7f2ea" />
+            <ellipse cx="3" cy="-1.2" rx="1.8" ry="1.3" fill="#f7f2ea" />
+            {/* ears, standing up */}
+            <ellipse cx="-2.3" cy="-23" rx="1.6" ry="7" fill="#f7f2ea" transform="rotate(-12 -2.3 -23)" />
+            <ellipse cx="2.3" cy="-23" rx="1.6" ry="7" fill="#f7f2ea" transform="rotate(12 2.3 -23)" />
+            <ellipse cx="-2.3" cy="-22" rx="0.8" ry="4.6" fill="#e8a8b8" transform="rotate(-12 -2.3 -22)" />
+            <ellipse cx="2.3" cy="-22" rx="0.8" ry="4.6" fill="#e8a8b8" transform="rotate(12 2.3 -22)" />
+            {/* head */}
+            <circle cx="0" cy="-15.5" r="4.6" fill="#f7f2ea" />
+            {/* face */}
+            <circle cx="-1.6" cy="-15.5" r="0.6" fill="#2a2a26" />
+            <circle cx="1.6" cy="-15.5" r="0.6" fill="#2a2a26" />
+            <path d="M -0.6 -13.8 L 0.6 -13.8 L 0 -13 Z" fill="#e8708a" />
           </g>
         ))}
 
