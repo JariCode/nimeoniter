@@ -1,40 +1,64 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './Assistant.css';
 
 // The survivor companion. A hand-drawn SVG so the character can breathe,
 // blink, and move its mouth while speaking — the weathered figure from the
 // landing page: neutral, worn skin (NOT green — only the jacket and hood are
 // green), shown as a bust with clear shoulders and a hood pulled over the
-// head. The backend is the source of truth: this component only asks for a
-// line of text and shows it. It never computes rewards or game state.
-function Assistant({ speaking, message, lastQuestion, onClose, onPoke, onAsk }) {
-  const isOpen = !!message;
+// head. The backend is the source of truth: this component only shows the
+// conversation and sends turns. It never computes rewards or game state.
+function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend }) {
   const [draft, setDraft] = useState('');
+  const scrollRef = useRef(null);
+
+  // Keep the chat scrolled to the newest message.
+  useEffect(() => {
+    if (open && scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [open, history, busy]);
 
   function submitQuestion() {
     const q = draft.trim();
-    if (!q) return;
+    if (!q || busy) return;
     setDraft('');
-    onAsk(q);
+    onSend('question', q);
   }
 
   return (
-    <div className={`assistant ${isOpen ? 'assistant--open' : ''}`}>
-      {isOpen && <div className="assistant__backdrop" onClick={onClose} />}
+    <div className={`assistant ${open ? 'assistant--open' : ''}`}>
+      {open && <div className="assistant__backdrop" onClick={onClose} />}
 
       <div className="assistant__stage">
-        {isOpen && message && (
-          <div className="assistant__panel">
-            {/* Echo the player's own question above the reply, so the bubble
-                doesn't look like an answer to nothing. */}
-            {lastQuestion && (
-              <div className="assistant__you">You: {lastQuestion}</div>
-            )}
-            <div className="assistant__bubble" role="status">
-              {message}
+        {open && (
+          <div className="assistant__chat">
+            <div className="assistant__log" ref={scrollRef}>
+              {history.length === 0 && !busy && (
+                <div className="assistant__empty">Say something to the survivor.</div>
+              )}
+              {history.map((m, i) => (
+                <div
+                  key={i}
+                  className={`chat-msg ${m.role === 'user' ? 'chat-msg--you' : 'chat-msg--them'}`}
+                >
+                  {m.content}
+                </div>
+              ))}
+              {busy && <div className="chat-msg chat-msg--them chat-msg--typing">…</div>}
             </div>
-            {/* Ask the companion a question about the game state. The backend
-                answers from the saved state only — it never changes anything. */}
+
+            {/* Buttons drive the greeting/advice/daily-challenge modes; their
+                replies land in the same log as typed questions. The backend
+                answers from saved state only — it never changes the game. */}
+            <div className="assistant__actions">
+              <button type="button" className="assistant__chip" onClick={() => onSend('advice')} disabled={busy}>
+                Advice
+              </button>
+              <button type="button" className="assistant__chip" onClick={() => onSend('daily_challenge')} disabled={busy}>
+                Daily challenge
+              </button>
+            </div>
+
             <div className="assistant__ask">
               <input
                 className="assistant__input"
@@ -44,11 +68,13 @@ function Assistant({ speaking, message, lastQuestion, onClose, onPoke, onAsk }) 
                 onKeyDown={(e) => { if (e.key === 'Enter') submitQuestion(); }}
                 placeholder="Ask the survivor..."
                 maxLength={200}
+                disabled={busy}
               />
               <button
                 type="button"
                 className="assistant__send"
                 onClick={submitQuestion}
+                disabled={busy}
                 aria-label="Send question"
               >
                 ›
@@ -60,7 +86,7 @@ function Assistant({ speaking, message, lastQuestion, onClose, onPoke, onAsk }) 
         <button
           type="button"
           className="assistant__figure"
-          onClick={isOpen ? onClose : onPoke}
+          onClick={open ? onClose : onOpen}
           aria-label="Talk to your companion"
         >
           <SurvivorFace speaking={speaking} />

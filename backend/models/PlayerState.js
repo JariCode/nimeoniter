@@ -23,6 +23,10 @@ const playerStateSchema = new mongoose.Schema(
     streak: { type: Number, default: 0 },
     // The user's local date (YYYY-MM-DD) of the last completed task
     lastActiveDate: { type: String, default: null },
+    // Persisted AI companion conversation. Each entry is { role, content, ts }
+    // where role is 'user' or 'assistant'. Trimmed to the most recent messages
+    // by the assistant route so the document and prompt size stay bounded.
+    chatHistory: { type: Array, default: [] },
   },
   { timestamps: true }
 );

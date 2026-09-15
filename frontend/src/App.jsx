@@ -15,7 +15,7 @@ import Notice from './components/Notice/Notice';
 import Assistant from './components/Assistant/Assistant';
 import { ACHIEVEMENTS } from './data/achievements';
 import { todayKey } from './data/dateUtils';
-import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi, askAssistantApi } from './lib/api';
+import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi, askAssistantApi, fetchAssistantHistory } from './lib/api';
 import './App.css';
 
 function App() {
@@ -42,10 +42,11 @@ function App() {
   const [buildStages, setBuildStages] = useState([]);
   const [streak, setStreak] = useState(0);
 
-  // AI assistant: the current line to show, the player's own last question,
-  // and whether it's mid-"speech"
-  const [assistantMessage, setAssistantMessage] = useState(null);
-  const [assistantQuestion, setAssistantQuestion] = useState(null);
+  // AI assistant: whether the chat is open, the saved conversation, whether a
+  // request is in flight, and whether the figure's mouth is animating.
+  const [assistantOpen, setAssistantOpen] = useState(false);
+  const [assistantHistory, setAssistantHistory] = useState([]);
+  const [assistantBusy, setAssistantBusy] = useState(false);
   const [assistantSpeaking, setAssistantSpeaking] = useState(false);
   const greetedRef = useRef(false); // greet only once per session
 
@@ -116,26 +117,51 @@ function App() {
   const [noticeShown, setNoticeShown] = useState(null);
   const dismissNotice = useCallback(() => setNoticeShown(null), []);
 
-  // Ask the backend for a line and "speak" it. The backend is authoritative:
-  // it reads the saved state and returns text only — this never touches XP,
-  // resources or buildings.
+  // Send one turn to the companion and fold the reply into the saved chat. The
+  // backend is authoritative: it reads the saved state, returns text only, and
+  // persists the conversation — this never touches XP, resources or buildings.
   const talkToAssistant = useCallback(async (mode, question) => {
+    setAssistantBusy(true);
+    // Optimistically show the player's own turn right away for typed questions.
+    if (mode === 'question' && question) {
+      setAssistantHistory((h) => [...h, { role: 'user', content: question }]);
+    }
     try {
-      // Show the player's own question (for the 'question' mode); clear it for
-      // greetings/advice so a stale question doesn't linger above the reply.
-      setAssistantQuestion(mode === 'question' ? question : null);
       const token = await getToken();
       const data = await askAssistantApi(token, mode, question);
-      setAssistantMessage(data.message);
+      // The backend returns the authoritative, trimmed history including this
+      // turn — use it as the source of truth for what to show.
+      if (Array.isArray(data.history)) {
+        setAssistantHistory(data.history);
+      } else if (data.message) {
+        setAssistantHistory((h) => [...h, { role: 'assistant', content: data.message }]);
+      }
       setAssistantSpeaking(true);
-      // Stop the mouth animation after a rough reading time; bubble stays open
       const readMs = Math.min(9000, 1800 + (data.message?.length || 0) * 45);
       setTimeout(() => setAssistantSpeaking(false), readMs);
     } catch (err) {
       console.error('Assistant failed:', err);
-      // On failure the companion just stays silent — no bubble
+    } finally {
+      setAssistantBusy(false);
     }
   }, [getToken]);
+
+  // Open the chat: load the saved conversation, then greet in a way that fits
+  // the current situation (only the first open of the session auto-greets).
+  const openAssistant = useCallback(async () => {
+    setAssistantOpen(true);
+    try {
+      const token = await getToken();
+      const data = await fetchAssistantHistory(token);
+      if (Array.isArray(data.history)) setAssistantHistory(data.history);
+    } catch (err) {
+      console.error('Assistant history failed:', err);
+    }
+    if (!greetedRef.current) {
+      greetedRef.current = true;
+      talkToAssistant('greeting');
+    }
+  }, [getToken, talkToAssistant]);
 
   async function addTask(task) {
     try {
@@ -222,15 +248,6 @@ function App() {
     }
     prevLevel.current = level;
   }, [level]);
-
-  // Greet once, shortly after the player's state has loaded on sign-in
-  useEffect(() => {
-    if (!isSignedIn || greetedRef.current) return;
-    if (missions.length === 0 && totalXp === 0) return; // wait until state is in
-    greetedRef.current = true;
-    const t = setTimeout(() => talkToAssistant('greeting'), 1200);
-    return () => clearTimeout(t);
-  }, [isSignedIn, missions.length, totalXp, talkToAssistant]);
 
   const nextStage = buildStages[baseStageIndex + 1] || null;
 
@@ -569,12 +586,13 @@ function App() {
           </div>
 
           <Assistant
+            open={assistantOpen}
             speaking={assistantSpeaking}
-            message={assistantMessage}
-            lastQuestion={assistantQuestion}
-            onClose={() => { setAssistantMessage(null); setAssistantSpeaking(false); setAssistantQuestion(null); }}
-            onPoke={() => talkToAssistant('advice')}
-            onAsk={(question) => talkToAssistant('question', question)}
+            history={assistantHistory}
+            busy={assistantBusy}
+            onOpen={openAssistant}
+            onClose={() => { setAssistantOpen(false); setAssistantSpeaking(false); }}
+            onSend={talkToAssistant}
           />
         </>
       )}

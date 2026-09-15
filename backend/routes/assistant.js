@@ -9,13 +9,13 @@ const {
   ASSISTANT_MODEL,
   SYSTEM_PROMPT,
   MODE_INSTRUCTIONS,
+  MAX_HISTORY,
 } = require('../data/assistantConfig');
 
 const router = express.Router();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 router.use(requireAuth);
-router.use(aiLimiter);
 
 // Builds a safe, read-only context for the AI from the player's saved state.
 // All derived values use the same gameConfig functions as the rest of the
@@ -64,8 +64,31 @@ function cleanQuestion(raw) {
   return trimmed.slice(0, 300);
 }
 
+// Keep only the fields we trust from stored history, and only the most recent
+// MAX_HISTORY entries, before sending them to the model.
+function sanitizeHistory(history) {
+  if (!Array.isArray(history)) return [];
+  return history
+    .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+    .slice(-MAX_HISTORY)
+    .map((m) => ({ role: m.role, content: m.content }));
+}
+
+// GET /api/assistant/history — the saved conversation, for showing the chat
+// when the companion is opened.
+router.get('/history', async (req, res) => {
+  try {
+    const state = await PlayerState.findOne({ clerkUserId: req.userId });
+    const history = state ? sanitizeHistory(state.chatHistory) : [];
+    res.json({ history });
+  } catch (err) {
+    console.error('Assistant history error', err);
+    res.status(500).json({ error: 'Could not load conversation' });
+  }
+});
+
 // POST /api/assistant  { mode, question? }
-router.post('/', async (req, res, next) => {
+router.post('/', aiLimiter, async (req, res) => {
   try {
     const { mode, question } = req.body;
     const instruction = MODE_INSTRUCTIONS[mode];
@@ -79,6 +102,7 @@ router.post('/', async (req, res, next) => {
     }
 
     const context = buildContext(state);
+    const priorHistory = sanitizeHistory(state.chatHistory);
 
     // A light list of task names + keys so the AI can only suggest tasks that
     // actually exist (never invented ones).
@@ -97,8 +121,9 @@ router.post('/', async (req, res, next) => {
         + `"""${cleaned}"""`
       : null;
 
-    const userContent = [
-      `Player state: ${JSON.stringify(context)}`,
+    // The current game state + this turn's instruction, as a fresh user turn.
+    const turnContent = [
+      `Current player state: ${JSON.stringify(context)}`,
       `Available tasks: ${taskList}`,
       questionBlock,
       `Instruction: ${instruction}`,
@@ -112,12 +137,35 @@ router.post('/', async (req, res, next) => {
       temperature: 0.7,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: userContent },
+        ...priorHistory,
+        { role: 'user', content: turnContent },
       ],
     });
 
     const message = completion.choices?.[0]?.message?.content?.trim() || '...';
-    res.json({ message });
+
+    // Persist the turn. We store a clean version of what the PLAYER sees (their
+    // typed question, or a short label for button-driven modes) rather than the
+    // full instruction blob, so the saved chat reads naturally next time.
+    const userVisible =
+      cleaned ||
+      (mode === 'advice'
+        ? '(asked for advice)'
+        : mode === 'daily_challenge'
+        ? '(asked for a daily challenge)'
+        : mode === 'greeting'
+        ? null
+        : '(spoke)');
+
+    const additions = [];
+    if (userVisible) additions.push({ role: 'user', content: userVisible, ts: Date.now() });
+    additions.push({ role: 'assistant', content: message, ts: Date.now() });
+
+    const newHistory = [...(state.chatHistory || []), ...additions].slice(-MAX_HISTORY);
+    state.chatHistory = newHistory;
+    await state.save();
+
+    res.json({ message, history: sanitizeHistory(newHistory) });
   } catch (err) {
     // OpenAI errors must not crash the game — the speech bubble just stays empty
     console.error('Assistant error', err);

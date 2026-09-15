@@ -1,4 +1,4 @@
-/* Resting spot in the corner; grows toward center when speaking. */
+/* Resting spot in the corner; grows toward center when opened. */
 .assistant {
   position: fixed;
   right: 1.5rem;
@@ -34,7 +34,7 @@
   transform: translateY(-3px);
 }
 
-/* When open, pin the whole thing to center and enlarge the figure. */
+/* When open, pin the whole thing to center and lay out chat + figure. */
 .assistant--open {
   right: 0;
   bottom: 0;
@@ -97,54 +97,111 @@
   50% { transform: scaleY(1.12); }
 }
 
-/* Panel wraps the echoed question + bubble + ask input together */
-.assistant__panel {
+/* ---------- Chat panel ---------- */
+.assistant__chat {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  align-items: center;
-}
-
-/* The player's echoed question, above the reply bubble */
-.assistant__you {
-  max-width: 340px;
-  align-self: flex-start;
-  color: #b9b3a2;
-  font-size: 0.82rem;
-  font-style: italic;
-  opacity: 0.85;
-}
-
-/* Speech bubble */
-.assistant__bubble {
-  max-width: 340px;
-  background: #151a0f;
-  color: #e6e0d2;
+  width: 360px;
+  max-width: 92vw;
+  background: #12160c;
   border: 1px solid #6a7a4c;
-  border-radius: 12px;
-  padding: 0.9rem 1.1rem;
-  font-size: 0.98rem;
-  line-height: 1.4;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-  position: relative;
-}
-.assistant__bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -9px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-left: 9px solid transparent;
-  border-right: 9px solid transparent;
-  border-top: 9px solid #6a7a4c;
+  border-radius: 14px;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
 }
 
-/* Ask input under the bubble */
+.assistant__log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.9rem;
+  max-height: 32vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #4a5a34 transparent;
+}
+.assistant__log::-webkit-scrollbar {
+  width: 8px;
+}
+.assistant__log::-webkit-scrollbar-thumb {
+  background: #4a5a34;
+  border-radius: 8px;
+}
+.assistant__log::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.assistant__empty {
+  color: #8a8a7a;
+  font-size: 0.9rem;
+  font-style: italic;
+  text-align: center;
+  padding: 0.5rem 0;
+}
+
+.chat-msg {
+  max-width: 82%;
+  padding: 0.55rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  word-wrap: break-word;
+}
+
+/* Player's messages — right side, warmer */
+.chat-msg--you {
+  align-self: flex-end;
+  background: #3a3320;
+  color: #f0ead9;
+  border-bottom-right-radius: 4px;
+}
+
+/* Companion's messages — left side, green-tinted */
+.chat-msg--them {
+  align-self: flex-start;
+  background: #1e2614;
+  color: #e6e0d2;
+  border: 1px solid #3f4a2a;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-msg--typing {
+  letter-spacing: 2px;
+  opacity: 0.7;
+}
+
+/* Action chips (advice / daily challenge) */
+.assistant__actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 0.9rem 0.6rem;
+}
+
+.assistant__chip {
+  flex: 1;
+  background: #1e2614;
+  color: #cdd4bb;
+  border: 1px solid #3f4a2a;
+  border-radius: 999px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.assistant__chip:hover:not(:disabled) {
+  background: #2c3720;
+  color: #e6e0d2;
+}
+.assistant__chip:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Ask input row */
 .assistant__ask {
   display: flex;
   gap: 0.4rem;
-  width: 100%;
-  max-width: 340px;
+  padding: 0 0.9rem 0.9rem;
 }
 
 .assistant__input {
@@ -153,8 +210,8 @@
   color: #e6e0d2;
   border: 1px solid #6a7a4c;
   border-radius: 10px;
-  padding: 0.6rem 0.8rem;
-  font-size: 0.95rem;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.9rem;
   outline: none;
 }
 .assistant__input::placeholder {
@@ -162,6 +219,9 @@
 }
 .assistant__input:focus {
   border-color: #9ab06a;
+}
+.assistant__input:disabled {
+  opacity: 0.6;
 }
 
 .assistant__send {
@@ -175,8 +235,12 @@
   cursor: pointer;
   transition: background 0.2s ease;
 }
-.assistant__send:hover {
+.assistant__send:hover:not(:disabled) {
   background: #9ab06a;
+}
+.assistant__send:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -187,10 +251,8 @@
   }
 }
 
-/* Mobile landscape: a short, wide viewport — shrink the companion and bubble
-   so they don't cover the play area, matching App.css's own breakpoint. Lift
-   it up off the bottom so it clears the build button. When open, keep the
-   whole panel inside the short viewport and let it scroll if needed. */
+/* Mobile landscape: a short, wide viewport — shrink the companion and keep the
+   chat inside the short viewport, matching App.css's own breakpoint. */
 @media (orientation: landscape) and (max-height: 500px) {
   .assistant {
     right: 0.6rem;
@@ -203,38 +265,22 @@
   }
 
   .assistant--open .assistant__stage {
-    gap: 0.5rem;
-    max-height: 94vh;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 0.6rem;
     padding: 0.5rem;
-    overflow-y: auto;
   }
 
   .assistant--open .assistant__figure {
-    width: 96px;
-    height: 125px;
+    width: 120px;
+    height: 156px;
   }
 
-  .assistant__you {
-    font-size: 0.72rem;
+  .assistant__chat {
+    width: 300px;
   }
 
-  .assistant__bubble {
-    max-width: 260px;
-    font-size: 0.82rem;
-    padding: 0.5rem 0.7rem;
-  }
-
-  .assistant__ask {
-    max-width: 260px;
-  }
-
-  .assistant__input {
-    font-size: 0.82rem;
-    padding: 0.45rem 0.6rem;
-  }
-
-  .assistant__send {
-    width: 36px;
-    font-size: 1.2rem;
+  .assistant__log {
+    max-height: 60vh;
   }
 }

@@ -69,3 +69,8 @@ export function askAssistantApi(token, mode, question) {
     body: JSON.stringify({ mode, question }),
   });
 }
+
+// Fetch the saved AI conversation (does not hit OpenAI, no rate-limit cost)
+export function fetchAssistantHistory(token) {
+  return request('/api/assistant/history', token);
+}
