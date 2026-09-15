@@ -146,8 +146,8 @@ function App() {
     }
   }, [getToken]);
 
-  // Open the chat: load the saved conversation, then greet in a way that fits
-  // the current situation (only the first open of the session auto-greets).
+   // Open the chat and load the saved conversation. Greeting is handled by the
+  // sign-in effect below, so opening by click never triggers another greeting.
   const openAssistant = useCallback(async () => {
     setAssistantOpen(true);
     try {
@@ -157,11 +157,7 @@ function App() {
     } catch (err) {
       console.error('Assistant history failed:', err);
     }
-    if (!greetedRef.current) {
-      greetedRef.current = true;
-      talkToAssistant('greeting');
-    }
-  }, [getToken, talkToAssistant]);
+  }, [getToken]);
 
   // Greet automatically once per browser tab session — not on every refresh.
   // sessionStorage holds only a tiny non-sensitive flag ("have we greeted in
@@ -174,7 +170,8 @@ function App() {
     if (sessionStorage.getItem('nimeoniter_greeted') === '1') return;
     sessionStorage.setItem('nimeoniter_greeted', '1');
     openAssistant();
-  }, [isSignedIn, missions.length, totalXp, openAssistant]);
+    talkToAssistant('greeting');
+  }, [isSignedIn, missions.length, totalXp, openAssistant, talkToAssistant]);
 
   async function addTask(task) {
     try {
