@@ -51,13 +51,18 @@ Hard rules you must never break:
 // comes from the backend.
 const MODE_INSTRUCTIONS = {
   greeting:
-    'This is a greeting — open with an actual greeting to the player (vary it: '
-    + '"Hey", "Well, look who\'s back", "Morning", etc., not the same one each '
-    + 'time, and matching the timeOfDay in the context if one is given), then, '
-    + 'if it fits, add a short line reacting to their game state: time since '
-    + "last active, their streak, being close to a level-up, a building coming "
-    + 'up, or how many of today\'s tasks are still open. Greet first, comment '
-    + 'second. One or two sentences.',
+    'This is a greeting. If isNewPlayer in the context is true, this is the '
+    + "player's very first time — welcome them fresh, in your own voice, as "
+    + 'someone new arriving. Never use a "welcome back" style opener ("Well, '
+    + 'look who\'s back", "Good to see you again", etc.) and never refer to '
+    + 'past activity, a streak, or time since last active — they have none. '
+    + "If isNewPlayer is false, open with an actual greeting to the player "
+    + '(vary it: "Hey", "Well, look who\'s back", "Morning", etc., not the '
+    + 'same one each time, and matching the timeOfDay in the context if one '
+    + 'is given), then, if it fits, add a short line reacting to their game '
+    + 'state: time since last active, their streak, being close to a '
+    + "level-up, a building coming up, or how many of today's tasks are "
+    + 'still open. Greet first, comment second. One or two sentences either way.',
   advice:
     'Give one concrete piece of advice on what to focus on next, drawn from '
     + "their level, resources, what the next building needs, and today's tasks. "

@@ -61,6 +61,15 @@ function buildContext(state, today, timeOfDay) {
     remaining: todaysMissions.length - doneCount,
   };
 
+  // A first-time player has no history at all: no XP, no missions ever, no
+  // streak, and no recorded last-active date. Used to tell the AI to welcome
+  // them instead of greeting them as a returning player.
+  const isNewPlayer =
+    (state.totalXp || 0) === 0 &&
+    (!Array.isArray(state.missions) || state.missions.length === 0) &&
+    (state.streak || 0) === 0 &&
+    !state.lastActiveDate;
+
   return {
     level,
     xpIntoLevel,
@@ -74,6 +83,7 @@ function buildContext(state, today, timeOfDay) {
     todayTasks,
     todaySummary,
     timeOfDay, // already validated by the caller against TIME_OF_DAY_VALUES
+    isNewPlayer,
   };
 }
 

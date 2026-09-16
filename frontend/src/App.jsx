@@ -52,6 +52,10 @@ function App() {
   const [assistantBusy, setAssistantBusy] = useState(false);
   const [assistantSpeaking, setAssistantSpeaking] = useState(false);
   const greetedRef = useRef(false); // greet only once per session
+  // True once the player's saved state has come back from the backend on the
+  // initial load — distinguishes "not loaded yet" from a real new player who
+  // has 0 missions and 0 XP.
+  const [stateLoaded, setStateLoaded] = useState(false);
 
   // Apply a state object returned by the backend
   function applyState(data) {
@@ -78,6 +82,7 @@ function App() {
         const token = await getToken();
         const data = await fetchState(token);
         applyState(data);
+        setStateLoaded(true);
 
         // Seed the level-up baseline from the state we just loaded, so a
         // returning player's existing level doesn't trigger a level-up popup
@@ -170,12 +175,12 @@ function App() {
   // same tab does not. The backend stays the source of truth for everything.
   useEffect(() => {
     if (!isSignedIn) return;
-    if (missions.length === 0 && totalXp === 0) return; // wait until state is in
+    if (!stateLoaded) return; // wait until state is in
     if (sessionStorage.getItem('nimeoniter_greeted') === '1') return;
     sessionStorage.setItem('nimeoniter_greeted', '1');
     openAssistant();
     talkToAssistant('greeting');
-  }, [isSignedIn, missions.length, totalXp, openAssistant, talkToAssistant]);
+  }, [isSignedIn, stateLoaded, openAssistant, talkToAssistant]);
 
   async function addTask(task) {
     try {
