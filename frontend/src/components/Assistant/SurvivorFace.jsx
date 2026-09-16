@@ -71,6 +71,12 @@ function SurvivorFace({ speaking, holiday = null }) {
           <stop offset="55%" stopColor="#8a2420" />
           <stop offset="100%" stopColor="#551713" />
         </linearGradient>
+        {/* Golden party hat for New Year, only used for that holiday */}
+        <linearGradient id="newyearHat" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#f7d97a" />
+          <stop offset="55%" stopColor="#f0c14a" />
+          <stop offset="100%" stopColor="#c89a2e" />
+        </linearGradient>
       </defs>
 
       <g className="face__breathe">
@@ -273,6 +279,34 @@ function SurvivorFace({ speaking, holiday = null }) {
               <line x1="100" y1="156" x2="100" y2="166" />
               <line x1="104" y1="155" x2="105" y2="165" />
               <line x1="110" y1="152" x2="111" y2="164" />
+            </g>
+          </g>
+        )}
+        {holiday === 'newyear' && (
+          <g className="face__costume face__costume--newyear">
+            {/* Golden party hat, resting on top of the hood */}
+            <path
+              d="M78 78 Q100 66 122 78 L108 34 Q100 28 92 34 Z"
+              fill="url(#newyearHat)"
+              stroke="#a8842a"
+              strokeWidth="1.5"
+            />
+            {/* diagonal stripes for a little texture */}
+            <path d="M85 71 L97 39" stroke="#c89a2e" strokeWidth="3" opacity="0.5" strokeLinecap="round" />
+            <path d="M100 75 L104 36" stroke="#fff4d0" strokeWidth="2" opacity="0.4" strokeLinecap="round" />
+            <path d="M115 71 L106 41" stroke="#c89a2e" strokeWidth="3" opacity="0.5" strokeLinecap="round" />
+            {/* a small star at the tip in place of a pom-pom */}
+            <path
+              d="M100 22 L102.5 26.5 L107 29 L102.5 31.5 L100 36 L97.5 31.5 L93 29 L97.5 26.5 Z"
+              fill="#fff4d0"
+              stroke="#c89a2e"
+              strokeWidth="0.8"
+            />
+            {/* a few faint sparkles twinkling around the hat */}
+            <g className="face__sparkle">
+              <circle cx="66" cy="56" r="2" fill="#fff4d0" />
+              <circle cx="134" cy="58" r="2" fill="#fff4d0" />
+              <circle cx="100" cy="18" r="1.6" fill="#fff4d0" />
             </g>
           </g>
         )}
