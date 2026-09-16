@@ -11,11 +11,20 @@ function SurvivorFace({ speaking, holiday = null }) {
   ];
 
   const isChristmas = holiday === 'christmas';
-  // Hood/jacket fill swaps to the Christmas-red gradients only while that
+  const isValentines = holiday === 'valentines';
+  // Hood/jacket fill swaps to a holiday-specific gradient only while that
   // holiday is active; any other value (including null) keeps the normal
   // green gradients untouched.
-  const hoodFill = isChristmas ? 'url(#hoodXmas)' : 'url(#hood)';
-  const jacketFill = isChristmas ? 'url(#jacketXmas)' : 'url(#jacket)';
+  const hoodFill = isChristmas
+    ? 'url(#hoodXmas)'
+    : isValentines
+    ? 'url(#hoodValentines)'
+    : 'url(#hood)';
+  const jacketFill = isChristmas
+    ? 'url(#jacketXmas)'
+    : isValentines
+    ? 'url(#jacketValentines)'
+    : 'url(#jacket)';
 
   return (
     <svg
@@ -76,6 +85,18 @@ function SurvivorFace({ speaking, holiday = null }) {
           <stop offset="0%" stopColor="#f7d97a" />
           <stop offset="55%" stopColor="#f0c14a" />
           <stop offset="100%" stopColor="#c89a2e" />
+        </linearGradient>
+        {/* Valentine's-pink hood fabric, swapped in only for that holiday */}
+        <linearGradient id="hoodValentines" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0%" stopColor="#ec7a95" />
+          <stop offset="50%" stopColor="#d9425e" />
+          <stop offset="100%" stopColor="#8a2f45" />
+        </linearGradient>
+        {/* Valentine's-pink jacket, a touch darker than the hood */}
+        <linearGradient id="jacketValentines" x1="0" y1="0" x2="0.2" y2="1">
+          <stop offset="0%" stopColor="#d9425e" />
+          <stop offset="55%" stopColor="#b83552" />
+          <stop offset="100%" stopColor="#6e2439" />
         </linearGradient>
       </defs>
 
@@ -308,6 +329,39 @@ function SurvivorFace({ speaking, holiday = null }) {
               <circle cx="134" cy="58" r="2" fill="#fff4d0" />
               <circle cx="100" cy="18" r="1.6" fill="#fff4d0" />
             </g>
+          </g>
+        )}
+        {isValentines && (
+          <g className="face__costume face__costume--valentines">
+            {/* Heart-shaped sunglasses sitting over the eyes */}
+            <path
+              d="M75 124 L66 120 M125 124 L134 120"
+              stroke="#a8335a"
+              strokeWidth="3"
+              strokeLinecap="round"
+              fill="none"
+            />
+            {/* bridge across the nose, linking the two lenses */}
+            <path d="M93 121 Q100 118 107 121" stroke="#a8335a" strokeWidth="3" fill="none" strokeLinecap="round" />
+            {/* left heart lens */}
+            <path
+              d="M84 133 C75 124 75 114 84 119.4 C93 114 93 124 84 133 Z"
+              fill="#f08aa0"
+              fillOpacity="0.9"
+              stroke="#a8335a"
+              strokeWidth="2"
+            />
+            {/* right heart lens */}
+            <path
+              d="M116 133 C107 124 107 114 116 119.4 C125 114 125 124 116 133 Z"
+              fill="#f08aa0"
+              fillOpacity="0.9"
+              stroke="#a8335a"
+              strokeWidth="2"
+            />
+            {/* small glossy highlight on each lens */}
+            <circle cx="80" cy="121" r="1.6" fill="#fce4e9" opacity="0.85" />
+            <circle cx="112" cy="121" r="1.6" fill="#fce4e9" opacity="0.85" />
           </g>
         )}
       </g>
