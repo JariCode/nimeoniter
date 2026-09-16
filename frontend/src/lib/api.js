@@ -68,10 +68,13 @@ export function buildApi(token) {
 // `today` (YYYY-MM-DD) is the real current date, so the backend can pull in
 // today's tasks for advice — always "today", never the day the player has
 // navigated to, since the assistant advises on the present moment.
-export function askAssistantApi(token, mode, question, holiday, today) {
+// `timeOfDay` ('dawn' | 'day' | 'dusk' | 'night', from data/timeOfDay.js) is
+// the player's real clock time, so greetings match the actual time instead of
+// the model guessing.
+export function askAssistantApi(token, mode, question, holiday, today, timeOfDay) {
   return request('/api/assistant', token, {
     method: 'POST',
-    body: JSON.stringify({ mode, question, holiday, today }),
+    body: JSON.stringify({ mode, question, holiday, today, timeOfDay }),
   });
 }
 

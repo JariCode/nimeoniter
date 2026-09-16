@@ -18,12 +18,17 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 router.use(requireAuth);
 
+// Recognized values for the client-reported time of day, matching
+// frontend/src/data/timeOfDay.js -> getTimeOfDay().
+const TIME_OF_DAY_VALUES = new Set(['dawn', 'day', 'dusk', 'night']);
+
 // Builds a safe, read-only context for the AI from the player's saved state.
 // All derived values use the same gameConfig functions as the rest of the
 // game, so the AI sees exactly the same truth. `today` (YYYY-MM-DD, or null)
 // scopes the task info to a single day — never the player's whole mission
-// history — keeping the prompt small.
-function buildContext(state, today) {
+// history — keeping the prompt small. `timeOfDay` (one of TIME_OF_DAY_VALUES,
+// or null) is the player's real clock time, so greetings can match it.
+function buildContext(state, today, timeOfDay) {
   const { level, xpIntoLevel, xpForNext } = levelFromXp(state.totalXp || 0);
   const nextStage = BUILD_STAGES[(state.baseStageIndex ?? -1) + 1] || null;
 
@@ -68,6 +73,7 @@ function buildContext(state, today) {
     nextBuilding, // null if the base is fully built
     todayTasks,
     todaySummary,
+    timeOfDay, // already validated by the caller against TIME_OF_DAY_VALUES
   };
 }
 
@@ -107,7 +113,7 @@ router.get('/history', async (req, res) => {
 // POST /api/assistant  { mode, question? }
 router.post('/', aiLimiter, async (req, res) => {
   try {
-    const { mode, question, holiday, today } = req.body;
+    const { mode, question, holiday, today, timeOfDay } = req.body;
     const instruction = MODE_INSTRUCTIONS[mode];
     if (!instruction) {
       return res.status(400).json({ error: 'Unknown assistant mode' });
@@ -124,7 +130,11 @@ router.post('/', aiLimiter, async (req, res) => {
     // exploit by lying about the date — worst case is seeing the wrong day's
     // tasks in the AI's context.
     const cleanedToday = typeof today === 'string' ? today : null;
-    const context = buildContext(state, cleanedToday);
+    // Same trust level as `today` above: a plain string checked against a
+    // fixed allowlist, used only to phrase greetings — never a DB query, never
+    // dropped into the prompt as free text.
+    const cleanedTimeOfDay = TIME_OF_DAY_VALUES.has(timeOfDay) ? timeOfDay : null;
+    const context = buildContext(state, cleanedToday, cleanedTimeOfDay);
     const priorHistory = sanitizeHistory(state.chatHistory);
 
     // A light list of task names + keys so the AI can only suggest tasks that
