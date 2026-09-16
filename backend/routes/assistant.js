@@ -20,8 +20,10 @@ router.use(requireAuth);
 
 // Builds a safe, read-only context for the AI from the player's saved state.
 // All derived values use the same gameConfig functions as the rest of the
-// game, so the AI sees exactly the same truth.
-function buildContext(state) {
+// game, so the AI sees exactly the same truth. `today` (YYYY-MM-DD, or null)
+// scopes the task info to a single day — never the player's whole mission
+// history — keeping the prompt small.
+function buildContext(state, today) {
   const { level, xpIntoLevel, xpForNext } = levelFromXp(state.totalXp || 0);
   const nextStage = BUILD_STAGES[(state.baseStageIndex ?? -1) + 1] || null;
 
@@ -42,6 +44,18 @@ function buildContext(state) {
     };
   }
 
+  // Today's tasks only — read-only, for advice. Trimmed to name + done so
+  // the AI can talk about them without seeing ids, xp or resource rewards.
+  const todaysMissions =
+    typeof today === 'string' ? (state.missions || []).filter((m) => m && m.date === today) : [];
+  const todayTasks = todaysMissions.map((m) => ({ name: m.name, done: !!m.done }));
+  const doneCount = todaysMissions.filter((m) => m.done).length;
+  const todaySummary = {
+    total: todaysMissions.length,
+    done: doneCount,
+    remaining: todaysMissions.length - doneCount,
+  };
+
   return {
     level,
     xpIntoLevel,
@@ -52,6 +66,8 @@ function buildContext(state) {
     buildingsBuilt: (state.baseStageIndex ?? -1) + 1,
     buildingsTotal: BUILD_STAGES.length,
     nextBuilding, // null if the base is fully built
+    todayTasks,
+    todaySummary,
   };
 }
 
@@ -91,7 +107,7 @@ router.get('/history', async (req, res) => {
 // POST /api/assistant  { mode, question? }
 router.post('/', aiLimiter, async (req, res) => {
   try {
-    const { mode, question, holiday } = req.body;
+    const { mode, question, holiday, today } = req.body;
     const instruction = MODE_INSTRUCTIONS[mode];
     if (!instruction) {
       return res.status(400).json({ error: 'Unknown assistant mode' });
@@ -102,7 +118,13 @@ router.post('/', aiLimiter, async (req, res) => {
       return res.status(404).json({ error: 'No game state yet' });
     }
 
-    const context = buildContext(state);
+    // Same trust level as the date the client sends for daily-cap checks in
+    // routes/state.js: a plain string, used only to pick which day's tasks to
+    // read. This route never writes to the game state, so there's nothing to
+    // exploit by lying about the date — worst case is seeing the wrong day's
+    // tasks in the AI's context.
+    const cleanedToday = typeof today === 'string' ? today : null;
+    const context = buildContext(state, cleanedToday);
     const priorHistory = sanitizeHistory(state.chatHistory);
 
     // A light list of task names + keys so the AI can only suggest tasks that

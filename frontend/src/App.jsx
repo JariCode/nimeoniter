@@ -131,7 +131,7 @@ function App() {
     }
     try {
       const token = await getToken();
-      const data = await askAssistantApi(token, mode, question, getHoliday());
+      const data = await askAssistantApi(token, mode, question, getHoliday(), todayKey());
       // The backend returns the authoritative, trimmed history including this
       // turn — use it as the source of truth for what to show.
       if (Array.isArray(data.history)) {

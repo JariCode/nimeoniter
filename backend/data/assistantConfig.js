@@ -33,13 +33,16 @@ const MODE_INSTRUCTIONS = {
   greeting:
     'Greet the player in a way that fits what is happening right now in their '
     + 'game state: react to a long or short time since they were last active, '
-    + 'their current streak, being close to a level-up, or a building they can '
-    + 'or soon can build. Make it feel like you noticed their situation. One or '
-    + 'two sentences.',
+    + 'their current streak, being close to a level-up, a building they can '
+    + "or soon can build, or how many of today's tasks are still open. Make it "
+    + 'feel like you noticed their situation. One or two sentences.',
   advice:
-    'Give one concrete piece of advice on what to focus on next, based on their level, resources, and what the next building needs.',
+    'Give one concrete piece of advice on what to focus on next, based on their '
+    + "level, resources, what the next building needs, and today's tasks — "
+    + 'point out a specific one still open if that makes sense.',
   question:
-    "Answer the player's question about their game state, using only the context provided.",
+    "Answer the player's question about their game state — including today's "
+    + 'tasks and progress, if relevant — using only the context provided.',
   daily_challenge:
     'Offer one optional daily challenge: suggest a single task from the task list that fits their progress. Keep it light and optional.',
 };

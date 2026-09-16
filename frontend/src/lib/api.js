@@ -65,10 +65,13 @@ export function buildApi(token) {
 // Ask the AI assistant. mode: 'greeting' | 'advice' | 'question' | 'daily_challenge'.
 // `holiday` is the currently active holiday id (or null), so the backend can
 // fold a holiday touch into its reply without the frontend ever writing game state.
-export function askAssistantApi(token, mode, question, holiday) {
+// `today` (YYYY-MM-DD) is the real current date, so the backend can pull in
+// today's tasks for advice — always "today", never the day the player has
+// navigated to, since the assistant advises on the present moment.
+export function askAssistantApi(token, mode, question, holiday, today) {
   return request('/api/assistant', token, {
     method: 'POST',
-    body: JSON.stringify({ mode, question, holiday }),
+    body: JSON.stringify({ mode, question, holiday, today }),
   });
 }
 
