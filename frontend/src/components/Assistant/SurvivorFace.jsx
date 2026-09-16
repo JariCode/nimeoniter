@@ -10,6 +10,13 @@ function SurvivorFace({ speaking, holiday = null }) {
     [124, 142, 122, 148], [128, 134, 126, 140], [120, 138, 118, 143],
   ];
 
+  const isChristmas = holiday === 'christmas';
+  // Hood/jacket fill swaps to the Christmas-red gradients only while that
+  // holiday is active; any other value (including null) keeps the normal
+  // green gradients untouched.
+  const hoodFill = isChristmas ? 'url(#hoodXmas)' : 'url(#hood)';
+  const jacketFill = isChristmas ? 'url(#jacketXmas)' : 'url(#jacket)';
+
   return (
     <svg
       className={`face ${speaking ? 'face--speaking' : ''}`}
@@ -52,6 +59,18 @@ function SurvivorFace({ speaking, holiday = null }) {
           <stop offset="55%" stopColor="#868a76" />
           <stop offset="100%" stopColor="#b4b6a8" />
         </linearGradient>
+        {/* Christmas-red hood fabric, swapped in only for the christmas holiday */}
+        <linearGradient id="hoodXmas" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0%" stopColor="#c2453b" />
+          <stop offset="50%" stopColor="#a8322c" />
+          <stop offset="100%" stopColor="#6b1f1a" />
+        </linearGradient>
+        {/* Christmas-red jacket, a touch darker than the hood */}
+        <linearGradient id="jacketXmas" x1="0" y1="0" x2="0.2" y2="1">
+          <stop offset="0%" stopColor="#a8322c" />
+          <stop offset="55%" stopColor="#8a2420" />
+          <stop offset="100%" stopColor="#551713" />
+        </linearGradient>
       </defs>
 
       <g className="face__breathe">
@@ -59,7 +78,7 @@ function SurvivorFace({ speaking, holiday = null }) {
         <path
           d="M14 260 Q18 208 44 189 Q64 174 84 168 L116 168 Q136 174 156 189
              Q182 208 186 260 Z"
-          fill="url(#jacket)"
+          fill={jacketFill}
           stroke="#121809"
           strokeWidth="2.5"
         />
@@ -78,7 +97,7 @@ function SurvivorFace({ speaking, holiday = null }) {
         <path
           d="M56 190 Q36 150 46 112 Q54 70 100 62 Q146 70 154 112
              Q164 150 144 190 Q122 158 100 158 Q78 158 56 190 Z"
-          fill="url(#hood)"
+          fill={hoodFill}
           stroke="#121809"
           strokeWidth="2.5"
         />
@@ -189,13 +208,37 @@ function SurvivorFace({ speaking, holiday = null }) {
         <path
           d="M52 116 Q56 72 100 64 Q144 72 148 116 Q148 102 136 90
              Q118 76 100 76 Q82 76 64 90 Q52 102 52 116 Z"
-          fill="url(#hood)"
+          fill={hoodFill}
           stroke="#121809"
           strokeWidth="2.5"
         />
 
         {/* ---------- Holiday costume: worn over the finished face, never
              altering it when no holiday is active ---------- */}
+        {isChristmas && (
+          <g className="face__costume face__costume--christmas">
+            {/* Fluffy white fur trim along the hood's front rim, following the
+                same inner curve as the rim above it */}
+            <path
+              d="M55 114 Q62 88 100 78 Q138 88 145 114"
+              stroke="#f0ede6"
+              strokeWidth="10"
+              strokeLinecap="round"
+              fill="none"
+              opacity="0.95"
+            />
+            {/* Rounded tufts along the trim for a pom-pom fur texture */}
+            <g fill="#f0ede6">
+              <circle cx="57" cy="109" r="6" />
+              <circle cx="69" cy="93" r="6.3" />
+              <circle cx="84" cy="82" r="6.3" />
+              <circle cx="100" cy="78" r="6.6" />
+              <circle cx="116" cy="82" r="6.3" />
+              <circle cx="131" cy="93" r="6.3" />
+              <circle cx="143" cy="109" r="6" />
+            </g>
+          </g>
+        )}
         {holiday === 'halloween' && (
           <g className="face__costume">
             {/* Bone-white skull mask, same silhouette as the skin beneath it */}
