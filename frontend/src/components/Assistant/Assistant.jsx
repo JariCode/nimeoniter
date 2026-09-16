@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import SurvivorFace from './SurvivorFace';
+import { getHoliday } from '../../data/holiday';
 import './Assistant.css';
 
 // The survivor companion. Renders the shared SurvivorFace and a persistent
@@ -10,6 +11,9 @@ import './Assistant.css';
 function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend }) {
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
+  // Active holiday costume, shared by the small icon and the opened figure
+  // since both render the same SurvivorFace element below.
+  const holiday = getHoliday();
 
   // Keep the chat scrolled to the newest message.
   useEffect(() => {
@@ -89,7 +93,7 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend }) {
           onClick={open ? onClose : onOpen}
           aria-label="Talk to your companion"
         >
-          <SurvivorFace speaking={speaking} />
+          <SurvivorFace speaking={speaking} holiday={holiday} />
         </button>
       </div>
     </div>

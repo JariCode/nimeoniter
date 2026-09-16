@@ -44,4 +44,14 @@ const MODE_INSTRUCTIONS = {
     'Offer one optional daily challenge: suggest a single task from the task list that fits their progress. Keep it light and optional.',
 };
 
-module.exports = { ASSISTANT_MODEL, SYSTEM_PROMPT, MODE_INSTRUCTIONS, MAX_HISTORY };
+// Extra one-line instruction folded into a greeting when a holiday is active,
+// keyed by the same holiday id the frontend sends (see
+// frontend/src/data/holiday.js -> getHoliday()). Only greetings use this —
+// other modes are unaffected. Add a new key here (and a matching costume in
+// SurvivorFace.jsx) to support each future holiday.
+const HOLIDAY_GREETINGS = {
+  halloween:
+    'Today is Halloween — wish the player a happy Halloween in your greeting, in your gruff survivor voice.',
+};
+
+module.exports = { ASSISTANT_MODEL, SYSTEM_PROMPT, MODE_INSTRUCTIONS, HOLIDAY_GREETINGS, MAX_HISTORY };

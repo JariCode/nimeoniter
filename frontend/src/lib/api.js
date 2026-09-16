@@ -62,11 +62,13 @@ export function buildApi(token) {
   return request('/api/state/build', token, { method: 'POST' });
 }
 
-// Ask the AI assistant. mode: 'greeting' | 'advice' | 'question' | 'daily_challenge'
-export function askAssistantApi(token, mode, question) {
+// Ask the AI assistant. mode: 'greeting' | 'advice' | 'question' | 'daily_challenge'.
+// `holiday` is the currently active holiday id (or null), so the backend can
+// fold a holiday touch into its reply without the frontend ever writing game state.
+export function askAssistantApi(token, mode, question, holiday) {
   return request('/api/assistant', token, {
     method: 'POST',
-    body: JSON.stringify({ mode, question }),
+    body: JSON.stringify({ mode, question, holiday }),
   });
 }
 

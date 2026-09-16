@@ -5,7 +5,6 @@
 
 // Force a holiday for testing. Uncomment one line, then remove it afterwards.
 // Values: 'halloween' | 'christmas' | 'newyear' | 'valentines' | 'easter'
-// export const TEST_HOLIDAY = 'halloween';
 export const TEST_HOLIDAY = null;
 
 // Date ranges per holiday, as [month, day] pairs (month is 1-12 here for

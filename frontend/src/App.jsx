@@ -14,6 +14,7 @@ import Achievement from './components/Achievement/Achievement';
 import Notice from './components/Notice/Notice';
 import Assistant from './components/Assistant/Assistant';
 import { todayKey } from './data/dateUtils';
+import { getHoliday } from './data/holiday';
 import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi, askAssistantApi, fetchAssistantHistory } from './lib/api';
 import './App.css';
 
@@ -130,7 +131,7 @@ function App() {
     }
     try {
       const token = await getToken();
-      const data = await askAssistantApi(token, mode, question);
+      const data = await askAssistantApi(token, mode, question, getHoliday());
       // The backend returns the authoritative, trimmed history including this
       // turn — use it as the source of truth for what to show.
       if (Array.isArray(data.history)) {

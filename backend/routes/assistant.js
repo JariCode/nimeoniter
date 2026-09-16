@@ -9,6 +9,7 @@ const {
   ASSISTANT_MODEL,
   SYSTEM_PROMPT,
   MODE_INSTRUCTIONS,
+  HOLIDAY_GREETINGS,
   MAX_HISTORY,
 } = require('../data/assistantConfig');
 
@@ -90,7 +91,7 @@ router.get('/history', async (req, res) => {
 // POST /api/assistant  { mode, question? }
 router.post('/', aiLimiter, async (req, res) => {
   try {
-    const { mode, question } = req.body;
+    const { mode, question, holiday } = req.body;
     const instruction = MODE_INSTRUCTIONS[mode];
     if (!instruction) {
       return res.status(400).json({ error: 'Unknown assistant mode' });
@@ -110,6 +111,13 @@ router.post('/', aiLimiter, async (req, res) => {
 
     const cleaned = cleanQuestion(question);
 
+    // Only greetings get a holiday touch, and only for a holiday we actually
+    // recognize — an unknown/invalid value from the client is just ignored.
+    const holidayNote =
+      mode === 'greeting' && typeof holiday === 'string' && HOLIDAY_GREETINGS[holiday]
+        ? HOLIDAY_GREETINGS[holiday]
+        : null;
+
     // The player's question is wrapped in explicit delimiters and framed as
     // untrusted data, not instructions. Combined with the hard rules in the
     // system prompt — and the fact that this route never writes to the game
@@ -126,6 +134,7 @@ router.post('/', aiLimiter, async (req, res) => {
       `Current player state: ${JSON.stringify(context)}`,
       `Available tasks: ${taskList}`,
       questionBlock,
+      holidayNote,
       `Instruction: ${instruction}`,
     ]
       .filter(Boolean)

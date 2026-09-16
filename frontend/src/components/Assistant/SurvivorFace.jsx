@@ -3,7 +3,7 @@ import './Assistant.css';
 // The face and bust. Detail and grime come from gradients, uneven shapes and
 // stray stubble strokes rather than clean symmetrical paths. `speaking`
 // drives the mouth animation.
-function SurvivorFace({ speaking }) {
+function SurvivorFace({ speaking, holiday = null }) {
   // Short stubble strokes high on the cheeks, above the beard line.
   const stubble = [
     [76, 142, 78, 148], [72, 134, 74, 140], [80, 138, 82, 143],
@@ -193,6 +193,46 @@ function SurvivorFace({ speaking }) {
           stroke="#121809"
           strokeWidth="2.5"
         />
+
+        {/* ---------- Holiday costume: worn over the finished face, never
+             altering it when no holiday is active ---------- */}
+        {holiday === 'halloween' && (
+          <g className="face__costume">
+            {/* Bone-white skull mask, same silhouette as the skin beneath it */}
+            <path
+              d="M66 112 Q64 80 100 74 Q136 80 134 112 Q134 138 121 160
+                 Q111 176 100 178 Q89 176 79 160 Q66 138 66 112 Z"
+              fill="#e8e4d8"
+              stroke="#b0a996"
+              strokeWidth="1.5"
+            />
+            {/* cheekbone shading for a little dimension */}
+            <path d="M71 128 Q77 143 87 151" stroke="#c4bda8" strokeWidth="2" fill="none" opacity="0.6" strokeLinecap="round" />
+            <path d="M129 128 Q123 143 113 151" stroke="#c4bda8" strokeWidth="2" fill="none" opacity="0.6" strokeLinecap="round" />
+            {/* dark eye sockets over the eyes */}
+            <ellipse cx="84" cy="123" rx="11" ry="13" fill="#1a1712" />
+            <ellipse cx="116" cy="123" rx="11" ry="13" fill="#1a1712" />
+            {/* triangular nasal cavity */}
+            <path d="M100 116 L92 141 L108 141 Z" fill="#1a1712" />
+            {/* jaw cavity, tapering to the chin */}
+            <path d="M81 150 Q100 176 119 150 Z" fill="#1a1712" />
+            {/* upper teeth row sitting across the top of the jaw cavity */}
+            <path
+              d="M83 150 Q100 158 117 150 L115 161 Q100 167 85 161 Z"
+              fill="#f4f0e4"
+              stroke="#b0a996"
+              strokeWidth="0.8"
+            />
+            {/* gaps between the teeth */}
+            <g stroke="#1a1712" strokeWidth="1">
+              <line x1="90" y1="152" x2="89" y2="164" />
+              <line x1="96" y1="155" x2="95" y2="165" />
+              <line x1="100" y1="156" x2="100" y2="166" />
+              <line x1="104" y1="155" x2="105" y2="165" />
+              <line x1="110" y1="152" x2="111" y2="164" />
+            </g>
+          </g>
+        )}
       </g>
     </svg>
   );
