@@ -58,6 +58,8 @@ const HOLIDAY_GREETINGS = {
     'Today is New Year — wish the player a happy New Year in your greeting, in your gruff survivor voice.',
   valentines:
     "Today is Valentine's Day — wish the player a happy Valentine's Day in your greeting, in your gruff survivor voice.",
+  easter:
+    'Today is Easter — wish the player a happy Easter in your greeting, in your gruff survivor voice.',
 };
 
 module.exports = { ASSISTANT_MODEL, SYSTEM_PROMPT, MODE_INSTRUCTIONS, HOLIDAY_GREETINGS, MAX_HISTORY };

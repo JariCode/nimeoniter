@@ -12,6 +12,7 @@ function SurvivorFace({ speaking, holiday = null }) {
 
   const isChristmas = holiday === 'christmas';
   const isValentines = holiday === 'valentines';
+  const isEaster = holiday === 'easter';
   // Hood/jacket fill swaps to a holiday-specific gradient only while that
   // holiday is active; any other value (including null) keeps the normal
   // green gradients untouched.
@@ -19,11 +20,15 @@ function SurvivorFace({ speaking, holiday = null }) {
     ? 'url(#hoodXmas)'
     : isValentines
     ? 'url(#hoodValentines)'
+    : isEaster
+    ? 'url(#hoodEaster)'
     : 'url(#hood)';
   const jacketFill = isChristmas
     ? 'url(#jacketXmas)'
     : isValentines
     ? 'url(#jacketValentines)'
+    : isEaster
+    ? 'url(#jacketEaster)'
     : 'url(#jacket)';
 
   return (
@@ -97,6 +102,18 @@ function SurvivorFace({ speaking, holiday = null }) {
           <stop offset="0%" stopColor="#d9425e" />
           <stop offset="55%" stopColor="#b83552" />
           <stop offset="100%" stopColor="#6e2439" />
+        </linearGradient>
+        {/* Easter chick-yellow hood fabric, swapped in only for that holiday */}
+        <linearGradient id="hoodEaster" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0%" stopColor="#f7dd6e" />
+          <stop offset="50%" stopColor="#f0d24a" />
+          <stop offset="100%" stopColor="#c99328" />
+        </linearGradient>
+        {/* Easter chick-yellow jacket, a touch darker than the hood */}
+        <linearGradient id="jacketEaster" x1="0" y1="0" x2="0.2" y2="1">
+          <stop offset="0%" stopColor="#e8b23a" />
+          <stop offset="55%" stopColor="#c99328" />
+          <stop offset="100%" stopColor="#8a661a" />
         </linearGradient>
       </defs>
 
@@ -362,6 +379,26 @@ function SurvivorFace({ speaking, holiday = null }) {
             {/* small glossy highlight on each lens */}
             <circle cx="80" cy="121" r="1.6" fill="#fce4e9" opacity="0.85" />
             <circle cx="112" cy="121" r="1.6" fill="#fce4e9" opacity="0.85" />
+          </g>
+        )}
+        {isEaster && (
+          <g className="face__costume face__costume--easter">
+            {/* Bunny ears rising from the top of the hood */}
+            <path
+              d="M75 78 Q70 45 78 18 Q82 8 86 18 Q94 45 89 78 Q82 84 75 78 Z"
+              fill="#efe7d8"
+              stroke="#b0a68e"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M125 78 Q130 45 122 18 Q118 8 114 18 Q106 45 111 78 Q118 84 125 78 Z"
+              fill="#efe7d8"
+              stroke="#b0a68e"
+              strokeWidth="1.5"
+            />
+            {/* pink inner ear on each */}
+            <path d="M78 74 Q74 48 80 26 Q82 20 84 26 Q90 48 86 74 Q82 78 78 74 Z" fill="#f6b8ce" />
+            <path d="M122 74 Q126 48 120 26 Q118 20 116 26 Q110 48 114 74 Q118 78 122 74 Z" fill="#f6b8ce" />
           </g>
         )}
       </g>
