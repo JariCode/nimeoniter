@@ -46,6 +46,7 @@ const TASK_CATALOG = [
 
   // --- Home & tidying (mixed) ---
   { key: 'clean',     icon: '🧹', name: 'Clean',                xp: 10, resources: { stone: 1, food: 1 } },
+  { key: 'window',     icon: '🪟', name: 'Clean the windows',    xp: 10, resources: { stone: 1, wood: 1 } },
   { key: 'laundry',   icon: '🧺', name: 'Do laundry',           xp: 10, resources: { wood: 1, stone: 1 } },
   { key: 'dishes',    icon: '🍽️', name: 'Wash the dishes',      xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'tidy',      icon: '🛏️', name: 'Tidy your room',       xp: 10, resources: { wood: 1, food: 1 } },
@@ -60,6 +61,7 @@ const TASK_CATALOG = [
 
   // --- Mind & growth (wood + food) ---
   { key: 'study',     icon: '📚', name: 'Study',                xp: 20, resources: { wood: 1, stone: 1 } },
+  { key: 'exam',      icon: '📝', name: 'Take a test / exam',   xp: 25, resources: { wood: 2, stone: 1 } },
   { key: 'read',      icon: '📖', name: 'Read',                 xp: 10, resources: { wood: 1 } },
   { key: 'work',      icon: '💻', name: 'Focused work',         xp: 20, resources: { wood: 2, stone: 1 } },
   { key: 'journal',   icon: '📝', name: 'Write / journal',      xp: 10, resources: { wood: 1, food: 1 } },
@@ -125,6 +127,7 @@ const TASK_CATALOG = [
   { key: 'carservice', icon: '🛠️', name: 'Car service / maintenance', xp: 20, resources: { stone: 2, wood: 1 } },
   { key: 'bikeservice', icon: '🚲', name: 'Bike service / maintenance', xp: 20, resources: { stone: 1, wood: 1 } },
   { key: 'changetires', icon: '🚙', name: 'Change car tires',    xp: 20, resources: { stone: 2, wood: 1 } },
+  { key: 'carwash',   icon: '🧼', name: 'Car wash',            xp: 10, resources: { stone: 1, wood: 1 } },
 
   // --- Health & appointments (mixed) ---
   { key: 'dentist',   icon: '🦷', name: 'Dentist appointment', xp: 10, resources: { food: 1, stone: 1 } },
