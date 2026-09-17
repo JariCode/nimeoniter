@@ -118,7 +118,6 @@ const TASK_CATALOG = [
   // --- Errands & getting around (wood / mixed) ---
   { key: 'drive',     icon: '🚗', name: 'Drive somewhere',     xp: 10, resources: { wood: 2 } },
   { key: 'fuel',      icon: '⛽', name: 'Fill up / charge the car', xp: 10, resources: { wood: 1, stone: 1 } },
-  { key: 'carwash',   icon: '🧼', name: 'Wash the car',        xp: 10, resources: { stone: 1, wood: 1 } },
   { key: 'transit',   icon: '🚌', name: 'Take public transport', xp: 10, resources: { wood: 1, stone: 1 } },
   { key: 'pharmacy',  icon: '💊', name: 'Go to the pharmacy',  xp: 10, resources: { food: 1, wood: 1 } },
   { key: 'post',      icon: '📮', name: 'Post office / parcels', xp: 10, resources: { wood: 1, stone: 1 } },
@@ -127,7 +126,7 @@ const TASK_CATALOG = [
   { key: 'carservice', icon: '🛠️', name: 'Car service / maintenance', xp: 20, resources: { stone: 2, wood: 1 } },
   { key: 'bikeservice', icon: '🚲', name: 'Bike service / maintenance', xp: 20, resources: { stone: 1, wood: 1 } },
   { key: 'changetires', icon: '🚙', name: 'Change car tires',    xp: 20, resources: { stone: 2, wood: 1 } },
-  { key: 'carwash',   icon: '🧼', name: 'Car wash',            xp: 10, resources: { stone: 1, wood: 1 } },
+  { key: 'carwash',   icon: '🧼', name: 'Wash the car',            xp: 10, resources: { stone: 1, wood: 1 } },
 
   // --- Health & appointments (mixed) ---
   { key: 'dentist',   icon: '🦷', name: 'Dentist appointment', xp: 10, resources: { food: 1, stone: 1 } },
