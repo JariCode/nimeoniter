@@ -10,9 +10,11 @@ import AddTask from './components/AddTask/AddTask';
 import ResourceBar from './components/ResourceBar/ResourceBar';
 import BaseStatus from './components/BaseStatus/BaseStatus';
 import LevelUp from './components/LevelUp/LevelUp';
+import WorldComplete from './components/WorldComplete/WorldComplete';
 import Achievement from './components/Achievement/Achievement';
 import Notice from './components/Notice/Notice';
 import Assistant from './components/Assistant/Assistant';
+import { currentWorldFromBuilt } from './data/world';
 import { todayKey } from './data/dateUtils';
 import { getHoliday } from './data/holiday';
 import { getTimeOfDay } from './data/timeOfDay';
@@ -104,6 +106,20 @@ function App() {
   // Stable reference: LevelUp's auto-dismiss effect depends on this prop, so
   // a new function identity on every render would keep resetting its timer.
   const dismissLevelUp = useCallback(() => setLevelUpShown(null), []);
+
+  // World-complete detection: shown once, right when the just-built stage is
+  // the last stage of its world (e.g. building the wall finishes world 1).
+  const [worldCompleteShown, setWorldCompleteShown] = useState(false);
+  const dismissWorldComplete = useCallback(() => setWorldCompleteShown(false), []);
+
+  // Is `key` the last stage belonging to its own world? Used right after a
+  // build to detect "the world we were building just got finished".
+  function isWorldFinalStage(stages, key) {
+    const stage = stages.find((s) => s.key === key);
+    if (!stage) return false;
+    const sameWorld = stages.filter((s) => s.world === stage.world);
+    return sameWorld[sameWorld.length - 1]?.key === key;
+  }
 
   // Achievements are granted by the backend, which returns the ids newly
   // unlocked by a completion/build in its `unlockedNow` field. We queue those
@@ -288,6 +304,9 @@ function App() {
       const data = await buildApi(token);
       applyState(data);
       queueUnlocked(data.unlockedNow);
+      if (isWorldFinalStage(buildStages, builtKey)) {
+        setWorldCompleteShown(true);
+      }
     } catch (err) {
       console.error('Build failed:', err);
     }
@@ -297,6 +316,9 @@ function App() {
     baseStageIndex >= 0 && buildStages[baseStageIndex]
       ? buildStages[baseStageIndex].key
       : 'camp';
+
+  // Which world the player is currently in, for the companion's city outfit
+  const currentWorld = currentWorldFromBuilt(buildStages, baseStageKey);
 
   // Show queued achievement popups one at a time: when nothing is showing and
   // the queue has items, pop the first off the queue and display it.
@@ -340,6 +362,8 @@ function App() {
       {!started && !isSignedIn && <Landing onStart={() => setStarted(true)} />}
 
       {levelUpShown && <LevelUp level={levelUpShown} onDone={dismissLevelUp} />}
+
+      {worldCompleteShown && <WorldComplete onDone={dismissWorldComplete} />}
 
       {achievementShown && (
         <Achievement achievement={achievementShown} onDone={dismissAchievement} />
@@ -596,6 +620,7 @@ function App() {
             onOpen={openAssistant}
             onClose={() => { setAssistantOpen(false); setAssistantSpeaking(false); }}
             onSend={talkToAssistant}
+            world={currentWorld}
           />
         </>
       )}

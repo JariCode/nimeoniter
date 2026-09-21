@@ -3,7 +3,7 @@ import './Assistant.css';
 // The face and bust. Detail and grime come from gradients, uneven shapes and
 // stray stubble strokes rather than clean symmetrical paths. `speaking`
 // drives the mouth animation.
-function SurvivorFace({ speaking, holiday = null }) {
+function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
   // Short stubble strokes high on the cheeks, above the beard line.
   const stubble = [
     [76, 142, 78, 148], [72, 134, 74, 140], [80, 138, 82, 143],
@@ -13,6 +13,10 @@ function SurvivorFace({ speaking, holiday = null }) {
   const isChristmas = holiday === 'christmas';
   const isValentines = holiday === 'valentines';
   const isEaster = holiday === 'easter';
+  // The city outfit is the world-2 "default look" — it only applies when no
+  // holiday costume is active, so holidays keep overriding it exactly like
+  // they already override the plain medieval look.
+  const isCity = world === 'city' && !holiday;
   // Hood/jacket fill swaps to a holiday-specific gradient only while that
   // holiday is active; any other value (including null) keeps the normal
   // green gradients untouched.
@@ -22,6 +26,8 @@ function SurvivorFace({ speaking, holiday = null }) {
     ? 'url(#hoodValentines)'
     : isEaster
     ? 'url(#hoodEaster)'
+    : isCity
+    ? 'url(#hoodCity)'
     : 'url(#hood)';
   const jacketFill = isChristmas
     ? 'url(#jacketXmas)'
@@ -29,6 +35,8 @@ function SurvivorFace({ speaking, holiday = null }) {
     ? 'url(#jacketValentines)'
     : isEaster
     ? 'url(#jacketEaster)'
+    : isCity
+    ? 'url(#jacketCity)'
     : 'url(#jacket)';
 
   return (
@@ -115,6 +123,23 @@ function SurvivorFace({ speaking, holiday = null }) {
           <stop offset="55%" stopColor="#c99328" />
           <stop offset="100%" stopColor="#8a661a" />
         </linearGradient>
+        {/* City-world black coat fabric (hood stands in for the raised collar) */}
+        <linearGradient id="hoodCity" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0%" stopColor="#3a3a42" />
+          <stop offset="50%" stopColor="#242428" />
+          <stop offset="100%" stopColor="#101012" />
+        </linearGradient>
+        {/* City-world black coat, a touch darker than the collar */}
+        <linearGradient id="jacketCity" x1="0" y1="0" x2="0.2" y2="1">
+          <stop offset="0%" stopColor="#2c2c32" />
+          <stop offset="55%" stopColor="#1c1c20" />
+          <stop offset="100%" stopColor="#0c0c0e" />
+        </linearGradient>
+        {/* Purple shirt, glimpsed under the open coat collar */}
+        <linearGradient id="shirtCity" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#9a5cd0" />
+          <stop offset="100%" stopColor="#6a34a0" />
+        </linearGradient>
       </defs>
 
       <g className="face__breathe">
@@ -126,6 +151,10 @@ function SurvivorFace({ speaking, holiday = null }) {
           stroke="#121809"
           strokeWidth="2.5"
         />
+        {/* Purple shirt showing through the open coat collar (city only) */}
+        {isCity && (
+          <path d="M84 172 Q100 186 116 172 L112 192 Q100 198 88 192 Z" fill="url(#shirtCity)" />
+        )}
         {/* collar opening */}
         <path d="M82 170 Q100 188 118 170" stroke="#151c0c" strokeWidth="3.5" fill="none" opacity="0.85" />
         {/* jacket seams / folds */}
@@ -399,6 +428,17 @@ function SurvivorFace({ speaking, holiday = null }) {
             {/* pink inner ear on each */}
             <path d="M78 74 Q74 48 80 26 Q82 20 84 26 Q90 48 86 74 Q82 78 78 74 Z" fill="#f6b8ce" />
             <path d="M122 74 Q126 48 120 26 Q118 20 116 26 Q110 48 114 74 Q118 78 122 74 Z" fill="#f6b8ce" />
+          </g>
+        )}
+        {isCity && (
+          <g className="face__costume face__costume--city">
+            {/* Black aviator sunglasses sitting over the eyes */}
+            <path d="M75 122 L67 119 M125 122 L133 119" stroke="#0c0c0e" strokeWidth="3" strokeLinecap="round" fill="none" />
+            <path d="M93 120 Q100 117 107 120" stroke="#0c0c0e" strokeWidth="3" fill="none" strokeLinecap="round" />
+            <ellipse cx="84" cy="124" rx="10.5" ry="8.5" fill="#14141a" stroke="#0c0c0e" strokeWidth="1.6" />
+            <ellipse cx="116" cy="124" rx="10.5" ry="8.5" fill="#14141a" stroke="#0c0c0e" strokeWidth="1.6" />
+            <path d="M78 120 Q82 118 87 120" stroke="#6a7080" strokeWidth="1.2" opacity="0.6" fill="none" />
+            <path d="M110 120 Q114 118 119 120" stroke="#6a7080" strokeWidth="1.2" opacity="0.6" fill="none" />
           </g>
         )}
       </g>

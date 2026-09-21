@@ -424,11 +424,46 @@
   100% { transform: rotate(0deg); }
 }
 
+/* ===== City-world decorations ===== */
+/* Neon signage flickers unevenly, like a real tube sign settling in. */
+.neon-pulse {
+  animation: neon-flicker 2.8s ease-in-out infinite;
+}
+@keyframes neon-flicker {
+  0%, 100% { opacity: 1; }
+  8%       { opacity: 0.75; }
+  10%      { opacity: 1; }
+  52%      { opacity: 0.85; }
+  55%      { opacity: 1; }
+}
+
+/* Rooftop beacon blinks on a steady slow rhythm. */
+.skyscraper-beacon {
+  animation: beacon-blink 1.8s ease-in-out infinite;
+}
+@keyframes beacon-blink {
+  0%, 40%  { opacity: 1; }
+  50%, 90% { opacity: 0.15; }
+  100%     { opacity: 1; }
+}
+
+/* Coffee steam wisps rise and fade, replacing the campfire's smoke */
+.coffee-steam {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: steam-rise 3s ease-in-out infinite;
+}
+@keyframes steam-rise {
+  0%   { transform: translateY(4px); opacity: 0; }
+  25%  { opacity: 0.5; }
+  100% { transform: translateY(-14px); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bat, .bat-body, .pumpkin-glow, .ghost-float, .candle-flame, .christmas-light-glow,
   .bunting-flag, .newyear-sparkle, .newyear-rocket-trail, .newyear-firework,
   .valentine-heart-float, .valentine-garland-heart, .valentine-heart-glow,
-  .easter-egg-sway {
+  .easter-egg-sway, .neon-pulse, .skyscraper-beacon, .coffee-steam {
     animation: none;
   }
 }

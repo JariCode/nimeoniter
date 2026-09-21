@@ -8,14 +8,22 @@ function xpForLevel(level) {
 // Buildings in the order they get built. Each stays permanently once built.
 // The starting camp is free and not in this list.
 const BUILD_STAGES = [
-  { key: 'well',       name: 'WELL',       requiredLevel: 2,  cost: { wood: 10, stone: 5,  food: 25 } },
-  { key: 'hut',        name: 'HUT',        requiredLevel: 3,  cost: { wood: 20, stone: 10, food: 30 } },
-  { key: 'house',      name: 'HOUSE',      requiredLevel: 5,  cost: { wood: 35, stone: 20, food: 30 } },
-  { key: 'field',      name: 'FIELD',      requiredLevel: 7,  cost: { wood: 20, stone: 10, food: 35 } },
-  { key: 'storage',    name: 'STORAGE',    requiredLevel: 9,  cost: { wood: 30, stone: 25, food: 40 } },
-  { key: 'fence',      name: 'FENCE',      requiredLevel: 11, cost: { wood: 30, stone: 20, food: 45 } },
-  { key: 'watchtower', name: 'WATCHTOWER', requiredLevel: 14, cost: { wood: 40, stone: 40, food: 50 } },
-  { key: 'wall',       name: 'WALL',       requiredLevel: 18, cost: { wood: 90, stone: 80, food: 55 } },
+  { key: 'well',       name: 'WELL',       world: 'medieval', requiredLevel: 2,  cost: { wood: 10, stone: 5,  food: 25 } },
+  { key: 'hut',        name: 'HUT',        world: 'medieval', requiredLevel: 3,  cost: { wood: 20, stone: 10, food: 30 } },
+  { key: 'house',      name: 'HOUSE',      world: 'medieval', requiredLevel: 5,  cost: { wood: 35, stone: 20, food: 30 } },
+  { key: 'field',      name: 'FIELD',      world: 'medieval', requiredLevel: 7,  cost: { wood: 20, stone: 10, food: 35 } },
+  { key: 'storage',    name: 'STORAGE',    world: 'medieval', requiredLevel: 9,  cost: { wood: 30, stone: 25, food: 40 } },
+  { key: 'fence',      name: 'FENCE',      world: 'medieval', requiredLevel: 11, cost: { wood: 30, stone: 20, food: 45 } },
+  { key: 'watchtower', name: 'WATCHTOWER', world: 'medieval', requiredLevel: 14, cost: { wood: 40, stone: 40, food: 50 } },
+  { key: 'wall',       name: 'WALL',       world: 'medieval', requiredLevel: 18, cost: { wood: 90, stone: 80, food: 55 } },
+  { key: 'street',     name: 'STREET',     world: 'city', requiredLevel: 21, cost: { wood: 100, stone: 90,  food: 60 } },
+  { key: 'apartment',  name: 'APARTMENT',  world: 'city', requiredLevel: 24, cost: { wood: 110, stone: 100, food: 65 } },
+  { key: 'diner',      name: 'DINER',      world: 'city', requiredLevel: 27, cost: { wood: 120, stone: 110, food: 70 } },
+  { key: 'shop',       name: 'SHOP',       world: 'city', requiredLevel: 30, cost: { wood: 130, stone: 120, food: 75 } },
+  { key: 'hotel',      name: 'HOTEL',      world: 'city', requiredLevel: 34, cost: { wood: 150, stone: 140, food: 80 } },
+  { key: 'casino',     name: 'CASINO',     world: 'city', requiredLevel: 38, cost: { wood: 170, stone: 160, food: 85 } },
+  { key: 'theater',    name: 'THEATER',    world: 'city', requiredLevel: 42, cost: { wood: 190, stone: 180, food: 90 } },
+  { key: 'skyscraper', name: 'SKYSCRAPER', world: 'city', requiredLevel: 46, cost: { wood: 220, stone: 210, food: 95 } },
 ];
 
 // Level, progress within the level, and XP needed for the next — from total XP

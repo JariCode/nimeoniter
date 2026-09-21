@@ -1,0 +1,105 @@
+.worldcomplete-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 210;
+  animation: worldcomplete-fade 0.4s ease-out;
+}
+
+.worldcomplete-card {
+  position: relative;
+  text-align: center;
+  padding: 20px 40px;
+  animation: worldcomplete-rise 0.6s ease-out;
+}
+
+.worldcomplete-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.worldcomplete-ray {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 90px;
+  background: linear-gradient(to bottom, rgba(232, 162, 61, 0.9), rgba(232, 162, 61, 0));
+  transform: translate(-50%, -100%) rotate(var(--angle)) scaleY(0);
+  transform-origin: bottom center;
+  animation: worldcomplete-ray-shoot 1.2s ease-out forwards;
+}
+
+@keyframes worldcomplete-ray-shoot {
+  0%   { opacity: 0; transform: translate(-50%, -100%) rotate(var(--angle)) scaleY(0); }
+  40%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -100%) rotate(var(--angle)) scaleY(1); }
+}
+
+.worldcomplete-label {
+  font-size: 30px;
+  font-weight: bold;
+  letter-spacing: 6px;
+  color: var(--text-light);
+  text-shadow: 0 0 40px rgba(232, 162, 61, 0.7);
+  margin: 0;
+}
+
+.worldcomplete-sub {
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  margin: 10px 0 22px;
+}
+
+.worldcomplete-horizon {
+  height: 4px;
+  width: 220px;
+  margin: 0 auto;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ff3d9a, #3de0ff, #ffd23d, #ff3d9a);
+  background-size: 200% 100%;
+  box-shadow: 0 0 18px rgba(255, 61, 154, 0.6);
+  animation: worldcomplete-horizon-glow 3s linear infinite;
+}
+
+@keyframes worldcomplete-horizon-glow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.worldcomplete-teaser {
+  margin-top: 18px;
+  font-size: 13px;
+  font-style: italic;
+  letter-spacing: 0.3px;
+  color: var(--text-dim);
+  max-width: 320px;
+}
+
+@keyframes worldcomplete-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes worldcomplete-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .worldcomplete-ray,
+  .worldcomplete-horizon {
+    animation: none;
+  }
+}

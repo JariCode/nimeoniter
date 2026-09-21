@@ -8,7 +8,7 @@ import './Assistant.css';
 // with buttons for advice and the daily challenge. The backend is the source
 // of truth: this component only shows the conversation and sends turns. It
 // never computes rewards or game state.
-function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend }) {
+function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, world }) {
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
   // Active holiday costume, shared by the small icon and the opened figure
@@ -93,7 +93,7 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend }) {
           onClick={open ? onClose : onOpen}
           aria-label="Talk to your companion"
         >
-          <SurvivorFace speaking={speaking} holiday={holiday} />
+          <SurvivorFace speaking={speaking} holiday={holiday} world={world} />
         </button>
       </div>
     </div>
