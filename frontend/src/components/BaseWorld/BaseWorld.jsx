@@ -13,6 +13,13 @@ import {
   VALENTINES_HEARTS, VALENTINES_GLOW, VALENTINES_GARLAND, VALENTINES_ROSES, VALENTINES_HEART_GLOWS,
   EASTER_EGGS, EASTER_FLOWERS, EASTER_GLOW, EASTER_GARLAND, EASTER_BUNNIES,
 } from '../../data/holiday';
+import {
+  CITY_HALLOWEEN_GLOW, CITY_HALLOWEEN_NEON_BATS, CITY_HALLOWEEN_MARQUEE_PUMPKINS, CITY_HALLOWEEN_NEON_SIGN,
+  CITY_CHRISTMAS_ROOFLINE_LIGHTS, CITY_CHRISTMAS_AWNING_LIGHTS, CITY_CHRISTMAS_NEON_TREE,
+  CITY_NEWYEAR_FIREWORKS, CITY_NEWYEAR_SPARKLES, CITY_NEWYEAR_STREET_SPARKLE, CITY_NEWYEAR_NEON_TOAST,
+  CITY_VALENTINES_GLOW, CITY_VALENTINES_NEON_HEARTS, CITY_VALENTINES_HEART_SIGNS, CITY_VALENTINES_NEON_HEART_GLOW,
+  CITY_EASTER_GLOW, CITY_EASTER_NEON_EGG_FLOATERS, CITY_EASTER_NEON_EGGS, CITY_EASTER_NEON_BUNNY,
+} from '../../data/cityHolidayDecorations';
 
 // How many buildings are built, from the current stage key.
 // 'camp' = 0 built; otherwise index in buildStages + 1.
@@ -374,8 +381,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
-        {/* ===== HALLOWEEN: sky-layer decorations (glow, cobwebs, bats) ===== */}
-        {holiday === 'halloween' && (
+        {/* ===== HALLOWEEN: sky-layer decorations (glow, cobwebs, bats) =====
+            Village-only: positions are laid out for the medieval scenery. */}
+        {!isCity && holiday === 'halloween' && (
           <g>
             {/* Orange glow tint over the whole sky */}
             <rect
@@ -424,8 +432,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
-        {/* ===== CHRISTMAS: sky-layer decorations (string lights) ===== */}
-        {holiday === 'christmas' && (
+        {/* ===== CHRISTMAS: sky-layer decorations (string lights) =====
+            Village-only: positions are laid out for the medieval scenery. */}
+        {!isCity && holiday === 'christmas' && (
           <g>
             {/* garland wire, swagged in two dips across the top of the scene */}
             <path
@@ -469,8 +478,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
-        {/* ===== NEW YEAR: sky-layer decorations (glow, bunting, sparkle, fireworks) ===== */}
-        {holiday === 'newyear' && (
+        {/* ===== NEW YEAR: sky-layer decorations (glow, bunting, sparkle, fireworks) =====
+            Village-only: positions are laid out for the medieval scenery. */}
+        {!isCity && holiday === 'newyear' && (
           <g>
             {/* Faint golden glow tint over the whole sky */}
             <rect
@@ -542,8 +552,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
-        {/* ===== VALENTINE'S: sky-layer decorations (glow, garland, floating hearts) ===== */}
-        {holiday === 'valentines' && (
+        {/* ===== VALENTINE'S: sky-layer decorations (glow, garland, floating hearts) =====
+            Village-only: positions are laid out for the medieval scenery. */}
+        {!isCity && holiday === 'valentines' && (
           <g>
             {/* Warm pink glow tint over the whole sky */}
             <rect
@@ -578,8 +589,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
-        {/* ===== EASTER: sky-layer decorations (glow, egg garland) ===== */}
-        {holiday === 'easter' && (
+        {/* ===== EASTER: sky-layer decorations (glow, egg garland) =====
+            Village-only: positions are laid out for the medieval scenery. */}
+        {!isCity && holiday === 'easter' && (
           <g>
             {/* Pale spring glow tint over the whole sky */}
             <rect
@@ -601,6 +613,156 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
                   <ellipse cx="0" cy="0" rx="3.2" ry="4.4" fill={e.color} />
                   <circle cx="-1" cy="-1" r="0.6" fill="#fff" opacity="0.6" />
                   <circle cx="1.2" cy="1.4" r="0.6" fill="#fff" opacity="0.6" />
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
+        {/* ===== CITY HALLOWEEN: sky-layer decorations (violet glow, neon bats) ===== */}
+        {isCity && holiday === 'halloween' && (
+          <g>
+            {/* Violet neon glow tint over the whole sky, standing in for the
+                village's warm orange tint */}
+            <rect
+              x="0" y="0" width="400" height="230"
+              fill={CITY_HALLOWEEN_GLOW.color}
+              opacity={CITY_HALLOWEEN_GLOW.opacity}
+            />
+            {/* Bats drifting past the rooftops/skyscraper, same drift/flap
+                animation as the village bats, recolored neon magenta with a
+                glow filter */}
+            {CITY_HALLOWEEN_NEON_BATS.map((bat, i) => (
+              <g key={i} transform={`translate(${bat.x}, ${bat.y}) scale(${bat.scale})`}>
+                <g
+                  className="bat"
+                  style={{ animationDuration: `${bat.duration}s`, animationDelay: `${bat.delay}s` }}
+                >
+                  <path
+                    className="bat-body"
+                    d="M0 0 C -4 -4, -8 -3, -11 0 C -8 -1, -6 1, -4 3 C -2 1, -1 1, 0 2 C 1 1, 2 1, 4 3 C 6 1, 8 -1, 11 0 C 8 -3, 4 -4, 0 0 Z"
+                    fill="#ff3dd4"
+                    filter="url(#softGlow)"
+                  />
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
+        {/* ===== CITY CHRISTMAS: sky-layer decorations (rooftop chase lights) =====
+            Grouped per building along its own roofline rather than one
+            continuous wire, since the skyscraper is far taller than the
+            others and a flat wire at village-garland height would cut
+            straight through it. */}
+        {isCity && holiday === 'christmas' && (
+          <g>
+            {CITY_CHRISTMAS_ROOFLINE_LIGHTS.map((l, i) => (
+              <circle
+                key={i}
+                cx={l.x}
+                cy={l.y}
+                r="1.8"
+                fill={l.color}
+                className="christmas-light-glow"
+                style={{ animationDelay: `${l.delay}s` }}
+              />
+            ))}
+          </g>
+        )}
+
+        {/* ===== CITY NEW YEAR: sky-layer decorations (bigger neon fireworks show) ===== */}
+        {isCity && holiday === 'newyear' && (
+          <g>
+            {/* Scattered neon sparkle points, denser than the village's */}
+            {CITY_NEWYEAR_SPARKLES.map((s, i) => (
+              <circle
+                key={i}
+                cx={s.x}
+                cy={s.y}
+                r="1"
+                fill="#f0dca0"
+                className="newyear-sparkle"
+                style={{ animationDelay: `${s.delay}s` }}
+              />
+            ))}
+            {/* Fireworks bursting over the skyline, neon palette matching
+                the building signage (pink/cyan/gold/purple) */}
+            {CITY_NEWYEAR_FIREWORKS.map((f, i) => (
+              <g key={i} transform={`translate(${f.x}, ${f.burstY})`}>
+                <g
+                  className="newyear-rocket-trail"
+                  style={{ '--rise': `${f.rise}px`, animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+                >
+                  <path d="M 0 14 Q 1.5 7 0 0" fill="none" stroke={f.color} strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
+                  <circle cx="0" cy="0" r="1.3" fill="#fff6d8" />
+                </g>
+                <g
+                  className="newyear-firework"
+                  style={{ animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+                >
+                  {FIREWORK_RAY_ANGLES.map((a, j) => (
+                    <line
+                      key={j}
+                      x1="0" y1="0"
+                      x2={Math.cos(a) * 12}
+                      y2={Math.sin(a) * 12}
+                      stroke={f.color}
+                      strokeWidth="1.1"
+                      strokeLinecap="round"
+                    />
+                  ))}
+                  {FIREWORK_RAY_ANGLES.map((a, j) => (
+                    <circle key={j} cx={Math.cos(a) * 12} cy={Math.sin(a) * 12} r="0.9" fill={f.color} />
+                  ))}
+                  <circle cx="0" cy="0" r="1.6" fill="#fff6d8" opacity="0.9" />
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
+        {/* ===== CITY VALENTINE'S: sky-layer decorations (hot-neon glow, drifting hearts) ===== */}
+        {isCity && holiday === 'valentines' && (
+          <g>
+            <rect
+              x="0" y="0" width="400" height="230"
+              fill={CITY_VALENTINES_GLOW.color}
+              opacity={CITY_VALENTINES_GLOW.opacity}
+            />
+            {CITY_VALENTINES_NEON_HEARTS.map((h, i) => (
+              <g key={i} transform={`translate(${h.x}, ${h.y}) scale(${h.scale})`}>
+                <g
+                  className="valentine-heart-float"
+                  style={{ animationDuration: `${h.duration}s`, animationDelay: `${h.delay}s` }}
+                >
+                  <path d={HEART_PATH} fill={h.color} opacity="0.9" filter="url(#softGlow)" />
+                  <path d={HEART_PATH} fill={h.color} opacity="0.9" />
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
+        {/* ===== CITY EASTER: sky-layer decorations (pastel-neon glow, floating eggs) =====
+            Eggs bob gently near the rooftops instead of hanging from a
+            strung garland, since a flat wire at village-garland height
+            would cut through the skyscraper. */}
+        {isCity && holiday === 'easter' && (
+          <g>
+            <rect
+              x="0" y="0" width="400" height="230"
+              fill={CITY_EASTER_GLOW.color}
+              opacity={CITY_EASTER_GLOW.opacity}
+            />
+            {CITY_EASTER_NEON_EGG_FLOATERS.map((e, i) => (
+              <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
+                <g
+                  className="ghost-float"
+                  style={{ animationDuration: `${e.duration}s`, animationDelay: `${e.delay}s` }}
+                >
+                  <ellipse cx="0" cy="0" rx="5" ry="6.5" fill={e.color} opacity="0.9" filter="url(#softGlow)" />
+                  <ellipse cx="0" cy="0" rx="5" ry="6.5" fill="none" stroke={e.color} strokeWidth="1" opacity="0.9" />
                 </g>
               </g>
             ))}
@@ -709,8 +871,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* ===== HALLOWEEN: ground-layer decorations (jack-o'-lanterns) ===== */}
-        {holiday === 'halloween' && HALLOWEEN_PUMPKINS.map((p, i) => (
+        {/* ===== HALLOWEEN: ground-layer decorations (jack-o'-lanterns) =====
+            Village-only: positions are laid out for the medieval scenery. */}
+        {!isCity && holiday === 'halloween' && HALLOWEEN_PUMPKINS.map((p, i) => (
           <g key={i} transform={`translate(${p.x}, ${p.y}) scale(${p.scale})`}>
             {/* stalk */}
             <rect x="-1.5" y="-11" width="3" height="4" rx="1" fill="#3f5225" />
@@ -725,8 +888,8 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* A skeleton resting on the ground, off to the side */}
-        {holiday === 'halloween' && HALLOWEEN_SKELETONS.map((sk, i) => (
+        {/* A skeleton resting on the ground, off to the side (village-only) */}
+        {!isCity && holiday === 'halloween' && HALLOWEEN_SKELETONS.map((sk, i) => (
           <g key={i} transform={`translate(${sk.x}, ${sk.y}) scale(${sk.scale})`}>
             {/* skull */}
             <circle cx="0" cy="-10" r="4" fill="#d8d8cc" />
@@ -748,8 +911,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* Small candles keeping the pumpkins company, flames flickering */}
-        {holiday === 'halloween' && HALLOWEEN_CANDLES.map((c, i) => (
+        {/* Small candles keeping the pumpkins company, flames flickering
+            (village-only) */}
+        {!isCity && holiday === 'halloween' && HALLOWEEN_CANDLES.map((c, i) => (
           <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
             {/* wax body */}
             <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill="#e8dcc0" />
@@ -766,14 +930,15 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* ===== CHRISTMAS: ground-layer decorations (tree, gifts, candles, snow mounds) ===== */}
+        {/* ===== CHRISTMAS: ground-layer decorations (tree, gifts, candles, snow mounds) =====
+            Village-only: positions are laid out for the medieval scenery. */}
         {/* Faint snow mounds for ground texture, drawn first so everything else sits on top */}
-        {holiday === 'christmas' && CHRISTMAS_SNOWDRIFTS.map((d, i) => (
+        {!isCity && holiday === 'christmas' && CHRISTMAS_SNOWDRIFTS.map((d, i) => (
           <ellipse key={i} cx={d.x} cy={d.y} rx={d.rx} ry={d.ry} fill="#eef3f8" opacity={d.opacity} />
         ))}
 
         {/* A small decorated tree, ornaments glowing softly */}
-        {holiday === 'christmas' && CHRISTMAS_TREES.map((t, i) => (
+        {!isCity && holiday === 'christmas' && CHRISTMAS_TREES.map((t, i) => (
           <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
             {/* trunk */}
             <rect x="-1.5" y="-4" width="3" height="4" fill="#4a2f1a" />
@@ -797,8 +962,8 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* Wrapped gifts at the foot of the tree */}
-        {holiday === 'christmas' && CHRISTMAS_GIFTS.map((g, i) => (
+        {/* Wrapped gifts at the foot of the tree (village-only) */}
+        {!isCity && holiday === 'christmas' && CHRISTMAS_GIFTS.map((g, i) => (
           <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
             <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill={g.box} />
             <rect x="-1" y="-6" width="2" height="6" fill={g.ribbon} />
@@ -810,8 +975,8 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* Warm candles keeping watch nearby, flames flickering (same shape as
-            the Halloween candles, festive wax colors) */}
-        {holiday === 'christmas' && CHRISTMAS_CANDLES.map((c, i) => (
+            the Halloween candles, festive wax colors) (village-only) */}
+        {!isCity && holiday === 'christmas' && CHRISTMAS_CANDLES.map((c, i) => (
           <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
             {/* wax body */}
             <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill={c.wax} />
@@ -828,8 +993,8 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* A couple of red roses on the ground */}
-        {holiday === 'valentines' && VALENTINES_ROSES.map((r, i) => (
+        {/* A couple of red roses on the ground (village-only) */}
+        {!isCity && holiday === 'valentines' && VALENTINES_ROSES.map((r, i) => (
           <g key={i} transform={`translate(${r.x}, ${r.y}) scale(${r.scale}) rotate(${r.rotate})`}>
             {/* stem, curving slightly */}
             <path d="M 0 0 C 1 -6 -1 -10 0 -16" fill="none" stroke="#3f6b3a" strokeWidth="1.1" strokeLinecap="round" />
@@ -858,8 +1023,8 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* Decorated Easter eggs on the ground, pastel bases with a
-            stripe/dot pattern */}
-        {holiday === 'easter' && EASTER_EGGS.map((e, i) => (
+            stripe/dot pattern (village-only) */}
+        {!isCity && holiday === 'easter' && EASTER_EGGS.map((e, i) => (
           <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
             <path
               d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z"
@@ -883,8 +1048,8 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* Small spring flowers on the ground */}
-        {holiday === 'easter' && EASTER_FLOWERS.map((fl, i) => (
+        {/* Small spring flowers on the ground (village-only) */}
+        {!isCity && holiday === 'easter' && EASTER_FLOWERS.map((fl, i) => (
           <g key={i} transform={`translate(${fl.x}, ${fl.y}) scale(${fl.scale})`}>
             <line x1="0" y1="0" x2="0" y2="-5" stroke="#4a7a44" strokeWidth="1" />
             {Array.from({ length: 4 }, (_, j) => {
@@ -902,6 +1067,79 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
               );
             })}
             <circle cx="0" cy="-5" r="1.1" fill={fl.center} />
+          </g>
+        ))}
+
+        {/* ===== CITY HALLOWEEN: ground-layer decorations (neon pumpkin signs on facades) ===== */}
+        {isCity && holiday === 'halloween' && CITY_HALLOWEEN_MARQUEE_PUMPKINS.map((p, i) => (
+          <g key={i} transform={`translate(${p.x}, ${p.y}) scale(${p.scale})`}>
+            <rect x="-8" y="-15" width="16" height="15" rx="1.5" fill="#0d0c14" opacity="0.9" />
+            <ellipse cx="0" cy="-6" rx="6" ry="5" fill="none" stroke="#ff8c3d" strokeWidth="1.2" filter="url(#softGlow)" />
+            <ellipse cx="0" cy="-6" rx="6" ry="5" fill="none" stroke="#ff8c3d" strokeWidth="1.2" className="neon-pulse" />
+            <path d="M -1 -11 L 1 -11 L 1 -9 L -1 -9 Z" fill="#3f5225" />
+            <g className="pumpkin-glow">
+              <path d="M -3.5 -7.5 L -1.5 -7.5 L -2.5 -5.5 Z" fill="#ffb347" />
+              <path d="M 3.5 -7.5 L 1.5 -7.5 L 2.5 -5.5 Z" fill="#ffb347" />
+              <path d="M -2.5 -3.5 L -1 -2 L 0 -3.5 L 1 -2 L 2.5 -3.5 L 2 -2.5 L -2 -2.5 Z" fill="#ffb347" />
+            </g>
+          </g>
+        ))}
+
+        {/* ===== CITY CHRISTMAS: ground-layer decorations (shop awning lights) ===== */}
+        {isCity && holiday === 'christmas' && CITY_CHRISTMAS_AWNING_LIGHTS.map((l, i) => (
+          <circle
+            key={i}
+            cx={l.x}
+            cy={l.y}
+            r="1.6"
+            fill={l.color}
+            className="christmas-light-glow"
+            style={{ animationDelay: `${l.delay}s` }}
+          />
+        ))}
+
+        {/* ===== CITY NEW YEAR: ground-layer decorations (street-level sparkle) ===== */}
+        {isCity && holiday === 'newyear' && CITY_NEWYEAR_STREET_SPARKLE.map((s, i) => (
+          <circle
+            key={i}
+            cx={s.x}
+            cy={s.y}
+            r="1.2"
+            fill="#f0dca0"
+            className="newyear-sparkle"
+            style={{ animationDelay: `${s.delay}s` }}
+          />
+        ))}
+
+        {/* ===== CITY VALENTINE'S: ground-layer decorations (neon heart signs on facades) ===== */}
+        {isCity && holiday === 'valentines' && CITY_VALENTINES_HEART_SIGNS.map((h, i) => (
+          <g key={i} transform={`translate(${h.x}, ${h.y}) scale(${h.scale})`}>
+            <rect x="-9" y="-17" width="18" height="17" rx="1.5" fill="#0d0c14" opacity="0.9" />
+            <g className="neon-pulse">
+              <path d={HEART_PATH} transform="translate(0, -7) scale(0.9)" fill="none" stroke="#ff3d9a" strokeWidth="1.2" filter="url(#softGlow)" />
+              <path d={HEART_PATH} transform="translate(0, -7) scale(0.9)" fill="none" stroke="#ff3d9a" strokeWidth="1.2" />
+            </g>
+          </g>
+        ))}
+
+        {/* ===== CITY EASTER: ground-layer decorations (neon eggs standing on the street) ===== */}
+        {isCity && holiday === 'easter' && CITY_EASTER_NEON_EGGS.map((e, i) => (
+          <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
+            <ellipse cx="0" cy="8" rx="7" ry="2" fill="#000" opacity="0.3" />
+            <path
+              d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z"
+              fill="none"
+              stroke={e.color}
+              strokeWidth="1.3"
+              filter="url(#softGlow)"
+              className="neon-pulse"
+            />
+            <path
+              d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z"
+              fill="none"
+              stroke={e.color}
+              strokeWidth="1.3"
+            />
           </g>
         ))}
 
@@ -943,8 +1181,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         </g>
 
         {/* HALLOWEEN GHOST (drawn in the foreground, after the buildings and
-            campfire, so it isn't clipped by the wall/tower/storage) */}
-        {holiday === 'halloween' && HALLOWEEN_GHOSTS.map((g, i) => (
+            campfire, so it isn't clipped by the wall/tower/storage)
+            (village-only: sits beside the medieval campfire) */}
+        {!isCity && holiday === 'halloween' && HALLOWEEN_GHOSTS.map((g, i) => (
           <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
             <g
               className="ghost-float"
@@ -964,8 +1203,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* CHRISTMAS SNOWMAN (drawn in the foreground, after the buildings and
-            campfire, so it isn't clipped by the wall/tower/storage) */}
-        {holiday === 'christmas' && CHRISTMAS_SNOWMEN.map((s, i) => (
+            campfire, so it isn't clipped by the wall/tower/storage)
+            (village-only: sits beside the medieval campfire) */}
+        {!isCity && holiday === 'christmas' && CHRISTMAS_SNOWMEN.map((s, i) => (
           <g key={i} transform={`translate(${s.x}, ${s.y}) scale(${s.scale})`}>
             {/* three stacked snowballs, slightly overlapping */}
             <circle cx="0" cy="-7" r="7" fill="#eef3f6" />
@@ -1000,8 +1240,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* NEW YEAR TOAST — champagne bottle and two clinking glasses (drawn
             in the foreground, after the buildings and campfire, so it isn't
-            clipped by the wall/tower/storage) */}
-        {holiday === 'newyear' && NEWYEAR_TOASTS.map((t, i) => (
+            clipped by the wall/tower/storage) (village-only: sits beside the
+            medieval campfire) */}
+        {!isCity && holiday === 'newyear' && NEWYEAR_TOASTS.map((t, i) => (
           <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
             {/* left flute, tilted toward the right glass */}
             <line x1="-6" y1="0" x2="-5" y2="-9" stroke="#c9b98a" strokeWidth="1" />
@@ -1042,8 +1283,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* VALENTINE'S HEART GLOW — a softly pulsing heart near the campfire
             (drawn in the foreground, after the buildings and campfire, so it
-            isn't clipped by the wall/tower/storage) */}
-        {holiday === 'valentines' && VALENTINES_HEART_GLOWS.map((hg, i) => (
+            isn't clipped by the wall/tower/storage) (village-only: sits
+            beside the medieval campfire) */}
+        {!isCity && holiday === 'valentines' && VALENTINES_HEART_GLOWS.map((hg, i) => (
           <g key={i} transform={`translate(${hg.x}, ${hg.y}) scale(${hg.scale})`}>
             {/* soft blurred backdrop for the glow */}
             <path d={HEART_PATH} transform="translate(0, -14) scale(2)" fill="#e85a7a" opacity="0.3" filter="url(#softGlow)" />
@@ -1056,8 +1298,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* EASTER BUNNY — sitting upright, ears up (drawn in the foreground,
             after the buildings and campfire, so it isn't clipped by the
-            wall/tower/storage) */}
-        {holiday === 'easter' && EASTER_BUNNIES.map((b, i) => (
+            wall/tower/storage) (village-only: sits beside the medieval
+            campfire) */}
+        {!isCity && holiday === 'easter' && EASTER_BUNNIES.map((b, i) => (
           <g key={i} transform={`translate(${b.x}, ${b.y}) scale(${b.scale})`}>
             {/* tail */}
             <circle cx="-5.5" cy="-2" r="2" fill="#fff" />
@@ -1097,6 +1340,104 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             balance the composition, stacked neon signage and a blinking
             marquee crown */}
         {isCity && has('casino') && <Casino justBuilt={justBuilt} />}
+
+        {/* ===== CITY HOLIDAY STANDEES (foreground) =====
+            The neon counterpart to the village's campfire-side props
+            (ghost/snowman/toast/heart-glow/bunny) — a single glowing sign
+            standing on the street beside the survivor. Drawn after every
+            city building (including the theater/casino, whose footprints
+            reach this x range) so it's never hidden behind one, the way the
+            parked car briefly was earlier when it rendered too early. */}
+
+        {/* CITY HALLOWEEN — neon jack-o'-lantern standee */}
+        {isCity && holiday === 'halloween' && (
+          <g transform={`translate(${CITY_HALLOWEEN_NEON_SIGN.x}, ${CITY_HALLOWEEN_NEON_SIGN.y}) scale(${CITY_HALLOWEEN_NEON_SIGN.scale})`}>
+            <rect x="-1.2" y="-4" width="2.4" height="20" fill="#1c1a28" />
+            <ellipse cx="0" cy="16" rx="7" ry="2" fill="#000" opacity="0.35" />
+            <g className="neon-sign-buzz">
+              <ellipse cx="0" cy="-16" rx="10" ry="9" fill="none" stroke="#ff8c3d" strokeWidth="1.6" filter="url(#softGlow)" />
+              <ellipse cx="0" cy="-16" rx="10" ry="9" fill="none" stroke="#ff8c3d" strokeWidth="1.6" />
+              <path d="M -3.5 -25 Q 0 -29 3.5 -25" fill="none" stroke="#3f5225" strokeWidth="1.6" />
+              <g className="pumpkin-glow">
+                <path d="M -5.5 -19 L -2 -19 L -3.7 -15 Z" fill="#ffb347" />
+                <path d="M 5.5 -19 L 2 -19 L 3.7 -15 Z" fill="#ffb347" />
+                <path d="M -4 -11 L -1.5 -9 L 0 -11 L 1.5 -9 L 4 -11 L 3 -9.5 L -3 -9.5 Z" fill="#ffb347" />
+              </g>
+            </g>
+          </g>
+        )}
+
+        {/* CITY CHRISTMAS — neon-outline tree standee */}
+        {isCity && holiday === 'christmas' && (
+          <g transform={`translate(${CITY_CHRISTMAS_NEON_TREE.x}, ${CITY_CHRISTMAS_NEON_TREE.y}) scale(${CITY_CHRISTMAS_NEON_TREE.scale})`}>
+            <ellipse cx="0" cy="1" rx="9" ry="2" fill="#000" opacity="0.35" />
+            <g className="neon-sign-buzz">
+              <rect x="-3" y="-6" width="6" height="6" fill="#0d0c14" />
+              <path d="M -9 -6 L 0 -16 L 9 -6 Z" fill="none" stroke="#3ddc6a" strokeWidth="1.4" filter="url(#softGlow)" />
+              <path d="M -9 -6 L 0 -16 L 9 -6 Z" fill="none" stroke="#3ddc6a" strokeWidth="1.4" />
+              <path d="M -7 -12 L 0 -21 L 7 -12 Z" fill="none" stroke="#3ddc6a" strokeWidth="1.3" />
+              <path d="M -5 -18 L 0 -26 L 5 -18 Z" fill="none" stroke="#3ddc6a" strokeWidth="1.2" />
+              <path
+                d="M 0 -30 L 1.1 -27.3 L 4 -27 L 1.8 -25 L 2.4 -22.2 L 0 -23.7 L -2.4 -22.2 L -1.8 -25 L -4 -27 L -1.1 -27.3 Z"
+                fill="#ffd23d"
+                className="christmas-light-glow"
+              />
+              <circle cx="-4" cy="-9" r="1" fill="#ff3d9a" className="christmas-light-glow" style={{ animationDelay: '0.1s' }} />
+              <circle cx="4" cy="-10" r="1" fill="#3de0ff" className="christmas-light-glow" style={{ animationDelay: '0.5s' }} />
+              <circle cx="-3" cy="-15" r="0.9" fill="#ffd23d" className="christmas-light-glow" style={{ animationDelay: '0.9s' }} />
+              <circle cx="3" cy="-16" r="0.9" fill="#ff3d9a" className="christmas-light-glow" style={{ animationDelay: '0.3s' }} />
+            </g>
+          </g>
+        )}
+
+        {/* CITY NEW YEAR — neon champagne-toast standee */}
+        {isCity && holiday === 'newyear' && (
+          <g transform={`translate(${CITY_NEWYEAR_NEON_TOAST.x}, ${CITY_NEWYEAR_NEON_TOAST.y}) scale(${CITY_NEWYEAR_NEON_TOAST.scale})`}>
+            <ellipse cx="0" cy="1" rx="9" ry="2" fill="#000" opacity="0.35" />
+            <g className="neon-sign-buzz">
+              <line x1="-6" y1="0" x2="-5" y2="-9" stroke="#f0c14a" strokeWidth="1" />
+              <path d="M -7.2 -9 L -2.8 -9 L -3.6 -16.5 L -6.4 -15.5 Z" fill="none" stroke="#f0c14a" strokeWidth="1" filter="url(#softGlow)" />
+              <path d="M -7.2 -9 L -2.8 -9 L -3.6 -16.5 L -6.4 -15.5 Z" fill="none" stroke="#f0c14a" strokeWidth="1" />
+              <line x1="4" y1="0" x2="3" y2="-9" stroke="#3de0ff" strokeWidth="1" />
+              <path d="M 2.8 -9 L 7.2 -9 L 6.4 -15.5 L 3.6 -16.5 Z" fill="none" stroke="#3de0ff" strokeWidth="1" filter="url(#softGlow)" />
+              <path d="M 2.8 -9 L 7.2 -9 L 6.4 -15.5 L 3.6 -16.5 Z" fill="none" stroke="#3de0ff" strokeWidth="1" />
+              <path
+                d="M 0 -17.6 L 0.5 -16.3 L 1.8 -16 L 0.5 -15.7 L 0 -14.4 L -0.5 -15.7 L -1.8 -16 L -0.5 -16.3 Z"
+                fill="#fff6d8"
+                className="newyear-sparkle"
+              />
+            </g>
+          </g>
+        )}
+
+        {/* CITY VALENTINE'S — neon heart-glow standee, same technique as the
+            village's campfire-side heart glow, recolored hot pink/cyan */}
+        {isCity && holiday === 'valentines' && (
+          <g transform={`translate(${CITY_VALENTINES_NEON_HEART_GLOW.x}, ${CITY_VALENTINES_NEON_HEART_GLOW.y}) scale(${CITY_VALENTINES_NEON_HEART_GLOW.scale})`}>
+            <path d={HEART_PATH} transform="translate(0, -14) scale(2)" fill="#ff2d78" opacity="0.3" filter="url(#softGlow)" />
+            <g className="valentine-heart-glow">
+              <path d={HEART_PATH} transform="translate(0, -14) scale(1.1)" fill="#ff3d9a" />
+              <path d={HEART_PATH} transform="translate(-2.5, -17) scale(0.5)" fill="#9ff0ff" opacity="0.7" />
+            </g>
+          </g>
+        )}
+
+        {/* CITY EASTER — neon-outline bunny standee */}
+        {isCity && holiday === 'easter' && (
+          <g transform={`translate(${CITY_EASTER_NEON_BUNNY.x}, ${CITY_EASTER_NEON_BUNNY.y}) scale(${CITY_EASTER_NEON_BUNNY.scale})`}>
+            <ellipse cx="0" cy="1" rx="8" ry="2" fill="#000" opacity="0.35" />
+            <g className="neon-sign-buzz">
+              <ellipse cx="-2.3" cy="-23" rx="1.6" ry="7" fill="none" stroke="#ff9ad1" strokeWidth="1.1" transform="rotate(-12 -2.3 -23)" />
+              <ellipse cx="2.3" cy="-23" rx="1.6" ry="7" fill="none" stroke="#ff9ad1" strokeWidth="1.1" transform="rotate(12 2.3 -23)" />
+              <ellipse cx="0" cy="-9" rx="6" ry="7.5" fill="none" stroke="#ff9ad1" strokeWidth="1.2" filter="url(#softGlow)" />
+              <ellipse cx="0" cy="-9" rx="6" ry="7.5" fill="none" stroke="#ff9ad1" strokeWidth="1.2" />
+              <circle cx="0" cy="-17.5" r="4.6" fill="none" stroke="#ff9ad1" strokeWidth="1.2" />
+              <circle cx="-1.6" cy="-17.5" r="0.5" fill="#9ae0ff" />
+              <circle cx="1.6" cy="-17.5" r="0.5" fill="#9ae0ff" />
+            </g>
+          </g>
+        )}
+
         {/* Weather: rain in autumn, snow in winter — not every day */}
         {weather === 'rain' && (
           <g opacity="0.55">
@@ -1241,8 +1582,10 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         </g>
         )}
 
-        {/* CHRISTMAS WREATH, hung above the sign board */}
-        {holiday === 'christmas' && (
+        {/* CHRISTMAS WREATH, hung above the sign board (village-only: sized
+            and positioned for the wooden sign board, not the city's neon
+            marquee) */}
+        {!isCity && holiday === 'christmas' && (
           <g transform={`translate(${CHRISTMAS_WREATH.x}, ${CHRISTMAS_WREATH.y}) scale(${CHRISTMAS_WREATH.scale})`}>
             {/* pine ring */}
             <circle cx="0" cy="0" r="6.5" fill="none" stroke="#2f5c3a" strokeWidth="3.2" />

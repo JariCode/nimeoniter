@@ -80,7 +80,7 @@ export function Apartment({ justBuilt }) {
         })
       )}
       {/* rooftop water tank */}
-      <rect x="66" y="148" width="14" height="12" rx="2" fill="url(#cityConcrete)" />
+      <rect x="66" y="148" width="14" height="14" rx="2" fill="url(#cityConcrete)" />
       <path d="M 66 148 L 73 140 L 80 148 Z" fill="#1c1a28" />
       {/* small neon "APT" sign, shifted toward the right edge of the
           facade so the now much-further-left Casino doesn't cover it */}

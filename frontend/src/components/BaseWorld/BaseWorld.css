@@ -459,11 +459,33 @@
   100% { transform: translateY(-14px); opacity: 0; }
 }
 
+/* ===== City-world holiday decorations =====
+   The city's holiday standees (neon pumpkin/tree/toast/bunny signs beside
+   the survivor) reuse most of the village's holiday animation classes
+   above (.bat/.bat-body, .pumpkin-glow, .christmas-light-glow,
+   .newyear-sparkle/.newyear-rocket-trail/.newyear-firework,
+   .valentine-heart-float/.valentine-heart-glow, .ghost-float) since those
+   keyframes are shape-agnostic. This one is new: a livelier "neon tube
+   sign" buzz — flicker plus a small scale pulse — for the standee icons,
+   distinct from the subtler .neon-pulse used on building signage. */
+.neon-sign-buzz {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: neon-sign-buzz 3s ease-in-out infinite;
+}
+@keyframes neon-sign-buzz {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  6%       { opacity: 0.7; transform: scale(0.98); }
+  9%       { opacity: 1; transform: scale(1); }
+  48%      { opacity: 0.85; transform: scale(1.03); }
+  53%      { opacity: 1; transform: scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bat, .bat-body, .pumpkin-glow, .ghost-float, .candle-flame, .christmas-light-glow,
   .bunting-flag, .newyear-sparkle, .newyear-rocket-trail, .newyear-firework,
   .valentine-heart-float, .valentine-garland-heart, .valentine-heart-glow,
-  .easter-egg-sway, .neon-pulse, .skyscraper-beacon, .coffee-steam {
+  .easter-egg-sway, .neon-pulse, .skyscraper-beacon, .coffee-steam, .neon-sign-buzz {
     animation: none;
   }
 }
