@@ -599,16 +599,25 @@ function App() {
             </div>
 
             <div className="app-right">
-              <BaseStatus
-                stageKey={baseStageKey}
-                buildStages={buildStages}
-                justBuilt={justBuilt}
-                nextStage={nextStage}
-                resources={resources}
-                level={level}
-                canBuild={canBuild}
-                onBuild={build}
-              />
+              {/* Hold off rendering the world until both config (buildStages,
+                  which world/stage keys derive from) and state (baseStageKey)
+                  have come back from the backend — otherwise buildStages is
+                  still empty and baseStageKey defaults to 'camp', so
+                  currentWorldFromBuilt briefly reports the medieval village
+                  even for a city player, flashing the wrong world on every
+                  refresh before the real data arrives. */}
+              {stateLoaded && buildStages.length > 0 && (
+                <BaseStatus
+                  stageKey={baseStageKey}
+                  buildStages={buildStages}
+                  justBuilt={justBuilt}
+                  nextStage={nextStage}
+                  resources={resources}
+                  level={level}
+                  canBuild={canBuild}
+                  onBuild={build}
+                />
+              )}
             </div>
           </div>
 
