@@ -135,11 +135,6 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
           <stop offset="55%" stopColor="#1c1c20" />
           <stop offset="100%" stopColor="#0c0c0e" />
         </linearGradient>
-        {/* Purple shirt, glimpsed under the open coat collar */}
-        <linearGradient id="shirtCity" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#9a5cd0" />
-          <stop offset="100%" stopColor="#6a34a0" />
-        </linearGradient>
       </defs>
 
       <g className="face__breathe">
@@ -151,10 +146,6 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
           stroke="#121809"
           strokeWidth="2.5"
         />
-        {/* Purple shirt showing through the open coat collar (city only) */}
-        {isCity && (
-          <path d="M84 172 Q100 186 116 172 L112 192 Q100 198 88 192 Z" fill="url(#shirtCity)" />
-        )}
         {/* collar opening */}
         <path d="M82 170 Q100 188 118 170" stroke="#151c0c" strokeWidth="3.5" fill="none" opacity="0.85" />
         {/* jacket seams / folds */}

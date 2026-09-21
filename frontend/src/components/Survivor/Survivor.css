@@ -23,3 +23,10 @@
   94%           { transform: rotate(4deg); }
   97%           { transform: rotate(0deg); }
 }
+
+/* City local: same gentle idle sway as the medieval figure, its own origin
+   since the standing pose's center sits a little differently. */
+.survivor-body--city {
+  transform-origin: 250px 195px;
+  animation: survivor-sway 4.5s ease-in-out infinite;
+}

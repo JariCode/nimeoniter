@@ -8,9 +8,12 @@
 // BaseWorld.css.
 
 // SKYSCRAPER — back-right tower, the city world's final build, occupying
-// the same back-layer real estate as the wall+tower
+// the same back-layer real estate as the wall+tower. Wrapped in a scale
+// (pivoting on its own ground anchor at 352,222) to grow it in proportion
+// to the survivor figure without touching any of its inner coordinates.
 export function Skyscraper({ justBuilt }) {
   return (
+    <g transform="translate(-52.8,-33.3) scale(1.15)">
     <g className={justBuilt === 'skyscraper' ? 'building-pop' : undefined}>
       <ellipse cx="352" cy="222" rx="30" ry="6" fill="#000" opacity="0.45" />
       {/* main glass shaft, reaching high into the sky */}
@@ -44,13 +47,17 @@ export function Skyscraper({ justBuilt }) {
       <circle cx="352" cy="-9" r="2.2" fill="#ff3d9a" className="skyscraper-beacon" />
       <circle cx="352" cy="-9" r="6" fill="url(#neonPinkGlow)" className="skyscraper-beacon" />
     </g>
+    </g>
   );
 }
 
 // APARTMENT — mid-left block of flats, lit windows in mixed colors,
-// rooftop water tank (same footprint the medieval house used)
+// rooftop water tank. Wrapped in a scale+reposition (pivoting on its own
+// ground anchor at 90,222, target 100,222) to grow it and shift it right a
+// touch, since the front-layer Casino now overlaps its left side for depth.
 export function Apartment({ justBuilt }) {
   return (
+    <g transform="translate(-17,-66.6) scale(1.3)">
     <g className={justBuilt === 'apartment' ? 'building-pop' : undefined}>
     <g>
       <ellipse cx="90" cy="222" rx="48" ry="8" fill="#000" opacity="0.4" />
@@ -75,18 +82,22 @@ export function Apartment({ justBuilt }) {
       {/* rooftop water tank */}
       <rect x="66" y="148" width="14" height="12" rx="2" fill="url(#cityConcrete)" />
       <path d="M 66 148 L 73 140 L 80 148 Z" fill="#1c1a28" />
-      {/* small neon "APT" sign over the entrance */}
-      <rect x="86" y="210" width="16" height="12" fill="#0d0c14" />
-      <text x="94" y="219" fontFamily="Georgia, serif" fontSize="6" fontWeight="bold" textAnchor="middle" fill="#3de0ff" className="neon-pulse">APT</text>
+      {/* small neon "APT" sign, shifted toward the right edge of the
+          facade so the now much-further-left Casino doesn't cover it */}
+      <rect x="100" y="210" width="16" height="12" fill="#0d0c14" />
+      <text x="108" y="219" fontFamily="Georgia, serif" fontSize="6" fontWeight="bold" textAnchor="middle" fill="#3de0ff" className="neon-pulse">APT</text>
+    </g>
     </g>
     </g>
   );
 }
 
-// HOTEL — mid-right tower, taller than the apartment, vertical neon sign
-// running down its face
+// HOTEL — mid tower, taller than the apartment, vertical neon sign running
+// down its face. Wrapped in a scale (pivoting on its own ground anchor at
+// 195,222) to grow it in proportion to the survivor figure.
 export function Hotel({ justBuilt }) {
   return (
+    <g transform="translate(-48.75,-55.5) scale(1.25)">
     <g className={justBuilt === 'hotel' ? 'building-pop' : undefined}>
     <g>
       <ellipse cx="195" cy="222" rx="30" ry="6" fill="#000" opacity="0.4" />
@@ -127,13 +138,18 @@ export function Hotel({ justBuilt }) {
       ))}
     </g>
     </g>
+    </g>
   );
 }
 
-// SHOP — small storefront, lit awning and a neon window sign (occupies the
-// well's old front-left spot)
+// SHOP — small storefront, lit awning and a neon window sign, kept at its
+// original horizontal spot next to the hotel's foot but brought further
+// forward (bigger, lower) onto the near side of the street, close to the
+// NIMEONITER sign's depth, so it reads as street-level rather than a
+// background silhouette.
 export function Shop({ justBuilt }) {
   return (
+    <g transform="translate(104,-196) scale(2)">
     <g className={justBuilt === 'shop' ? 'building-pop' : undefined}>
     <g transform="translate(-2,-2)">
       <ellipse cx="35" cy="241" rx="18" ry="4.5" fill="#000" opacity="0.4" />
@@ -149,13 +165,19 @@ export function Shop({ justBuilt }) {
       <text x="35" y="214.5" fontFamily="Georgia, serif" fontSize="5" fontWeight="bold" textAnchor="middle" fill="#fff6d8" opacity="0.95">SHOP</text>
     </g>
     </g>
+    </g>
   );
 }
 
-// DINER — right behind where the survivor sits with a coffee cup, the
-// city's version of the campfire hangout
+// DINER — right behind where the survivor stands with a coffee cup, the
+// city's version of the campfire hangout. Wrapped in a scale+reposition
+// (pivoting on its own ground anchor, shifted slightly left) to grow it and
+// keep it centered on the survivor's new standing position. Nudged back
+// (up) an extra 22 units so its ground shadow clears the street band
+// (y225-249) instead of sitting in the middle of the road.
 export function Diner({ justBuilt }) {
   return (
+    <g transform="translate(-66,-70.4) scale(1.2)">
     <g className={justBuilt === 'diner' ? 'building-pop' : undefined}>
     <g transform="translate(0, 20)">
       <ellipse cx="280" cy="222" rx="56" ry="8" fill="#000" opacity="0.35" />
@@ -173,6 +195,7 @@ export function Diner({ justBuilt }) {
       {/* rooftop neon "DINER" sign */}
       <rect x="255" y="160" width="50" height="14" fill="#0d0c14" />
       <text x="280" y="170.5" fontFamily="Georgia, serif" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#ffd23d" className="neon-pulse">DINER</text>
+    </g>
     </g>
     </g>
   );
@@ -200,10 +223,15 @@ export function Street({ justBuilt }) {
   );
 }
 
-// THEATER — showy marquee with a bulb-lined border, standing where the
-// storage shed once did
+// THEATER — showy marquee, kept at its original horizontal spot to the
+// right of the diner but brought further forward (bigger, lower) onto the
+// near side of the street, close to the NIMEONITER sign's depth — its back
+// half still overlapping the skyscraper for depth. Wrapped in a further
+// scale+reposition (pivoting on its own current ground anchor) on top of
+// its existing inner transform.
 export function Theater({ justBuilt }) {
   return (
+    <g transform="translate(-251.75,-221.05) scale(1.75)">
     <g className={justBuilt === 'theater' ? 'building-pop' : undefined}>
     <g transform="translate(-37,-11) scale(1.2)">
       <ellipse cx="315" cy="243" rx="30" ry="6" fill="#000" opacity="0.4" />
@@ -225,30 +253,43 @@ export function Theater({ justBuilt }) {
       <rect x="288" y="212" width="47" height="30" fill="none" stroke="#100f18" strokeWidth="1" opacity="0.5" />
     </g>
     </g>
+    </g>
   );
 }
 
-// CASINO — the city's showiest building, right edge, stacked neon signage
-// and a blinking marquee crown (watchtower's old spot)
+// CASINO — the city's showiest building, kept at its original front-left
+// spot but nudged a little further right (just enough that its vertical
+// "CASINO" marquee, which sits left of the building's own ground anchor,
+// clears the left edge of the viewBox with a comfortable margin instead of
+// clipping off it) and brought further forward (bigger, lower) like the
+// other two. It overlaps the apartment behind it, the same front-over-mid
+// depth layering the medieval world already uses (e.g. house sitting in
+// front of the wall).
 export function Casino({ justBuilt }) {
   return (
+    <g transform="translate(-615.1,-140.7) scale(1.85)">
     <g className={justBuilt === 'casino' ? 'building-pop' : undefined}>
     <g>
       <ellipse cx="366" cy="222" rx="26" ry="5" fill="#000" opacity="0.4" />
       <rect x="345" y="150" width="42" height="72" fill="url(#cityGlass)" />
       <rect x="345" y="150" width="42" height="72" fill="none" stroke="#0c0d16" strokeWidth="1" opacity="0.5" />
       {Array.from({ length: 5 }, (_, row) =>
-        Array.from({ length: 3 }, (_, col) => (
-          <rect
-            key={`${row}-${col}`}
-            x={349 + col * 12}
-            y={155 + row * 11}
-            width="8"
-            height="7"
-            fill={(row + col) % 2 === 0 ? '#ff3d9a' : '#3de0ff'}
-            opacity="0.6"
-          />
-        ))
+        Array.from({ length: 3 }, (_, col) => {
+          // skip the bottom-row middle window — it sits right where the
+          // entrance opening cuts into the facade below
+          if (row === 4 && col === 1) return null;
+          return (
+            <rect
+              key={`${row}-${col}`}
+              x={349 + col * 12}
+              y={155 + row * 11}
+              width="8"
+              height="7"
+              fill={(row + col) % 2 === 0 ? '#ff3d9a' : '#3de0ff'}
+              opacity="0.6"
+            />
+          );
+        })
       )}
       {/* crown of chasing bulbs along the roofline */}
       <rect x="343" y="146" width="46" height="5" fill="#0d0c14" />
@@ -272,9 +313,11 @@ export function Casino({ justBuilt }) {
           {ch}
         </text>
       ))}
-      {/* entrance glow */}
-      <rect x="356" y="200" width="20" height="22" fill="#151628" />
+      {/* entrance glow — narrowed so it no longer overlaps the bottom-row
+          side windows (col 0 at x349-357, col 2 at x373-381) */}
+      <rect x="361" y="200" width="10" height="22" fill="#151628" />
       <circle cx="366" cy="210" r="10" fill="url(#neonPurpleGlow)" filter="url(#softGlow)" />
+    </g>
     </g>
     </g>
   );

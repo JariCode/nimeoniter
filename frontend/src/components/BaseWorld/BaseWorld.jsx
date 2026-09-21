@@ -36,11 +36,14 @@ const CITY_SKY_STOPS = {
 // City-world ground gradient stops, one per season key — dark asphalt tones
 // standing in for the medieval GROUND_STOPS. Keyed identically to
 // GROUND_STOPS; the season system itself (getSeason) is untouched.
+// Lightened relative to the street's own `#18161f` fill so the ground
+// reads as a distinct surface behind/around the street instead of
+// blending into it.
 const CITY_GROUND_STOPS = {
-  winter: [['0%', '#2a2e3a'], ['100%', '#14161e']],
-  spring: [['0%', '#262838'], ['100%', '#121420']],
-  summer: [['0%', '#282436'], ['100%', '#14121c']],
-  autumn: [['0%', '#242232'], ['100%', '#12111a']],
+  winter: [['0%', '#343a4a'], ['100%', '#1e212c']],
+  spring: [['0%', '#2f324a'], ['100%', '#1c1e2c']],
+  summer: [['0%', '#322e46'], ['100%', '#1e1a28']],
+  autumn: [['0%', '#2c2a42'], ['100%', '#1c1926']],
 };
 
 // Fixed rain/snow particle positions and timing, spread across the canvas
@@ -604,6 +607,14 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* STREET — the city's first build: a paved lane with painted lines
+            and a lamppost. Painted here, before any building, as part of
+            the ground itself — the front-row buildings (shop/theater/
+            casino) now sit deep enough into its depth band that if it
+            painted later (as it used to, alongside the medieval TENT) it
+            would draw its dark road rect right over their lower halves. */}
+        {isCity && has('street') && <Street justBuilt={justBuilt} />}
+
         {/* ===== BACK LAYER ===== */}
 
         {/* WALL + big corner tower — final build */}
@@ -632,8 +643,31 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             sign running down its face */}
         {isCity && has('hotel') && <Hotel justBuilt={justBuilt} />}
 
-        {/* SHOP — small storefront, lit awning and a neon window sign
-            (occupies the well's old front-left spot) */}
+        {/* Parked car on the street, drawn after the apartment/hotel (so it
+            sits in front of those, not swallowed by the hotel's tall glass
+            footprint the way it was when it rendered before all mid-layer
+            buildings) but before the shop. Faces right, toward the diner/
+            survivor. Wrapped in a scale+reposition (pivoting on its own
+            ground-shadow anchor) to grow it and shift it left of the shop,
+            nudged back right a touch from its first left placement so it
+            sits closer to the shop's corner — most of the car (cabin, both
+            wheels, shadow) stays clear, with just its headlight/front edge
+            tucking behind the shop's left edge. */}
+        {isCity && has('street') && (
+          <g transform="translate(-174,-152.4) scale(1.6)">
+            <ellipse cx="205" cy="249" rx="22" ry="2.5" fill="#000" opacity="0.4" />
+            <rect x="185" y="233" width="40" height="13" rx="2" fill="#26232f" stroke="#100f18" strokeWidth="0.7" />
+            <rect x="195" y="224" width="20" height="9" rx="2" fill="#26232f" stroke="#100f18" strokeWidth="0.7" />
+            <rect x="197" y="225" width="16" height="6" fill="#3de0ff" opacity="0.35" />
+            <circle cx="193" cy="246" r="4.5" fill="#0c0c0e" />
+            <circle cx="217" cy="246" r="4.5" fill="#0c0c0e" />
+            <circle cx="227" cy="240" r="1.8" fill="#ffe8a3" opacity="0.9" />
+            <circle cx="183" cy="240" r="1.8" fill="#ff3d9a" opacity="0.8" />
+          </g>
+        )}
+
+        {/* SHOP — small storefront, lit awning and a neon window sign,
+            tucked between the apartment and the hotel */}
         {isCity && has('shop') && <Shop justBuilt={justBuilt} />}
 
         {/* DINER — right behind where the survivor sits with a coffee cup,
@@ -662,11 +696,6 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           <circle cx="154" cy="220" r="1.4" fill="#241d13" />
         </g>
         )}
-
-        {/* STREET — the city's first build: a paved lane with painted lines
-            and a lamppost, laid across the foreground where the field once
-            grew (occupies the same ground-level real estate) */}
-        {isCity && has('street') && <Street justBuilt={justBuilt} />}
 
         {/* FIELD (medieval, foreground, enlarged, shifted left so it stays clear of the survivor) */}
         {!isCity && has('field') && <Field justBuilt={justBuilt} />}
@@ -876,14 +905,15 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* SURVIVOR (always) */}
+        {/* SURVIVOR (always) — stands in front of the diner, holding its own
+            small coffee cup, when the world is 'city' */}
         <g transform="translate(0, 20)">
-          <Survivor />
+          <Survivor world={world} />
         </g>
 
-        {/* CAMPFIRE (medieval) / COFFEE CUP + NEON GLOW (city) — always, right
-            where the survivor sits; the city version stands in for the fire
-            without touching the weather/season/holiday systems around it */}
+        {/* CAMPFIRE (medieval only) — right where the survivor stands. The
+            city figure holds its own (reasonably sized) coffee cup, so
+            there's no separate prop drawn here for the city world. */}
         <g transform="translate(0, 20)">
           {!isCity ? (
             <>
@@ -909,25 +939,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
                 />
               ))}
             </>
-          ) : (
-            <>
-              <g filter="url(#glow)">
-                {/* saucer + cup */}
-                <ellipse cx="280" cy="216" rx="15" ry="4" fill="#0d0c14" />
-                <path d="M 269 201 L 272 213 Q 280 216 288 213 L 291 201 Z" fill="#e8e4d8" />
-                <ellipse cx="280" cy="201" rx="11" ry="3.2" fill="#fff8ec" />
-                <ellipse cx="280" cy="201" rx="7.5" ry="2" fill="#4a2f1a" />
-                {/* handle */}
-                <path d="M 291 204 Q 298 206 291 211" fill="none" stroke="#c8c2b2" strokeWidth="2.2" />
-              </g>
-              {/* steam wisps rising from the cup */}
-              <path d="M 276 198 Q 272 191 276 185" fill="none" stroke="#e8e4d8" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" className="coffee-steam" />
-              <path d="M 284 198 Q 288 191 284 185" fill="none" stroke="#e8e4d8" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" className="coffee-steam" style={{ animationDelay: '1s' }} />
-              {/* neon glow pooling on the ground, standing in for the firelight */}
-              <ellipse cx="280" cy="216" rx="58" ry="13" fill="#ff3d9a" opacity="0.15" />
-              <circle cx="280" cy="204" r="16" fill="url(#neonCyanGlow)" filter="url(#softGlow)" opacity="0.6" />
-            </>
-          )}
+          ) : null}
         </g>
 
         {/* HALLOWEEN GHOST (drawn in the foreground, after the buildings and
@@ -1081,8 +1093,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* WATCHTOWER (foreground, stays at the right edge) */}
         {!isCity && has('watchtower') && <Watchtower justBuilt={justBuilt} />}
 
-        {/* CASINO — the city's showiest building, right edge, stacked neon
-            signage and a blinking marquee crown (watchtower's old spot) */}
+        {/* CASINO — the city's showiest building, moved to the front-left to
+            balance the composition, stacked neon signage and a blinking
+            marquee crown */}
         {isCity && has('casino') && <Casino justBuilt={justBuilt} />}
         {/* Weather: rain in autumn, snow in winter — not every day */}
         {weather === 'rain' && (
