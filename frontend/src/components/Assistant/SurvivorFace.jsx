@@ -13,20 +13,30 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
   const isChristmas = holiday === 'christmas';
   const isValentines = holiday === 'valentines';
   const isEaster = holiday === 'easter';
-  // The city outfit is the world-2 "default look" — it only applies when no
-  // holiday costume is active, so holidays keep overriding it exactly like
-  // they already override the plain medieval look.
-  const isCity = world === 'city' && !holiday;
+  // True whenever world 2 (city) is active, regardless of holiday. The city
+  // black coat is world 2's own "default look", so holidays that don't
+  // supply their own hood/jacket color (halloween, new year) should still
+  // get the city black rather than falling back to the medieval green —
+  // holiday costumes build ON TOP of the city look, they don't replace it.
+  // Holidays that DO supply their own color (christmas/valentines/easter)
+  // still take priority in the ternaries below, in both worlds — this only
+  // changes what the *fallback* is when a holiday doesn't paint the outfit.
+  const isCityWorld = world === 'city';
+  // Sunglasses are world 2's other "default" costume piece. They're drawn
+  // for every city holiday except the two that already cover the eyes
+  // themselves: halloween's skull mask has its own eye sockets, and
+  // valentines has its own heart-shaped lenses.
+  const showCitySunglasses = isCityWorld && holiday !== 'halloween' && !isValentines;
   // Hood/jacket fill swaps to a holiday-specific gradient only while that
-  // holiday is active; any other value (including null) keeps the normal
-  // green gradients untouched.
+  // holiday is active; any other value (including null) falls back to the
+  // city black in world 2, or the normal green in the medieval world.
   const hoodFill = isChristmas
     ? 'url(#hoodXmas)'
     : isValentines
     ? 'url(#hoodValentines)'
     : isEaster
     ? 'url(#hoodEaster)'
-    : isCity
+    : isCityWorld
     ? 'url(#hoodCity)'
     : 'url(#hood)';
   const jacketFill = isChristmas
@@ -35,7 +45,7 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
     ? 'url(#jacketValentines)'
     : isEaster
     ? 'url(#jacketEaster)'
-    : isCity
+    : isCityWorld
     ? 'url(#jacketCity)'
     : 'url(#jacket)';
 
@@ -421,7 +431,7 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
             <path d="M122 74 Q126 48 120 26 Q118 20 116 26 Q110 48 114 74 Q118 78 122 74 Z" fill="#f6b8ce" />
           </g>
         )}
-        {isCity && (
+        {showCitySunglasses && (
           <g className="face__costume face__costume--city">
             {/* Black aviator sunglasses sitting over the eyes */}
             <path d="M75 122 L67 119 M125 122 L133 119" stroke="#0c0c0e" strokeWidth="3" strokeLinecap="round" fill="none" />
