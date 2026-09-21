@@ -20,7 +20,7 @@ function BaseLoading({ waking }) {
       <div className="base-loading-spinner" aria-hidden="true" />
       {waking && (
         <p className="base-loading-message">
-          Waking up the server&hellip; this can take a little while on the free tier.
+          Waking up the server&hellip; this can take a moment.
         </p>
       )}
     </div>
