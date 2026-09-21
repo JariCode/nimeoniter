@@ -1,0 +1,66 @@
+.base-loading {
+  position: relative;
+  width: 100%;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 40px 16px;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+/* Dim by default; only pulses once the "waking" state kicks in, so a
+   normal-speed load reads as a plain spinner. */
+.base-loading-glow {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.base-loading--waking .base-loading-glow {
+  opacity: 0.35;
+  animation: base-loading-pulse 2.4s ease-in-out infinite;
+}
+
+.base-loading-spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  animation: base-loading-spin 0.9s linear infinite;
+  z-index: 1;
+}
+
+@keyframes base-loading-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes base-loading-pulse {
+  0%, 100% { opacity: 0.2; transform: scale(0.9); }
+  50%      { opacity: 0.45; transform: scale(1.05); }
+}
+
+.base-loading-message {
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  color: var(--text-dim);
+  text-align: center;
+  max-width: 220px;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .base-loading-spinner,
+  .base-loading-glow {
+    animation: none;
+  }
+}

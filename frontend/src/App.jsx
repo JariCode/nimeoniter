@@ -9,6 +9,7 @@ import MissionList from './components/MissionList/MissionList';
 import AddTask from './components/AddTask/AddTask';
 import ResourceBar from './components/ResourceBar/ResourceBar';
 import BaseStatus from './components/BaseStatus/BaseStatus';
+import BaseLoading from './components/BaseLoading/BaseLoading';
 import LevelUp from './components/LevelUp/LevelUp';
 import WorldComplete from './components/WorldComplete/WorldComplete';
 import Achievement from './components/Achievement/Achievement';
@@ -68,12 +69,19 @@ function App() {
     setMissions(Array.isArray(data.missions) ? data.missions : []);
   }
 
-  // Load config once, and the player's state on sign-in
+  // Load config once, and the player's state on sign-in. The backend runs
+  // on Render's free tier, which cold-starts after idling — the first
+  // request can take tens of seconds instead of failing outright, but a
+  // request can also genuinely fail while the server is spinning up. Retry
+  // on failure instead of leaving the app blank until the player refreshes.
   const hasLoaded = useRef(false);
+  const loadInFlight = useRef(false); // guards against overlapping retry attempts
   useEffect(() => {
     if (!isSignedIn || hasLoaded.current) return;
-    hasLoaded.current = true;
-    (async () => {
+
+    async function load() {
+      if (loadInFlight.current) return;
+      loadInFlight.current = true;
       try {
         const config = await fetchConfig();
         setTaskCatalog(config.taskCatalog || []);
@@ -91,11 +99,38 @@ function App() {
         // on sign-in. Achievements are granted by the backend, so there is
         // nothing to seed for them here.
         prevLevel.current = levelFromXp(data.totalXp ?? 0).level;
+
+        // Only mark the load as done once it actually succeeded — this is
+        // what lets a failed attempt below retry instead of getting stuck.
+        hasLoaded.current = true;
+        loadInFlight.current = false;
       } catch (err) {
         console.error('Load failed:', err);
+        // Most likely the backend cold-starting — wait a moment and try
+        // again. hasLoaded.current is still false, so this keeps retrying
+        // until fetchConfig/fetchState succeed.
+        loadInFlight.current = false;
+        setTimeout(load, 3000);
       }
-    })();
+    }
+
+    load();
   }, [isSignedIn, getToken]);
+
+  // Track whether the initial load is taking long enough that it's likely
+  // a Render cold start, so BaseLoading can show an explanatory message
+  // instead of just a bare spinner. Only relevant for the very first load
+  // (!stateLoaded) — later fetches (build, completing a task) don't touch
+  // this.
+  const [wakingUp, setWakingUp] = useState(false);
+  useEffect(() => {
+    if (!isSignedIn || stateLoaded) return undefined;
+    const t = setTimeout(() => setWakingUp(true), 3500);
+    return () => {
+      clearTimeout(t);
+      setWakingUp(false);
+    };
+  }, [isSignedIn, stateLoaded]);
 
   // Which day the user is currently viewing
   const [selectedDate, setSelectedDate] = useState(todayKey());
@@ -606,7 +641,7 @@ function App() {
                   currentWorldFromBuilt briefly reports the medieval village
                   even for a city player, flashing the wrong world on every
                   refresh before the real data arrives. */}
-              {stateLoaded && buildStages.length > 0 && (
+              {stateLoaded && buildStages.length > 0 ? (
                 <BaseStatus
                   stageKey={baseStageKey}
                   buildStages={buildStages}
@@ -617,6 +652,8 @@ function App() {
                   canBuild={canBuild}
                   onBuild={build}
                 />
+              ) : (
+                isSignedIn && <BaseLoading waking={wakingUp} />
               )}
             </div>
           </div>
