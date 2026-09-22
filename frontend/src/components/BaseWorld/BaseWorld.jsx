@@ -7,6 +7,9 @@ import { currentWorldFromBuilt } from '../../data/world';
 import { Wall, House, Hut, Well, Field, Storage, Fence, Watchtower } from './buildings/medieval';
 import { Street, Apartment, Diner, Shop, Hotel, Casino, Theater, Skyscraper } from './buildings/city';
 import {
+  LandingPad, Habitat, Greenhouse, SolarArray, CommsTower, Lab, Reactor, CommandTower,
+} from './buildings/space';
+import {
   getHoliday,
   HALLOWEEN_PUMPKINS, HALLOWEEN_COBWEBS, HALLOWEEN_BATS, HALLOWEEN_GLOW, HALLOWEEN_SKELETONS, HALLOWEEN_GHOSTS, HALLOWEEN_CANDLES,
   CHRISTMAS_LIGHTS, CHRISTMAS_EAVES_LIGHTS, CHRISTMAS_ELVES, CHRISTMAS_TREES, CHRISTMAS_GIFTS, CHRISTMAS_CANDLES, CHRISTMAS_SNOWDRIFTS, CHRISTMAS_WREATH,
@@ -329,6 +332,37 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           <radialGradient id="cosmicStormGlow" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#b24bf3" stopOpacity="0.6" />
             <stop offset="100%" stopColor="#b24bf3" stopOpacity="0" />
+          </radialGradient>
+
+          {/* ===== Space-world building materials ===== */}
+          <linearGradient id="spaceMetal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#7a8494" />
+            <stop offset="100%" stopColor="#363c48" />
+          </linearGradient>
+          <linearGradient id="spaceMetalDark" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#4a5058" />
+            <stop offset="100%" stopColor="#1e2228" />
+          </linearGradient>
+          <linearGradient id="spaceGlassCyan" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#a0eaff" />
+            <stop offset="100%" stopColor="#1a4a5a" />
+          </linearGradient>
+          <linearGradient id="greenhouseGlass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#b8f0c8" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#2a5a38" stopOpacity="0.55" />
+          </linearGradient>
+          <linearGradient id="solarPanel" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#3a5a8a" />
+            <stop offset="100%" stopColor="#0e1526" />
+          </linearGradient>
+          <radialGradient id="reactorCore" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#eafcff" />
+            <stop offset="45%" stopColor="#6fd8ff" />
+            <stop offset="100%" stopColor="#1a4a72" />
+          </radialGradient>
+          <radialGradient id="spaceBeaconGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ff5a5a" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#ff5a5a" stopOpacity="0" />
           </radialGradient>
         </defs>
 
@@ -969,25 +1003,35 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             would draw its dark road rect right over their lower halves. */}
         {isCity && has('street') && <Street justBuilt={justBuilt} />}
 
+        {/* LANDING PAD — the space world's first build: a metal deck with a
+            glowing landing ring, painted here for the same reason the
+            street is — front-row buildings sit deep enough into its depth
+            band that painting it later would draw over their lower halves. */}
+        {isSpace && has('landing-pad') && <LandingPad justBuilt={justBuilt} />}
+
         {/* ===== BACK LAYER ===== */}
 
         {/* WALL + big corner tower — final build */}
-        {!isCity && has('wall') && <Wall justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('wall') && <Wall justBuilt={justBuilt} />}
 
         {/* SKYSCRAPER — back-right tower, the city world's final build,
             occupying the same back-layer real estate as the wall+tower */}
         {isCity && has('skyscraper') && <Skyscraper justBuilt={justBuilt} />}
 
+        {/* COMMAND TOWER — back-right tower, the space world's final build,
+            occupying the same back-layer real estate as the wall+tower/skyscraper */}
+        {isSpace && has('command-tower') && <CommandTower justBuilt={justBuilt} />}
+
         {/* ===== MID LAYER (original buildings, unchanged) ===== */}
 
         {/* HOUSE (original) */}
-        {!isCity && has('house') && <House justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('house') && <House justBuilt={justBuilt} />}
 
         {/* HUT (original, enlarged so the doorway reads against the survivor) */}
-        {!isCity && has('hut') && <Hut justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('hut') && <Hut justBuilt={justBuilt} />}
 
         {/* WELL (brought forward and clear of the hut, shadow aligned to its base) */}
-        {!isCity && has('well') && <Well justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('well') && <Well justBuilt={justBuilt} />}
 
         {/* APARTMENT — mid-left block of flats, lit windows in mixed colors,
             rooftop water tank (same footprint the medieval house used) */}
@@ -996,6 +1040,14 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* HOTEL — mid-right tower, taller than the apartment, vertical neon
             sign running down its face */}
         {isCity && has('hotel') && <Hotel justBuilt={justBuilt} />}
+
+        {/* HABITAT — mid-left cluster of round crew-quarters pods, the space
+            world's apartment equivalent */}
+        {isSpace && has('habitat') && <Habitat justBuilt={justBuilt} />}
+
+        {/* COMMS TOWER — slim mast with a dish, standing between the
+            habitat and greenhouse, the space world's hotel equivalent */}
+        {isSpace && has('comms-tower') && <CommsTower justBuilt={justBuilt} />}
 
         {/* Parked car on the street, drawn after the apartment/hotel (so it
             sits in front of those, not swallowed by the hotel's tall glass
@@ -1028,10 +1080,18 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             the city's version of the campfire hangout */}
         {isCity && has('diner') && <Diner justBuilt={justBuilt} />}
 
+        {/* GREENHOUSE — translucent dome with plants glowing inside, the
+            space world's shop equivalent */}
+        {isSpace && has('greenhouse') && <Greenhouse justBuilt={justBuilt} />}
+
+        {/* SOLAR ARRAY — angled panels on ground struts, the space world's
+            parked-car-street-prop equivalent */}
+        {isSpace && has('solar-array') && <SolarArray justBuilt={justBuilt} />}
+
         {/* ===== FRONT LAYER ===== */}
 
         {/* TENT (medieval, original) */}
-        {!isCity && (
+        {!isCity && !isSpace && (
         <g transform="translate(0, 18)">
           <ellipse cx="175" cy="222" rx="46" ry="8" fill="#000" opacity="0.4" />
           <path d="M 140 220 L 175 165 L 210 220 Z" fill="#43371f" />
@@ -1052,7 +1112,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         )}
 
         {/* FIELD (medieval, foreground, enlarged, shifted left so it stays clear of the survivor) */}
-        {!isCity && has('field') && <Field justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('field') && <Field justBuilt={justBuilt} />}
 
         {/* Butterflies fluttering near the summer flowers — drawn in the
             front layer so they stay clear of buildings, not hidden behind
@@ -1347,9 +1407,12 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* CAMPFIRE (medieval only) — right where the survivor stands. The
             city figure holds its own (reasonably sized) coffee cup, so
-            there's no separate prop drawn here for the city world. */}
+            there's no separate prop drawn here for the city world. Also
+            withheld in space (no space-specific hangout prop yet — that
+            comes with the character phase), so no open flame shows up in
+            the station scene. */}
         <g transform="translate(0, 20)">
-          {!isCity ? (
+          {!isCity && !isSpace ? (
             <>
               <g filter="url(#glow)">
                 <rect x="266" y="211" width="26" height="5" rx="2" fill="#2a2018" transform="rotate(14 280 214)" />
@@ -1522,22 +1585,31 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* STORAGE (drawn after the campfire so its glow stays behind the building) */}
-        {!isCity && has('storage') && <Storage justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('storage') && <Storage justBuilt={justBuilt} />}
 
         {/* THEATER — showy marquee with a bulb-lined border, standing where
             the storage shed once did */}
         {isCity && has('theater') && <Theater justBuilt={justBuilt} />}
 
+        {/* LAB — modest front-left research module, standing where the
+            storage shed/theater once did */}
+        {isSpace && has('lab') && <Lab justBuilt={justBuilt} />}
+
         {/* FENCE (right against the front edge of the field, matching its width) */}
-        {!isCity && has('fence') && <Fence justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('fence') && <Fence justBuilt={justBuilt} />}
 
         {/* WATCHTOWER (foreground, stays at the right edge) */}
-        {!isCity && has('watchtower') && <Watchtower justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('watchtower') && <Watchtower justBuilt={justBuilt} />}
 
         {/* CASINO — the city's showiest building, moved to the front-left to
             balance the composition, stacked neon signage and a blinking
             marquee crown */}
         {isCity && has('casino') && <Casino justBuilt={justBuilt} />}
+
+        {/* REACTOR — the space world's showiest build, a glowing energy core
+            in front of the command tower's foot, the casino/theater
+            equivalent */}
+        {isSpace && has('reactor') && <Reactor justBuilt={justBuilt} />}
 
         {/* ===== CITY HALLOWEEN: floating neon ghosts (up in the sky) =====
             Same ghost silhouette and `.ghost-float` bob as the village's
@@ -1972,8 +2044,30 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* NIMEONITER sign (always, front — in the gap right of the fence,
             ahead of the storage shed and watchtower): carved wood in the
-            medieval world, a Las Vegas-style neon tube sign in the city */}
-        {!isCity ? (
+            medieval world, a Las Vegas-style neon tube sign in the city, a
+            flickering hologram projection in the space colony */}
+        {isSpace ? (
+        <g>
+          {/* a hologram casts light, not shade — a faint ground glow stands
+              in for the other worlds' solid post shadow */}
+          <ellipse cx="260" cy="294" rx="44" ry="4" fill="#3de0ff" opacity="0.12" />
+          {/* projector base */}
+          <rect x="245" y="288" width="30" height="6" rx="2" fill="url(#spaceMetalDark)" />
+          <circle cx="260" cy="288" r="2" fill="#3de0ff" opacity="0.9" />
+          {/* holographic panel: translucent, scanlined, flickering */}
+          <g className="hologram-flicker">
+            <rect x="216" y="256" width="88" height="30" rx="2" fill="#3de0ff" opacity="0.08" />
+            <rect x="216" y="256" width="88" height="30" rx="2" fill="none" stroke="#3de0ff" strokeWidth="1" opacity="0.6" />
+            {Array.from({ length: 6 }, (_, i) => (
+              <line key={i} x1="216" y1={260 + i * 5} x2="304" y2={260 + i * 5} stroke="#8fe0ff" strokeWidth="0.6" opacity="0.25" />
+            ))}
+            <text x="260" y="275" fontFamily="Georgia, serif" fontSize="9" fontWeight="bold" letterSpacing="0.6" textAnchor="middle" fill="none" stroke="#8fe0ff" strokeWidth="1.4" filter="url(#glow)" opacity="0.9">NIMEONITER</text>
+            <text x="260" y="275" fontFamily="Georgia, serif" fontSize="9" fontWeight="bold" letterSpacing="0.6" textAnchor="middle" fill="#eafcff" opacity="0.95">NIMEONITER</text>
+            {/* moving scan sweep */}
+            <rect x="216" y="256" width="6" height="30" fill="#eafcff" opacity="0.25" className="hologram-scan-sweep" />
+          </g>
+        </g>
+        ) : !isCity ? (
         <g>
           <ellipse cx="260" cy="294" rx="42" ry="4" fill="#000" opacity="0.4" />
           {/* posts */}
