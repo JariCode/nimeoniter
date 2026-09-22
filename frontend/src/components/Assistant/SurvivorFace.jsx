@@ -22,14 +22,27 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
   // still take priority in the ternaries below, in both worlds — this only
   // changes what the *fallback* is when a holiday doesn't paint the outfit.
   const isCityWorld = world === 'city';
+  // True whenever world 3 (space colony) is active, regardless of holiday —
+  // same idea as isCityWorld: the white spacesuit is world 3's own "default
+  // look", so holidays that don't supply their own hood/jacket color
+  // (halloween, new year) still get the spacesuit white rather than falling
+  // back to the medieval green.
+  const isSpaceWorld = world === 'space';
   // Sunglasses are world 2's other "default" costume piece. They're drawn
   // for every city holiday except the two that already cover the eyes
   // themselves: halloween's skull mask has its own eye sockets, and
   // valentines has its own heart-shaped lenses.
   const showCitySunglasses = isCityWorld && holiday !== 'halloween' && !isValentines;
+  // The space helmet's visor is world 3's equivalent of the city
+  // sunglasses — same reasoning: halloween's mask and valentines' heart
+  // lenses already cover the eyes themselves, so the visor (which would
+  // otherwise sit on top of the whole face) is left off for those two so
+  // the costume shows through unobstructed.
+  const showSpaceVisor = isSpaceWorld && holiday !== 'halloween' && !isValentines;
   // Hood/jacket fill swaps to a holiday-specific gradient only while that
   // holiday is active; any other value (including null) falls back to the
-  // city black in world 2, or the normal green in the medieval world.
+  // city black in world 2, the spacesuit white in world 3, or the normal
+  // green in the medieval world.
   const hoodFill = isChristmas
     ? 'url(#hoodXmas)'
     : isValentines
@@ -38,6 +51,8 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
     ? 'url(#hoodEaster)'
     : isCityWorld
     ? 'url(#hoodCity)'
+    : isSpaceWorld
+    ? 'url(#hoodSpace)'
     : 'url(#hood)';
   const jacketFill = isChristmas
     ? 'url(#jacketXmas)'
@@ -47,6 +62,8 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
     ? 'url(#jacketEaster)'
     : isCityWorld
     ? 'url(#jacketCity)'
+    : isSpaceWorld
+    ? 'url(#jacketSpace)'
     : 'url(#jacket)';
 
   return (
@@ -145,6 +162,26 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
           <stop offset="55%" stopColor="#1c1c20" />
           <stop offset="100%" stopColor="#0c0c0e" />
         </linearGradient>
+        {/* Space-world white suit fabric (hood stands in for the raised
+            helmet collar) */}
+        <linearGradient id="hoodSpace" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0%" stopColor="#eef0f3" />
+          <stop offset="50%" stopColor="#d4d8de" />
+          <stop offset="100%" stopColor="#aab0ba" />
+        </linearGradient>
+        {/* Space-world white suit, a touch darker/cooler than the collar */}
+        <linearGradient id="jacketSpace" x1="0" y1="0" x2="0.2" y2="1">
+          <stop offset="0%" stopColor="#d4d8de" />
+          <stop offset="55%" stopColor="#b6bcc4" />
+          <stop offset="100%" stopColor="#848c96" />
+        </linearGradient>
+        {/* Helmet shell metal — lit upper-left like the skin gradient, so
+            the round dome reads as a curved, reflective surface */}
+        <radialGradient id="helmetShell" cx="38%" cy="30%" r="80%">
+          <stop offset="0%" stopColor="#f4f6f8" />
+          <stop offset="55%" stopColor="#c8ccd4" />
+          <stop offset="100%" stopColor="#8a929c" />
+        </radialGradient>
       </defs>
 
       <g className="face__breathe">
@@ -166,6 +203,18 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
         {/* shoulder highlight */}
         <path d="M50 190 Q66 178 84 172" stroke="#55663c" strokeWidth="2" fill="none" opacity="0.5" />
         <path d="M150 190 Q134 178 116 172" stroke="#55663c" strokeWidth="2" fill="none" opacity="0.5" />
+
+        {/* Space-world life-support chest light — a small glowing panel on
+            the suit, the same detail the world Survivor's spacesuit has.
+            A suit detail, not a face covering, so it stays on through every
+            space holiday rather than being tied to showSpaceVisor. */}
+        {isSpaceWorld && (
+          <g className="face__chest-light">
+            <circle cx="100" cy="216" r="7" fill="#3de0ff" opacity="0.25" />
+            <circle cx="100" cy="216" r="4.5" fill="#3de0ff" opacity="0.55" />
+            <circle cx="100" cy="216" r="2.4" fill="#eafcff" opacity="0.95" />
+          </g>
+        )}
 
         {/* ---------- Hood draped over head, resting on the shoulders ---------- */}
         <path
@@ -440,6 +489,40 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
             <ellipse cx="116" cy="124" rx="10.5" ry="8.5" fill="#14141a" stroke="#0c0c0e" strokeWidth="1.6" />
             <path d="M78 120 Q82 118 87 120" stroke="#6a7080" strokeWidth="1.2" opacity="0.6" fill="none" />
             <path d="M110 120 Q114 118 119 120" stroke="#6a7080" strokeWidth="1.2" opacity="0.6" fill="none" />
+          </g>
+        )}
+        {showSpaceVisor && (
+          <g className="face__costume face__costume--space">
+            {/* Helmet shell — an OPAQUE metal shape (evenodd fill with a
+                face-shaped hole cut out) shaped like an actual helmet: a
+                round dome on top that flares out toward the base to cover
+                the fabric hood's flared shoulder corners, rather than a
+                single uniform circle/oval. A circle big enough to cover
+                those corners everywhere read as a giant pot; a dome+flare
+                shape follows the hood's own silhouette closely while still
+                reading as round on top. Drawn last, after the hood front
+                rim, with a narrow border around the face opening. */}
+            <path
+              d="M100 58 Q152 62 158 118 Q162 160 148 194
+                 Q124 208 100 208 Q76 208 52 194
+                 Q38 160 42 118 Q48 62 100 58 Z
+                 M100 72 A36 52 0 1 0 100 176 A36 52 0 1 0 100 72 Z"
+              fill="url(#helmetShell)"
+              fillRule="evenodd"
+              stroke="#8a929c"
+              strokeWidth="1.2"
+            />
+            {/* Inner rim highlight framing the visor opening */}
+            <ellipse cx="100" cy="124" rx="36" ry="52" fill="none" stroke="#eef0f3" strokeWidth="1" opacity="0.6" />
+            {/* Small indicator lights on the neck seal where the dome closes */}
+            <circle cx="76" cy="200" r="1.8" fill="#ffd97a" opacity="0.9" />
+            <circle cx="124" cy="200" r="1.8" fill="#3de0ff" opacity="0.9" />
+            {/* Visor glass: translucent amber, filling the face opening —
+                kept light enough that the eyes/beard stay clearly visible
+                underneath, just tinted, rather than being washed out. */}
+            <ellipse cx="100" cy="124" rx="36" ry="52" fill="#f0c860" opacity="0.16" />
+            {/* Glossy highlight streak on the visor */}
+            <path d="M74 88 Q68 124 74 158" stroke="#fff6d8" strokeWidth="2.5" fill="none" opacity="0.35" strokeLinecap="round" />
           </g>
         )}
       </g>
