@@ -1018,9 +1018,16 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             occupying the same back-layer real estate as the wall+tower */}
         {isCity && has('skyscraper') && <Skyscraper justBuilt={justBuilt} />}
 
-        {/* COMMAND TOWER — back-right tower, the space world's final build,
-            occupying the same back-layer real estate as the wall+tower/skyscraper */}
+        {/* COMMAND TOWER — back row, right cluster: the space world's final
+            build, occupying the same back-layer real estate as the
+            wall+tower/skyscraper */}
         {isSpace && has('command-tower') && <CommandTower justBuilt={justBuilt} />}
+
+        {/* COMMS TOWER — back row, left cluster: a slim mast with a dish,
+            the space world's hotel equivalent. Drawn back here (not mid)
+            so the mid/front buildings in front of it partly cover its base,
+            leaving its tall mast/dish rising above them. */}
+        {isSpace && has('comms-tower') && <CommsTower justBuilt={justBuilt} />}
 
         {/* ===== MID LAYER (original buildings, unchanged) ===== */}
 
@@ -1041,13 +1048,13 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             sign running down its face */}
         {isCity && has('hotel') && <Hotel justBuilt={justBuilt} />}
 
-        {/* HABITAT — mid-left cluster of round crew-quarters pods, the space
-            world's apartment equivalent */}
+        {/* HABITAT — mid row, left cluster: round crew-quarters pods, the
+            space world's apartment equivalent */}
         {isSpace && has('habitat') && <Habitat justBuilt={justBuilt} />}
 
-        {/* COMMS TOWER — slim mast with a dish, standing between the
-            habitat and greenhouse, the space world's hotel equivalent */}
-        {isSpace && has('comms-tower') && <CommsTower justBuilt={justBuilt} />}
+        {/* LAB — mid row, left cluster: modest research module at the far
+            left edge, the space world's hotel-slot equivalent */}
+        {isSpace && has('lab') && <Lab justBuilt={justBuilt} />}
 
         {/* Parked car on the street, drawn after the apartment/hotel (so it
             sits in front of those, not swallowed by the hotel's tall glass
@@ -1079,10 +1086,6 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* DINER — right behind where the survivor sits with a coffee cup,
             the city's version of the campfire hangout */}
         {isCity && has('diner') && <Diner justBuilt={justBuilt} />}
-
-        {/* GREENHOUSE — translucent dome with plants glowing inside, the
-            space world's shop equivalent */}
-        {isSpace && has('greenhouse') && <Greenhouse justBuilt={justBuilt} />}
 
         {/* SOLAR ARRAY — angled panels on ground struts, the space world's
             parked-car-street-prop equivalent */}
@@ -1591,9 +1594,10 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             the storage shed once did */}
         {isCity && has('theater') && <Theater justBuilt={justBuilt} />}
 
-        {/* LAB — modest front-left research module, standing where the
-            storage shed/theater once did */}
-        {isSpace && has('lab') && <Lab justBuilt={justBuilt} />}
+        {/* GREENHOUSE — front row, left cluster: translucent dome with
+            plants glowing inside, the space world's theater-slot showpiece
+            on this side, standing where the storage shed/theater once did */}
+        {isSpace && has('greenhouse') && <Greenhouse justBuilt={justBuilt} />}
 
         {/* FENCE (right against the front edge of the field, matching its width) */}
         {!isCity && !isSpace && has('fence') && <Fence justBuilt={justBuilt} />}
@@ -1606,9 +1610,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             marquee crown */}
         {isCity && has('casino') && <Casino justBuilt={justBuilt} />}
 
-        {/* REACTOR — the space world's showiest build, a glowing energy core
-            in front of the command tower's foot, the casino/theater
-            equivalent */}
+        {/* REACTOR — front row, right cluster: the space world's showiest
+            build, a glowing energy core in front of the command tower's
+            foot, the casino/theater equivalent */}
         {isSpace && has('reactor') && <Reactor justBuilt={justBuilt} />}
 
         {/* ===== CITY HALLOWEEN: floating neon ghosts (up in the sky) =====
