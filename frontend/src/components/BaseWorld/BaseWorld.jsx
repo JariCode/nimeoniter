@@ -1113,10 +1113,11 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* ===== CITY HALLOWEEN: ground-layer decorations (neon pumpkin signs on facades) ===== */}
+        {/* ===== CITY HALLOWEEN: ground-layer decorations (neon pumpkin signs on facades) =====
+            No dark backing rect — the pumpkin glows directly on the street,
+            like the other small foreground decorations. */}
         {isCity && holiday === 'halloween' && CITY_HALLOWEEN_MARQUEE_PUMPKINS.map((p, i) => (
           <g key={i} transform={`translate(${p.x}, ${p.y}) scale(${p.scale})`}>
-            <rect x="-8" y="-15" width="16" height="15" rx="1.5" fill="#0d0c14" opacity="0.9" />
             <ellipse cx="0" cy="-6" rx="6" ry="5" fill="none" stroke="#ff8c3d" strokeWidth="1.2" filter="url(#softGlow)" />
             <ellipse cx="0" cy="-6" rx="6" ry="5" fill="none" stroke="#ff8c3d" strokeWidth="1.2" className="neon-pulse" />
             <path d="M -1 -11 L 1 -11 L 1 -9 L -1 -9 Z" fill="#3f5225" />
@@ -1154,10 +1155,11 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           />
         ))}
 
-        {/* ===== CITY VALENTINE'S: ground-layer decorations (neon heart signs on facades) ===== */}
+        {/* ===== CITY VALENTINE'S: ground-layer decorations (neon heart signs on facades) =====
+            No dark backing rect — the heart glows directly on the street,
+            like the other small foreground decorations. */}
         {isCity && holiday === 'valentines' && CITY_VALENTINES_HEART_SIGNS.map((h, i) => (
           <g key={i} transform={`translate(${h.x}, ${h.y}) scale(${h.scale})`}>
-            <rect x="-9" y="-17" width="18" height="17" rx="1.5" fill="#0d0c14" opacity="0.9" />
             <g className="neon-pulse">
               <path d={HEART_PATH} transform="translate(0, -7) scale(0.9)" fill="none" stroke="#ff3d9a" strokeWidth="1.2" filter="url(#softGlow)" />
               <path d={HEART_PATH} transform="translate(0, -7) scale(0.9)" fill="none" stroke="#ff3d9a" strokeWidth="1.2" />
@@ -1433,10 +1435,10 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             otherwise bare. Positioned below each building's own
             ground-contact shadow (CITY_HALLOWEEN_STREET_PUMPKINS) so they
             clearly stand closer to the viewer than the facade, and drawn
-            after those two buildings so they're never hidden behind one. */}
+            after those two buildings so they're never hidden behind one.
+            No dark backing rect — glows directly on the street. */}
         {isCity && holiday === 'halloween' && CITY_HALLOWEEN_STREET_PUMPKINS.map((p, i) => (
           <g key={i} transform={`translate(${p.x}, ${p.y}) scale(${p.scale})`}>
-            <rect x="-8" y="-15" width="16" height="15" rx="1.5" fill="#0d0c14" opacity="0.9" />
             <ellipse cx="0" cy="-6" rx="6" ry="5" fill="none" stroke="#ff8c3d" strokeWidth="1.2" filter="url(#softGlow)" />
             <ellipse cx="0" cy="-6" rx="6" ry="5" fill="none" stroke="#ff8c3d" strokeWidth="1.2" className="neon-pulse" />
             <path d="M -1 -11 L 1 -11 L 1 -9 L -1 -9 Z" fill="#3f5225" />
@@ -1542,15 +1544,14 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== CITY VALENTINE'S: heart signs in front of the
             casino/theater =====
-            Same backing-rect neon heart sign as CITY_VALENTINES_HEART_SIGNS
-            (opaque dark backing behind a glow-filtered + crisp double-stroke
-            heart outline), just placed in the same empty pavement spots the
-            Halloween street pumpkins and New Year champagne bottles use —
-            kept short so it clears each building's own ground-contact
-            shadow the same way those did. */}
+            Same glow-filtered + crisp double-stroke heart outline as
+            CITY_VALENTINES_HEART_SIGNS, just placed in the same empty
+            pavement spots the Halloween street pumpkins and New Year
+            champagne bottles use — kept short so it clears each building's
+            own ground-contact shadow the same way those did. No dark
+            backing rect — glows directly on the street. */}
         {isCity && holiday === 'valentines' && CITY_VALENTINES_STREET_HEARTS.map((h, i) => (
           <g key={i} transform={`translate(${h.x}, ${h.y}) scale(${h.scale})`}>
-            <rect x="-9" y="-17" width="18" height="17" rx="1.5" fill="#0d0c14" opacity="0.9" />
             <g className="neon-pulse">
               <path d={HEART_PATH} transform="translate(0, -7) scale(0.9)" fill="none" stroke={h.color} strokeWidth="1.2" filter="url(#softGlow)" />
               <path d={HEART_PATH} transform="translate(0, -7) scale(0.9)" fill="none" stroke={h.color} strokeWidth="1.2" />

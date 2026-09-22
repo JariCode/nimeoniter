@@ -5,7 +5,7 @@
 
 // Force a holiday for testing. Uncomment one line, then remove it afterwards.
 // Values: 'halloween' | 'christmas' | 'newyear' | 'valentines' | 'easter'
-export const TEST_HOLIDAY = null; ;
+export const TEST_HOLIDAY = null;
 // Date ranges per holiday, as [month, day] pairs (month is 1-12 here for
 // readability). A holiday spans from `start` to `end` inclusive. Ranges that
 // don't cross a month boundary are simple; newyear crosses Dec->Jan and is
