@@ -5,7 +5,7 @@
 
 // Force a holiday for testing. Uncomment one line, then remove it afterwards.
 // Values: 'halloween' | 'christmas' | 'newyear' | 'valentines' | 'easter'
-export const TEST_HOLIDAY = null;
+export const TEST_HOLIDAY = null; ;
 // Date ranges per holiday, as [month, day] pairs (month is 1-12 here for
 // readability). A holiday spans from `start` to `end` inclusive. Ranges that
 // don't cross a month boundary are simple; newyear crosses Dec->Jan and is
@@ -177,11 +177,15 @@ export const CHRISTMAS_LIGHTS = [
   { x: 380, y: 19.3, color: '#3f9a5c', delay: 1.2 },
 ];
 
-// A snowman standing on the ground, right beside the campfire on the
+// An elf standing on the ground, right beside the campfire on the
 // survivor's opposite side — the same spot the Halloween ghost stands in
 // (survivor sits left of the fire). Drawn in the foreground, after the
 // buildings and campfire, so it isn't clipped by the wall/tower/storage.
-export const CHRISTMAS_SNOWMEN = [
+// Used to be a second snowman here, but the village now also gets a
+// season-wide winter snowman elsewhere (WINTER_SNOWMAN in season.js), and
+// having two snowmen at once read as a redundant, oddly floating duplicate
+// — so this spot became an elf instead.
+export const CHRISTMAS_ELVES = [
   { x: 300, y: 228, scale: 0.9 },
 ];
 

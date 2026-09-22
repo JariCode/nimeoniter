@@ -1,14 +1,14 @@
 import './BaseWorld.css';
 import Survivor from '../Survivor/Survivor';
 import { getTimeOfDay, SKY_STOPS, STAR_OPACITY, SKY_IS_RADIAL, CELESTIAL } from '../../data/timeOfDay';
-import { getSeason, GROUND_STOPS, SEASON_OVERLAY, FLOWERS, getWeather } from '../../data/season';
+import { getSeason, GROUND_STOPS, SEASON_OVERLAY, FLOWERS, getWeather, WINTER_SNOWMAN } from '../../data/season';
 import { currentWorldFromBuilt } from '../../data/world';
 import { Wall, House, Hut, Well, Field, Storage, Fence, Watchtower } from './buildings/medieval';
 import { Street, Apartment, Diner, Shop, Hotel, Casino, Theater, Skyscraper } from './buildings/city';
 import {
   getHoliday,
   HALLOWEEN_PUMPKINS, HALLOWEEN_COBWEBS, HALLOWEEN_BATS, HALLOWEEN_GLOW, HALLOWEEN_SKELETONS, HALLOWEEN_GHOSTS, HALLOWEEN_CANDLES,
-  CHRISTMAS_LIGHTS, CHRISTMAS_EAVES_LIGHTS, CHRISTMAS_SNOWMEN, CHRISTMAS_TREES, CHRISTMAS_GIFTS, CHRISTMAS_CANDLES, CHRISTMAS_SNOWDRIFTS, CHRISTMAS_WREATH,
+  CHRISTMAS_LIGHTS, CHRISTMAS_EAVES_LIGHTS, CHRISTMAS_ELVES, CHRISTMAS_TREES, CHRISTMAS_GIFTS, CHRISTMAS_CANDLES, CHRISTMAS_SNOWDRIFTS, CHRISTMAS_WREATH,
   NEWYEAR_FIREWORKS, NEWYEAR_SPARKLES, NEWYEAR_GLOW, NEWYEAR_BUNTING, NEWYEAR_TOASTS,
   VALENTINES_HEARTS, VALENTINES_GLOW, VALENTINES_GARLAND, VALENTINES_ROSES, VALENTINES_HEART_GLOWS,
   EASTER_EGGS, EASTER_FLOWERS, EASTER_GLOW, EASTER_GARLAND, EASTER_BUNNIES,
@@ -52,7 +52,9 @@ const CITY_SKY_STOPS = {
 // reads as a distinct surface behind/around the street instead of
 // blending into it.
 const CITY_GROUND_STOPS = {
-  winter: [['0%', '#343a4a'], ['100%', '#1e212c']],
+  // Lightened from #343a4a/#1e212c so the asphalt reads as snow-dusted,
+  // matching the village's own winter lightening below.
+  winter: [['0%', '#4b5268'], ['100%', '#2c303e']],
   spring: [['0%', '#2f324a'], ['100%', '#1c1e2c']],
   summer: [['0%', '#322e46'], ['100%', '#1e1a28']],
   autumn: [['0%', '#2c2a42'], ['100%', '#1c1926']],
@@ -361,11 +363,15 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* Season overlay: snow blanket, flowers, or puddles */}
         {overlay === 'snow' && (
           <g>
-            <rect x="0" y="220" width="400" height="80" fill="#c8d0d8" opacity="0.16" />
-            <ellipse cx="200" cy="222" rx="200" ry="14" fill="#e8eef4" opacity="0.22" />
-            <ellipse cx="90" cy="238" rx="40" ry="7" fill="#e8eef4" opacity="0.3" />
-            <ellipse cx="300" cy="245" rx="50" ry="8" fill="#e8eef4" opacity="0.28" />
-            <ellipse cx="180" cy="258" rx="60" ry="9" fill="#e8eef4" opacity="0.25" />
+            {/* Opacities raised across the board (was 0.16-0.3) so the
+                ground reads as properly snow-covered rather than just
+                tinted, plus one extra drift for fuller coverage. */}
+            <rect x="0" y="220" width="400" height="80" fill="#c8d0d8" opacity="0.3" />
+            <ellipse cx="200" cy="222" rx="200" ry="14" fill="#e8eef4" opacity="0.4" />
+            <ellipse cx="90" cy="238" rx="40" ry="7" fill="#e8eef4" opacity="0.5" />
+            <ellipse cx="300" cy="245" rx="50" ry="8" fill="#e8eef4" opacity="0.48" />
+            <ellipse cx="180" cy="258" rx="60" ry="9" fill="#e8eef4" opacity="0.45" />
+            <ellipse cx="360" cy="265" rx="40" ry="8" fill="#e8eef4" opacity="0.42" />
           </g>
         )}
         {overlay === 'puddles' && (
@@ -1239,39 +1245,41 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* CHRISTMAS SNOWMAN (drawn in the foreground, after the buildings and
+        {/* CHRISTMAS ELF (drawn in the foreground, after the buildings and
             campfire, so it isn't clipped by the wall/tower/storage)
-            (village-only: sits beside the medieval campfire) */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_SNOWMEN.map((s, i) => (
-          <g key={i} transform={`translate(${s.x}, ${s.y}) scale(${s.scale})`}>
-            {/* three stacked snowballs, slightly overlapping */}
-            <circle cx="0" cy="-7" r="7" fill="#eef3f6" />
-            <circle cx="0" cy="-17" r="5.5" fill="#eef3f6" />
-            <circle cx="0" cy="-25" r="4" fill="#eef3f6" />
-            {/* soft shading, same trick as the celestial bodies */}
-            <ellipse cx="2.5" cy="-6" rx="4.5" ry="6" fill="#c8d4da" opacity="0.35" />
-            <ellipse cx="2" cy="-16" rx="3.4" ry="4.6" fill="#c8d4da" opacity="0.35" />
-            {/* twig arms */}
-            <line x1="-5" y1="-17" x2="-13" y2="-22" stroke="#5c4028" strokeWidth="1" strokeLinecap="round" />
-            <line x1="-13" y1="-22" x2="-16" y2="-19" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
-            <line x1="-13" y1="-22" x2="-15" y2="-24" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
-            <line x1="5" y1="-17" x2="13" y2="-13" stroke="#5c4028" strokeWidth="1" strokeLinecap="round" />
-            <line x1="13" y1="-13" x2="16" y2="-15" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
-            <line x1="13" y1="-13" x2="15" y2="-11" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
-            {/* coal buttons */}
-            <circle cx="0" cy="-9" r="0.6" fill="#1a1a1a" />
-            <circle cx="0" cy="-14" r="0.6" fill="#1a1a1a" />
-            {/* scarf, knotted at the neck with a dangling tail */}
-            <path d="M -4 -21 Q 0 -19 4 -21 L 4 -19.3 Q 0 -17.3 -4 -19.3 Z" fill="#b5342a" />
-            <rect x="1.8" y="-19.3" width="2.2" height="7" rx="1" fill="#b5342a" transform="rotate(18 2.9 -19.3)" />
-            {/* coal eyes and carrot nose */}
-            <circle cx="-1.4" cy="-26" r="0.7" fill="#1a1a1a" />
-            <circle cx="1.4" cy="-26" r="0.7" fill="#1a1a1a" />
-            <path d="M 4 -25 L 9 -24.3 L 4 -23.6 Z" fill="#e2822a" />
-            {/* top hat */}
-            <ellipse cx="0" cy="-29" rx="5" ry="1.3" fill="#1c1c1c" />
-            <rect x="-3" y="-36" width="6" height="7" rx="1" fill="#1c1c1c" />
-            <rect x="-3" y="-31.2" width="6" height="1.8" fill="#b5342a" />
+            (village-only: sits beside the medieval campfire). Same
+            recognizable elf figure as the city's CITY_CHRISTMAS_ELVES —
+            pointed red hat with a pompom, round face with pointed ears,
+            green legs, red tunic — minus the city's neon rim-light accent,
+            since the village has no neon styling to match. */}
+        {!isCity && holiday === 'christmas' && CHRISTMAS_ELVES.map((e, i) => (
+          <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
+            <ellipse cx="0" cy="1" rx="5" ry="1.3" fill="#000" opacity="0.35" />
+            {/* legs */}
+            <rect x="-2.6" y="-8" width="2" height="8" rx="0.8" fill="#1c8a4a" />
+            <rect x="0.6" y="-8" width="2" height="8" rx="0.8" fill="#1c8a4a" />
+            {/* curled-toe shoes */}
+            <path d="M -3.4 0 Q -5.2 -0.2 -4.6 -1.6 L -1.6 -1.6 L -1.6 0 Z" fill="#ffd23d" />
+            <path d="M 3.4 0 Q 5.2 -0.2 4.6 -1.6 L 1.6 -1.6 L 1.6 0 Z" fill="#ffd23d" />
+            {/* tunic */}
+            <path d="M -3.2 -8 Q 0 -6.4 3.2 -8 L 3 -16 Q 0 -17.4 -3 -16 Z" fill="#d9342a" />
+            <rect x="-3.2" y="-10.5" width="6.4" height="1.4" fill="#f0c14a" />
+            {/* arms with mitten hands */}
+            <path d="M -3 -15 Q -6.5 -13 -6 -9" fill="none" stroke="#d9342a" strokeWidth="1.6" strokeLinecap="round" />
+            <path d="M 3 -15 Q 6.5 -13 6 -9" fill="none" stroke="#d9342a" strokeWidth="1.6" strokeLinecap="round" />
+            <circle cx="-6" cy="-9" r="1.1" fill="#f0c14a" />
+            <circle cx="6" cy="-9" r="1.1" fill="#f0c14a" />
+            {/* head with pointed ears */}
+            <path d="M -3.4 -19 L -5.6 -18 L -3.6 -17.2 Z" fill="#f2c8a0" />
+            <path d="M 3.4 -19 L 5.6 -18 L 3.6 -17.2 Z" fill="#f2c8a0" />
+            <circle cx="0" cy="-19" r="3.4" fill="#f2c8a0" />
+            <circle cx="-1.2" cy="-19.4" r="0.5" fill="#2a2a26" />
+            <circle cx="1.2" cy="-19.4" r="0.5" fill="#2a2a26" />
+            <path d="M -0.8 -17.6 Q 0 -17 0.8 -17.6" fill="none" stroke="#c06a4a" strokeWidth="0.5" />
+            {/* pointed, folded hat with a pompom */}
+            <path d="M -3.6 -21 Q -1 -29 5 -25 Q 1.5 -25.6 -1 -23.6 Q -2.6 -22.2 -3.6 -21 Z" fill="#d9342a" />
+            <path d="M -3.6 -21 L 3.6 -21" stroke="#f0c14a" strokeWidth="1" opacity="0.9" />
+            <circle cx="5" cy="-25" r="1.1" fill="#fff6d8" />
           </g>
         ))}
 
@@ -1880,6 +1888,53 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         </g>
         )}
+
+        {/* WINTER SNOWMAN — season-wide (season === 'winter'), independent
+            of any holiday, so it can appear alongside a winter holiday's own
+            standee (Christmas/New Year/Valentine's all fall in winter) as
+            well as on its own. Same classic snowman in both worlds (see
+            WINTER_SNOWMAN for why each world's position clears its own
+            buildings/sign/survivor); drawn last so it isn't hidden behind
+            anything. The village's Christmas standee (below, "beside the
+            campfire") used to be a second snowman here too, which read as
+            redundant/floating next to this one — it's now an elf instead,
+            so this is the only snowman in the village during Christmas. */}
+        {season === 'winter' && (() => {
+          const sm = isCity ? WINTER_SNOWMAN.city : WINTER_SNOWMAN.village;
+          return (
+            <g transform={`translate(${sm.x}, ${sm.y}) scale(${sm.scale})`}>
+              <ellipse cx="0" cy="1" rx="10" ry="2.2" fill="#000" opacity="0.35" />
+              {/* three stacked snowballs, slightly overlapping */}
+              <circle cx="0" cy="-7" r="7" fill="#eef3f6" />
+              <circle cx="0" cy="-17" r="5.5" fill="#eef3f6" />
+              <circle cx="0" cy="-25" r="4" fill="#eef3f6" />
+              {/* soft shading, same trick as the celestial bodies */}
+              <ellipse cx="2.5" cy="-6" rx="4.5" ry="6" fill="#c8d4da" opacity="0.35" />
+              <ellipse cx="2" cy="-16" rx="3.4" ry="4.6" fill="#c8d4da" opacity="0.35" />
+              {/* twig arms */}
+              <line x1="-5" y1="-17" x2="-13" y2="-22" stroke="#5c4028" strokeWidth="1" strokeLinecap="round" />
+              <line x1="-13" y1="-22" x2="-16" y2="-19" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
+              <line x1="-13" y1="-22" x2="-15" y2="-24" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
+              <line x1="5" y1="-17" x2="13" y2="-13" stroke="#5c4028" strokeWidth="1" strokeLinecap="round" />
+              <line x1="13" y1="-13" x2="16" y2="-15" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
+              <line x1="13" y1="-13" x2="15" y2="-11" stroke="#5c4028" strokeWidth="0.7" strokeLinecap="round" />
+              {/* coal buttons */}
+              <circle cx="0" cy="-9" r="0.6" fill="#1a1a1a" />
+              <circle cx="0" cy="-14" r="0.6" fill="#1a1a1a" />
+              {/* scarf, knotted at the neck with a dangling tail */}
+              <path d="M -4 -21 Q 0 -19 4 -21 L 4 -19.3 Q 0 -17.3 -4 -19.3 Z" fill="#b5342a" />
+              <rect x="1.8" y="-19.3" width="2.2" height="7" rx="1" fill="#b5342a" transform="rotate(18 2.9 -19.3)" />
+              {/* coal eyes and carrot nose */}
+              <circle cx="-1.4" cy="-26" r="0.7" fill="#1a1a1a" />
+              <circle cx="1.4" cy="-26" r="0.7" fill="#1a1a1a" />
+              <path d="M 4 -25 L 9 -24.3 L 4 -23.6 Z" fill="#e2822a" />
+              {/* top hat */}
+              <ellipse cx="0" cy="-29" rx="5" ry="1.3" fill="#1c1c1c" />
+              <rect x="-3" y="-36" width="6" height="7" rx="1" fill="#1c1c1c" />
+              <rect x="-3" y="-31.2" width="6" height="1.8" fill="#b5342a" />
+            </g>
+          );
+        })()}
 
         {/* CHRISTMAS WREATH, hung above the sign board (village-only: sized
             and positioned for the wooden sign board, not the city's neon
