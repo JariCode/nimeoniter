@@ -11,6 +11,7 @@ import './Assistant.css';
 function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, world }) {
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
+  const inputRef = useRef(null);
   // Active holiday costume, shared by the small icon and the opened figure
   // since both render the same SurvivorFace element below.
   const holiday = getHoliday();
@@ -21,6 +22,16 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [open, history, busy]);
+
+  // Auto-focus the question input when the chat opens, so the player can
+  // type immediately without clicking into the field first. Also re-run on
+  // busy: an auto-opened chat greets with busy=true (input disabled), so
+  // focus must land once busy flips back to false after the greeting.
+  useEffect(() => {
+    if (open && !busy && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open, busy]);
 
   function submitQuestion() {
     const q = draft.trim();
@@ -65,6 +76,7 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
 
             <div className="assistant__ask">
               <input
+                ref={inputRef}
                 className="assistant__input"
                 type="text"
                 value={draft}
