@@ -24,6 +24,14 @@ const BUILD_STAGES = [
   { key: 'casino',     name: 'CASINO',     world: 'city', requiredLevel: 38, cost: { wood: 170, stone: 160, food: 85 } },
   { key: 'theater',    name: 'THEATER',    world: 'city', requiredLevel: 42, cost: { wood: 190, stone: 180, food: 90 } },
   { key: 'skyscraper', name: 'SKYSCRAPER', world: 'city', requiredLevel: 46, cost: { wood: 220, stone: 210, food: 95 } },
+  { key: 'landing-pad',   name: 'LANDING PAD',   world: 'space', requiredLevel: 50, cost: { wood: 240, stone: 230, food: 100 } },
+  { key: 'habitat',       name: 'HABITAT',       world: 'space', requiredLevel: 54, cost: { wood: 260, stone: 250, food: 105 } },
+  { key: 'greenhouse',    name: 'GREENHOUSE',    world: 'space', requiredLevel: 58, cost: { wood: 280, stone: 270, food: 110 } },
+  { key: 'solar-array',   name: 'SOLAR ARRAY',   world: 'space', requiredLevel: 62, cost: { wood: 300, stone: 290, food: 115 } },
+  { key: 'comms-tower',   name: 'COMMS TOWER',   world: 'space', requiredLevel: 66, cost: { wood: 320, stone: 310, food: 120 } },
+  { key: 'lab',           name: 'LAB',           world: 'space', requiredLevel: 70, cost: { wood: 350, stone: 340, food: 125 } },
+  { key: 'reactor',       name: 'REACTOR',       world: 'space', requiredLevel: 75, cost: { wood: 380, stone: 370, food: 130 } },
+  { key: 'command-tower', name: 'COMMAND TOWER', world: 'space', requiredLevel: 80, cost: { wood: 420, stone: 400, food: 135 } },
 ];
 
 // Level, progress within the level, and XP needed for the next — from total XP
