@@ -317,12 +317,22 @@ export const CITY_EASTER_GLOW = {
 };
 
 // Pastel-neon eggs drifting gently near the rooftops, reusing the ghost's
-// slow up/down bob (`.ghost-float`) instead of a strung garland.
+// slow up/down bob (`.ghost-float`) instead of a strung garland. Spread
+// across the whole width of the sky (the original four left the middle-left
+// and far-right mostly bare); the tallest non-skyscraper roof point is the
+// casino's bulb crown at final y~129 (see the Halloween ghost comment for
+// the full breakdown), so every egg here sits well above that, and none
+// share the skyscraper's x 322-382 column.
 export const CITY_EASTER_NEON_EGG_FLOATERS = [
   { x: 90, y: 100, scale: 0.6, color: '#ff9ad1', duration: 6, delay: 0 },
   { x: 190, y: 70, scale: 0.5, color: '#9ae0ff', duration: 7, delay: 1.2 },
   { x: 270, y: 95, scale: 0.55, color: '#ffe89a', duration: 6.5, delay: 0.6 },
   { x: 340, y: 60, scale: 0.45, color: '#c8a0ff', duration: 7.5, delay: 2 },
+  { x: 30, y: 85, scale: 0.5, color: '#ffb3de', duration: 6.8, delay: 1.8 },
+  { x: 140, y: 55, scale: 0.55, color: '#c8a0ff', duration: 7.2, delay: 0.9 },
+  { x: 230, y: 80, scale: 0.5, color: '#9ae0ff', duration: 6.4, delay: 2.4 },
+  { x: 305, y: 65, scale: 0.45, color: '#ffe89a', duration: 7.8, delay: 1.2 },
+  { x: 395, y: 90, scale: 0.4, color: '#ff9ad1', duration: 7.0, delay: 0.4 },
 ];
 
 // Neon-outline eggs standing on the open street/sidewalk (GROUND_SLOTS),
@@ -336,3 +346,27 @@ export const CITY_EASTER_NEON_EGGS = GROUND_SLOTS.map((slot, i) => ({
 
 // A neon bunny standee on the street, beside the survivor.
 export const CITY_EASTER_NEON_BUNNY = { x: FOREGROUND_STANDEE_X, y: FOREGROUND_STANDEE_Y, scale: 1.0 };
+
+// Small neon eggs filling the same empty pavement spots in front of the
+// casino and theater that the Halloween street pumpkins, New Year
+// champagne bottles, and Valentine's heart signs already use. Unlike
+// CITY_EASTER_NEON_EGGS (the outline-only GROUND_SLOTS version, fine there
+// since nothing sits behind it), these are drawn with a solid filled body
+// — the lesson from the Christmas tree, which started outline-only and let
+// the casino's windows show through it.
+export const CITY_EASTER_STREET_EGGS = [
+  // In front of the casino (casino final footprint x 23-101) — leaves room
+  // for CITY_EASTER_NEON_CHICK between them
+  { x: 46, y: 283, scale: 0.55, color: '#ff9ad1' },
+  { x: 86, y: 278, scale: 0.45, color: '#c8a0ff' },
+  // In front of the theater (theater final footprint x 282-387)
+  { x: 310, y: 283, scale: 0.5, color: '#9ae0ff' },
+  { x: 345, y: 277, scale: 0.5, color: '#ffe89a' },
+];
+
+// A single, clearly-readable neon-yellow chick standing in front of the
+// casino, between the two street eggs above (CITY_EASTER_STREET_EGGS at
+// x 46/86) — round fluffy body, wings, head tuft, eyes and an orange beak,
+// not an abstract neon blob, with a bright yellow glow filter + a
+// shimmering rim outline as the city's neon touch.
+export const CITY_EASTER_NEON_CHICK = { x: 65, y: 284, scale: 1.0 };

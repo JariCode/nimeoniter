@@ -23,6 +23,7 @@ import {
   CITY_VALENTINES_GLOW, CITY_VALENTINES_NEON_HEARTS, CITY_VALENTINES_HEART_SIGNS, CITY_VALENTINES_NEON_HEART_GLOW,
   CITY_VALENTINES_STREET_HEARTS,
   CITY_EASTER_GLOW, CITY_EASTER_NEON_EGG_FLOATERS, CITY_EASTER_NEON_EGGS, CITY_EASTER_NEON_BUNNY,
+  CITY_EASTER_STREET_EGGS, CITY_EASTER_NEON_CHICK,
 } from '../../data/cityHolidayDecorations';
 
 // How many buildings are built, from the current stage key.
@@ -1548,6 +1549,64 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             </g>
           </g>
         ))}
+
+        {/* ===== CITY EASTER: eggs in front of the casino/theater =====
+            Solid-filled neon eggs (glow pass + crisp pass, same as the
+            sky-layer CITY_EASTER_NEON_EGG_FLOATERS, unlike the outline-only
+            CITY_EASTER_NEON_EGGS ground signage) placed in the same empty
+            pavement spots the Halloween/New Year/Valentine's street props
+            use. */}
+        {isCity && holiday === 'easter' && CITY_EASTER_STREET_EGGS.map((e, i) => (
+          <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
+            <ellipse cx="0" cy="1" rx="4" ry="1.1" fill="#000" opacity="0.3" />
+            <path
+              d="M 0 -16 C 4 -16 5 -10 5 -6 C 5 -2 2.5 0 0 0 C -2.5 0 -5 -2 -5 -6 C -5 -10 -4 -16 0 -16 Z"
+              fill={e.color}
+              opacity="0.9"
+              filter="url(#softGlow)"
+            />
+            <path
+              d="M 0 -16 C 4 -16 5 -10 5 -6 C 5 -2 2.5 0 0 0 C -2.5 0 -5 -2 -5 -6 C -5 -10 -4 -16 0 -16 Z"
+              fill={e.color}
+              opacity="0.9"
+            />
+            {/* a simple painted band, a small nod to a decorated Easter egg */}
+            <path d="M -5 -8 Q 0 -6 5 -8" fill="none" stroke="#fff" strokeWidth="0.6" opacity="0.5" />
+          </g>
+        ))}
+
+        {/* ===== CITY EASTER: chick standing in front of the casino =====
+            A clearly-readable chick (round fluffy body, wings, head tuft,
+            eyes, orange beak/feet) rather than an abstract neon shape —
+            same "recognizable figure + one neon accent" approach as the
+            Christmas elves — standing between the two casino-front eggs
+            above (CITY_EASTER_STREET_EGGS at x 46/86). */}
+        {isCity && holiday === 'easter' && (
+          <g transform={`translate(${CITY_EASTER_NEON_CHICK.x}, ${CITY_EASTER_NEON_CHICK.y}) scale(${CITY_EASTER_NEON_CHICK.scale})`}>
+            <ellipse cx="0" cy="1" rx="4" ry="1.1" fill="#000" opacity="0.3" />
+            {/* legs and feet */}
+            <line x1="-2" y1="0" x2="-2" y2="-3" stroke="#ff8c3d" strokeWidth="0.9" />
+            <line x1="2" y1="0" x2="2" y2="-3" stroke="#ff8c3d" strokeWidth="0.9" />
+            <path d="M -2 0 L -3.2 1.6 M -2 0 L -0.8 1.6" stroke="#ff8c3d" strokeWidth="0.8" strokeLinecap="round" fill="none" />
+            <path d="M 2 0 L 0.8 1.6 M 2 0 L 3.2 1.6" stroke="#ff8c3d" strokeWidth="0.8" strokeLinecap="round" fill="none" />
+            {/* wings */}
+            <ellipse cx="-6" cy="-8" rx="2" ry="3.2" fill="#ffd23d" opacity="0.9" transform="rotate(-20 -6 -8)" />
+            <ellipse cx="6" cy="-8" rx="2" ry="3.2" fill="#ffd23d" opacity="0.9" transform="rotate(20 6 -8)" />
+            {/* round fluffy body, bright yellow neon glow */}
+            <ellipse cx="0" cy="-9" rx="6.5" ry="6" fill="#fff394" opacity="0.9" filter="url(#softGlow)" />
+            <ellipse cx="0" cy="-9" rx="6.5" ry="6" fill="#ffe066" />
+            <ellipse cx="0" cy="-9" rx="6.5" ry="6" fill="none" stroke="#fff6d8" strokeWidth="0.6" opacity="0.8" className="neon-pulse" />
+            {/* head fluff tuft */}
+            <path d="M -1.2 -15.5 Q 0 -18.5 1.2 -15.5" fill="none" stroke="#ffe066" strokeWidth="1.3" strokeLinecap="round" />
+            {/* eyes */}
+            <circle cx="-2.2" cy="-11" r="0.8" fill="#1a1a1a" />
+            <circle cx="2.2" cy="-11" r="0.8" fill="#1a1a1a" />
+            <circle cx="-1.9" cy="-11.3" r="0.3" fill="#fff" />
+            <circle cx="2.5" cy="-11.3" r="0.3" fill="#fff" />
+            {/* beak */}
+            <path d="M -1.6 -9 L 0 -7.5 L 1.6 -9 Z" fill="#ff8c3d" />
+          </g>
+        )}
 
         {/* ===== CITY HOLIDAY STANDEES (foreground) =====
             The neon counterpart to the village's campfire-side props
