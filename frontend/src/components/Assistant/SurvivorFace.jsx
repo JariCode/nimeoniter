@@ -216,25 +216,38 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
           </g>
         )}
 
-        {/* ---------- Hood draped over head, resting on the shoulders ---------- */}
-        <path
-          d="M56 190 Q36 150 46 112 Q54 70 100 62 Q146 70 154 112
-             Q164 150 144 190 Q122 158 100 158 Q78 158 56 190 Z"
-          fill={hoodFill}
-          stroke="#121809"
-          strokeWidth="2.5"
-        />
-        {/* hood fabric folds */}
-        <path d="M60 186 Q48 148 62 108" stroke="#1c2413" strokeWidth="3" fill="none" opacity="0.7" />
-        <path d="M140 186 Q152 148 138 108" stroke="#1c2413" strokeWidth="3" fill="none" opacity="0.7" />
-        {/* hood crown highlight (kept high on the fabric, clear of the face) */}
-        <path d="M74 76 Q100 62 126 76" stroke="#5a6b3e" strokeWidth="2.5" fill="none" opacity="0.45" />
+        {/* ---------- Hood draped over head, resting on the shoulders ----------
+             Withheld entirely in the space world: the round helmet drawn
+             later fully replaces it there rather than sitting on top of a
+             fabric hood shape (which kept peeking out past the helmet's
+             edges no matter how the helmet was sized). Medieval and city
+             keep the hood/collar exactly as before. */}
+        {!isSpaceWorld && (
+          <>
+            <path
+              d="M56 190 Q36 150 46 112 Q54 70 100 62 Q146 70 154 112
+                 Q164 150 144 190 Q122 158 100 158 Q78 158 56 190 Z"
+              fill={hoodFill}
+              stroke="#121809"
+              strokeWidth="2.5"
+            />
+            {/* hood fabric folds */}
+            <path d="M60 186 Q48 148 62 108" stroke="#1c2413" strokeWidth="3" fill="none" opacity="0.7" />
+            <path d="M140 186 Q152 148 138 108" stroke="#1c2413" strokeWidth="3" fill="none" opacity="0.7" />
+            {/* hood crown highlight (kept high on the fabric, clear of the face) */}
+            <path d="M74 76 Q100 62 126 76" stroke="#5a6b3e" strokeWidth="2.5" fill="none" opacity="0.45" />
+          </>
+        )}
 
-        {/* Inner hood shadow, cupping the face */}
-        <path
-          d="M58 116 Q56 78 100 70 Q144 78 142 116 Q140 150 100 152 Q60 150 58 116 Z"
-          fill="url(#hoodInner)"
-        />
+        {/* Inner hood shadow, cupping the face — a hardcoded dark green
+            gradient, so it's withheld in the space world (the metal helmet
+            already frames the face there); medieval and city keep it. */}
+        {!isSpaceWorld && (
+          <path
+            d="M58 116 Q56 78 100 70 Q144 78 142 116 Q140 150 100 152 Q60 150 58 116 Z"
+            fill="url(#hoodInner)"
+          />
+        )}
 
         {/* ---------- Head / face ---------- */}
         <path
@@ -327,14 +340,18 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
           <path d="M108 164 Q107 178 104 188" stroke="#b4b6a8" strokeWidth="0.9" fill="none" opacity="0.5" />
         </g>
 
-        {/* ---------- Hood front rim casting over the brow ---------- */}
-        <path
-          d="M52 116 Q56 72 100 64 Q144 72 148 116 Q148 102 136 90
-             Q118 76 100 76 Q82 76 64 90 Q52 102 52 116 Z"
-          fill={hoodFill}
-          stroke="#121809"
-          strokeWidth="2.5"
-        />
+        {/* ---------- Hood front rim casting over the brow ----------
+             Also withheld in space, for the same reason as the main hood
+             above — the round helmet stands in for it entirely. */}
+        {!isSpaceWorld && (
+          <path
+            d="M52 116 Q56 72 100 64 Q144 72 148 116 Q148 102 136 90
+               Q118 76 100 76 Q82 76 64 90 Q52 102 52 116 Z"
+            fill={hoodFill}
+            stroke="#121809"
+            strokeWidth="2.5"
+          />
+        )}
 
         {/* ---------- Holiday costume: worn over the finished face, never
              altering it when no holiday is active ---------- */}
@@ -493,34 +510,31 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
         )}
         {showSpaceVisor && (
           <g className="face__costume face__costume--space">
-            {/* Helmet shell — an OPAQUE metal shape (evenodd fill with a
-                face-shaped hole cut out) shaped like an actual helmet: a
-                round dome on top that flares out toward the base to cover
-                the fabric hood's flared shoulder corners, rather than a
-                single uniform circle/oval. A circle big enough to cover
-                those corners everywhere read as a giant pot; a dome+flare
-                shape follows the hood's own silhouette closely while still
-                reading as round on top. Drawn last, after the hood front
-                rim, with a narrow border around the face opening. */}
+            {/* Helmet shell — round dome on top, flaring out to a wide base
+                (evenodd fill with a face-shaped hole cut out). Now that the
+                fabric hood is withheld entirely in space (above), this wide
+                base is purely a styling choice (reads like a proper sealed
+                helmet base/collar ring) rather than needing to mask
+                anything underneath. Drawn last. */}
             <path
               d="M100 58 Q152 62 158 118 Q162 160 148 194
                  Q124 208 100 208 Q76 208 52 194
                  Q38 160 42 118 Q48 62 100 58 Z
-                 M100 72 A36 52 0 1 0 100 176 A36 52 0 1 0 100 72 Z"
+                 M100 60 A46 60 0 1 0 100 180 A46 60 0 1 0 100 60 Z"
               fill="url(#helmetShell)"
               fillRule="evenodd"
               stroke="#8a929c"
               strokeWidth="1.2"
             />
             {/* Inner rim highlight framing the visor opening */}
-            <ellipse cx="100" cy="124" rx="36" ry="52" fill="none" stroke="#eef0f3" strokeWidth="1" opacity="0.6" />
+            <ellipse cx="100" cy="120" rx="46" ry="60" fill="none" stroke="#eef0f3" strokeWidth="1" opacity="0.6" />
             {/* Small indicator lights on the neck seal where the dome closes */}
             <circle cx="76" cy="200" r="1.8" fill="#ffd97a" opacity="0.9" />
             <circle cx="124" cy="200" r="1.8" fill="#3de0ff" opacity="0.9" />
             {/* Visor glass: translucent amber, filling the face opening —
-                kept light enough that the eyes/beard stay clearly visible
-                underneath, just tinted, rather than being washed out. */}
-            <ellipse cx="100" cy="124" rx="36" ry="52" fill="#f0c860" opacity="0.16" />
+                strong enough to read clearly as tinted glass, while the
+                eyes/beard still show through underneath. */}
+            <ellipse cx="100" cy="120" rx="46" ry="60" fill="#f0c860" opacity="0.34" />
             {/* Glossy highlight streak on the visor */}
             <path d="M74 88 Q68 124 74 158" stroke="#fff6d8" strokeWidth="2.5" fill="none" opacity="0.35" strokeLinecap="round" />
           </g>
