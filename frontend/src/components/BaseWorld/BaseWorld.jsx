@@ -15,6 +15,7 @@ import {
 } from '../../data/holiday';
 import {
   CITY_HALLOWEEN_GLOW, CITY_HALLOWEEN_NEON_BATS, CITY_HALLOWEEN_MARQUEE_PUMPKINS, CITY_HALLOWEEN_NEON_SIGN,
+  CITY_HALLOWEEN_NEON_WEB, CITY_HALLOWEEN_NEON_GHOSTS, CITY_HALLOWEEN_STREET_PUMPKINS,
   CITY_CHRISTMAS_ROOFLINE_LIGHTS, CITY_CHRISTMAS_AWNING_LIGHTS, CITY_CHRISTMAS_NEON_TREE,
   CITY_NEWYEAR_FIREWORKS, CITY_NEWYEAR_SPARKLES, CITY_NEWYEAR_STREET_SPARKLE, CITY_NEWYEAR_NEON_TOAST,
   CITY_VALENTINES_GLOW, CITY_VALENTINES_NEON_HEARTS, CITY_VALENTINES_HEART_SIGNS, CITY_VALENTINES_NEON_HEART_GLOW,
@@ -629,6 +630,38 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
               fill={CITY_HALLOWEEN_GLOW.color}
               opacity={CITY_HALLOWEEN_GLOW.opacity}
             />
+            {/* A single, big neon-glow spiderweb in the top-left sky corner
+                (the top-right corner is occupied by the skyscraper, x
+                322-382, so only one web fits). Drawn twice per stroke: a
+                wide blurred pass for the glow, then a crisp pass on top —
+                the same "double stroke" trick used by the neon pumpkin
+                signs below — wrapped in `.neon-pulse` so the whole web
+                breathes with the rest of the city's neon signage. */}
+            <g transform={`translate(${CITY_HALLOWEEN_NEON_WEB.x}, ${CITY_HALLOWEEN_NEON_WEB.y}) scale(${CITY_HALLOWEEN_NEON_WEB.scale})`}>
+              <circle cx="0" cy="0" r="80" fill="url(#neonPurpleGlow)" opacity="0.3" />
+              <g className="neon-pulse">
+                <g stroke="#c060ff" strokeWidth="2.2" fill="none" filter="url(#softGlow)" opacity="0.8">
+                  <line x1="0" y1="0" x2="88" y2="16" />
+                  <line x1="0" y1="0" x2="80" y2="48" />
+                  <line x1="0" y1="0" x2="55" y2="78" />
+                  <line x1="0" y1="0" x2="18" y2="88" />
+                  <line x1="0" y1="0" x2="68" y2="62" />
+                  <path d="M 22 4 Q 26 24 7 26" />
+                  <path d="M 48 10 Q 56 44 14 52" />
+                  <path d="M 72 18 Q 80 64 20 76" />
+                </g>
+                <g stroke="#eecbff" strokeWidth="0.9" fill="none" opacity="0.95">
+                  <line x1="0" y1="0" x2="88" y2="16" />
+                  <line x1="0" y1="0" x2="80" y2="48" />
+                  <line x1="0" y1="0" x2="55" y2="78" />
+                  <line x1="0" y1="0" x2="18" y2="88" />
+                  <line x1="0" y1="0" x2="68" y2="62" />
+                  <path d="M 22 4 Q 26 24 7 26" />
+                  <path d="M 48 10 Q 56 44 14 52" />
+                  <path d="M 72 18 Q 80 64 20 76" />
+                </g>
+              </g>
+            </g>
             {/* Bats drifting past the rooftops/skyscraper, same drift/flap
                 animation as the village bats, recolored neon magenta with a
                 glow filter */}
@@ -1340,6 +1373,68 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             balance the composition, stacked neon signage and a blinking
             marquee crown */}
         {isCity && has('casino') && <Casino justBuilt={justBuilt} />}
+
+        {/* ===== CITY HALLOWEEN: floating neon ghosts (up in the sky) =====
+            Same ghost silhouette and `.ghost-float` bob as the village's
+            HALLOWEEN_GHOSTS, recolored neon with a glow-filtered fill pass
+            under a crisp outline pass. Positioned well above every
+            building's roofline (see CITY_HALLOWEEN_NEON_GHOSTS for the
+            actual highest points) so they read as floating in open sky
+            rather than pasted onto a facade, and clear of the skyscraper's
+            full-height column (x 322-382) and the rooftop bats. Rendered
+            here in the foreground group purely for code proximity to the
+            other Halloween city decorations — their sky position means
+            draw order relative to the buildings no longer matters. */}
+        {isCity && holiday === 'halloween' && CITY_HALLOWEEN_NEON_GHOSTS.map((g, i) => (
+          <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
+            <g
+              className="ghost-float"
+              style={{ animationDuration: `${g.duration}s`, animationDelay: `${g.delay}s` }}
+            >
+              <path
+                d="M -7 -4 C -7 -13, -4 -18, 0 -18 C 4 -18, 7 -13, 7 -4 L 7 5
+                   C 7 5, 5.5 2, 4 5 C 2.5 8, 1 3, 0 6
+                   C -1 3, -2.5 8, -4 5 C -5.5 2, -7 5, -7 5 Z"
+                fill={g.color}
+                opacity="0.35"
+                filter="url(#softGlow)"
+              />
+              <path
+                d="M -7 -4 C -7 -13, -4 -18, 0 -18 C 4 -18, 7 -13, 7 -4 L 7 5
+                   C 7 5, 5.5 2, 4 5 C 2.5 8, 1 3, 0 6
+                   C -1 3, -2.5 8, -4 5 C -5.5 2, -7 5, -7 5 Z"
+                fill="none"
+                stroke={g.color}
+                strokeWidth="1"
+                opacity="0.9"
+              />
+              <ellipse cx="-2.5" cy="-8" rx="1.1" ry="1.5" fill="#0d0c14" opacity="0.8" />
+              <ellipse cx="2.5" cy="-8" rx="1.1" ry="1.5" fill="#0d0c14" opacity="0.8" />
+            </g>
+          </g>
+        ))}
+
+        {/* ===== CITY HALLOWEEN: extra street pumpkins in front of the
+            casino/theater =====
+            Same neon jack-o'-lantern sign as CITY_HALLOWEEN_MARQUEE_PUMPKINS,
+            filling the pavement in front of the casino and theater that was
+            otherwise bare. Positioned below each building's own
+            ground-contact shadow (CITY_HALLOWEEN_STREET_PUMPKINS) so they
+            clearly stand closer to the viewer than the facade, and drawn
+            after those two buildings so they're never hidden behind one. */}
+        {isCity && holiday === 'halloween' && CITY_HALLOWEEN_STREET_PUMPKINS.map((p, i) => (
+          <g key={i} transform={`translate(${p.x}, ${p.y}) scale(${p.scale})`}>
+            <rect x="-8" y="-15" width="16" height="15" rx="1.5" fill="#0d0c14" opacity="0.9" />
+            <ellipse cx="0" cy="-6" rx="6" ry="5" fill="none" stroke="#ff8c3d" strokeWidth="1.2" filter="url(#softGlow)" />
+            <ellipse cx="0" cy="-6" rx="6" ry="5" fill="none" stroke="#ff8c3d" strokeWidth="1.2" className="neon-pulse" />
+            <path d="M -1 -11 L 1 -11 L 1 -9 L -1 -9 Z" fill="#3f5225" />
+            <g className="pumpkin-glow">
+              <path d="M -3.5 -7.5 L -1.5 -7.5 L -2.5 -5.5 Z" fill="#ffb347" />
+              <path d="M 3.5 -7.5 L 1.5 -7.5 L 2.5 -5.5 Z" fill="#ffb347" />
+              <path d="M -2.5 -3.5 L -1 -2 L 0 -3.5 L 1 -2 L 2.5 -3.5 L 2 -2.5 L -2 -2.5 Z" fill="#ffb347" />
+            </g>
+          </g>
+        ))}
 
         {/* ===== CITY HOLIDAY STANDEES (foreground) =====
             The neon counterpart to the village's campfire-side props

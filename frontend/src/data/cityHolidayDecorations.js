@@ -74,6 +74,41 @@ export const CITY_HALLOWEEN_MARQUEE_PUMPKINS = GROUND_SLOTS.map((slot, i) => ({
 // the city's replacement for the campfire-side jack-o'-lantern glow.
 export const CITY_HALLOWEEN_NEON_SIGN = { x: FOREGROUND_STANDEE_X, y: FOREGROUND_STANDEE_Y, scale: 1.0 };
 
+// A single, large neon-glow spiderweb filling the otherwise-empty top-left
+// sky corner — unlike the village's two hand-drawn cobwebs (one per top
+// corner), the city only gets one, since its top-right corner is occupied
+// by the skyscraper (x 322-382) and a web there would be clipped.
+export const CITY_HALLOWEEN_NEON_WEB = { x: 0, y: 0, scale: 1.0 };
+
+// Floating neon ghosts, up in the open sky above every building's roofline
+// rather than at facade height (an earlier version sat at street height and
+// read as pasted onto the walls instead of floating). The tallest
+// non-skyscraper roof point is the casino's bulb crown at y~129, so y 95-100
+// clears all of them with margin; the skyscraper (x 322-382) is the one
+// building tall enough to reach this height, so ghost x positions stay
+// clear of that whole column instead of just nudging around it. Also kept
+// apart from the rooftop bats (CITY_HALLOWEEN_NEON_BATS, centered y 38-95,
+// swinging up to +-40 in x during their drift) and from each other.
+export const CITY_HALLOWEEN_NEON_GHOSTS = [
+  { x: 100, y: 100, scale: 1.0, color: '#3de0ff', duration: 6.5, delay: 0 },
+  { x: 210, y: 95, scale: 0.85, color: '#ff3dd4', duration: 7.8, delay: 1.6 },
+  { x: 275, y: 100, scale: 0.95, color: '#b24bf3', duration: 7.2, delay: 0.8 },
+];
+
+// Extra neon jack-o'-lanterns standing on the pavement in front of the
+// casino and theater, which was otherwise bare — same visual as
+// CITY_HALLOWEEN_MARQUEE_PUMPKINS, different sizes for natural variation.
+// Placed below each building's own ground-contact shadow (casino's is at
+// final y~270/x~62, theater's at y~270/x~345) so they read as standing
+// closer to the viewer, in front of the facade, rather than merging into
+// the building's base.
+export const CITY_HALLOWEEN_STREET_PUMPKINS = [
+  { x: 45, y: 280, scale: 0.75 },
+  { x: 80, y: 288, scale: 0.95 },
+  { x: 308, y: 284, scale: 0.85 },
+  { x: 348, y: 277, scale: 0.6 },
+];
+
 // ---------------------------------------------------------------------------
 // Christmas — chasing light strings along building rooflines (the city has
 // no snow-covered roofs to decorate, so the lights go where a Vegas strip
