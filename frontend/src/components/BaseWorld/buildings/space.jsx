@@ -241,7 +241,7 @@ export function SolarArray({ justBuilt }) {
 // shows past the greenhouse in front of it.
 export function Lab({ justBuilt }) {
   return (
-    <g transform="translate(46.6,-16.4) scale(1.2)">
+    <g transform="translate(79.6,-16.4) scale(1.2)">
     <g className={justBuilt === 'lab' ? 'building-pop' : undefined}>
       <ellipse cx="32" cy="222" rx="34" ry="7" fill="#000" opacity="0.4" />
       <rect x="0" y="188" width="64" height="34" fill="url(#spaceMetalDark)" />
