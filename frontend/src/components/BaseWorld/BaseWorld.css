@@ -341,6 +341,20 @@
   50%      { opacity: 1; }
 }
 
+/* Champagne bubbles rising off the city's New Year street bottles: drift up
+   and fade, same "rise and fade" idea as the coffee steam but shorter/
+   quicker for a fizzy feel. */
+.newyear-bubble-rise {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: newyear-bubble-rise 2.2s ease-in-out infinite;
+}
+@keyframes newyear-bubble-rise {
+  0%   { transform: translateY(2px); opacity: 0; }
+  20%  { opacity: 0.9; }
+  100% { transform: translateY(-10px); opacity: 0; }
+}
+
 /* Firework rocket: rises from below up into its burst point, then fades. */
 .newyear-rocket-trail {
   transform-box: fill-box;
@@ -483,7 +497,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .bat, .bat-body, .pumpkin-glow, .ghost-float, .candle-flame, .christmas-light-glow,
-  .bunting-flag, .newyear-sparkle, .newyear-rocket-trail, .newyear-firework,
+  .bunting-flag, .newyear-sparkle, .newyear-rocket-trail, .newyear-firework, .newyear-bubble-rise,
   .valentine-heart-float, .valentine-garland-heart, .valentine-heart-glow,
   .easter-egg-sway, .neon-pulse, .skyscraper-beacon, .coffee-steam, .neon-sign-buzz {
     animation: none;

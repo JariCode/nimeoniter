@@ -19,6 +19,7 @@ import {
   CITY_CHRISTMAS_ROOFLINE_LIGHTS, CITY_CHRISTMAS_AWNING_LIGHTS, CITY_CHRISTMAS_NEON_TREE,
   CITY_CHRISTMAS_GIFTS, CITY_CHRISTMAS_ELVES,
   CITY_NEWYEAR_FIREWORKS, CITY_NEWYEAR_SPARKLES, CITY_NEWYEAR_STREET_SPARKLE, CITY_NEWYEAR_NEON_TOAST,
+  CITY_NEWYEAR_STREET_DECOR,
   CITY_VALENTINES_GLOW, CITY_VALENTINES_NEON_HEARTS, CITY_VALENTINES_HEART_SIGNS, CITY_VALENTINES_NEON_HEART_GLOW,
   CITY_EASTER_GLOW, CITY_EASTER_NEON_EGG_FLOATERS, CITY_EASTER_NEON_EGGS, CITY_EASTER_NEON_BUNNY,
 } from '../../data/cityHolidayDecorations';
@@ -1494,6 +1495,38 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             {/* neon rim-light on the tunic, the city's accent on an
                 otherwise traditionally-colored figure */}
             <path d="M -3.2 -8 Q 0 -6.4 3.2 -8 L 3 -16 Q 0 -17.4 -3 -16 Z" fill="none" stroke={e.glow} strokeWidth="0.7" opacity="0.85" filter="url(#softGlow)" />
+          </g>
+        ))}
+
+        {/* ===== CITY NEW YEAR: champagne bottles in front of the
+            casino/theater =====
+            Standing neon champagne bottles (CITY_NEWYEAR_STREET_DECOR)
+            filling the same pavement spots the Halloween street pumpkins
+            and Christmas gifts use. Solid dark glass body first, then a
+            glow pass + a crisp pulsing pass on top — the same double-stroke
+            trick used everywhere else in the city decorations — so the
+            casino/theater facade behind them is properly occluded rather
+            than showing through (the lesson from the Christmas tree, which
+            started outline-only). A few rising, fading bubbles above the
+            neck for the "kohoavia kuplia" touch. */}
+        {isCity && holiday === 'newyear' && CITY_NEWYEAR_STREET_DECOR.map((d, i) => (
+          <g key={i} transform={`translate(${d.x}, ${d.y}) scale(${d.scale})`}>
+            <ellipse cx="0" cy="1" rx="4" ry="1.1" fill="#000" opacity="0.35" />
+            {/* solid bottle body */}
+            <path d="M -3 0 L -3 -10 Q -3 -12 -1.6 -12.6 L -1.6 -15 L 1.6 -15 L 1.6 -12.6 Q 3 -12 3 -10 L 3 0 Z" fill="#0d2818" />
+            {/* glow pass */}
+            <path d="M -3 0 L -3 -10 Q -3 -12 -1.6 -12.6 L -1.6 -15 L 1.6 -15 L 1.6 -12.6 Q 3 -12 3 -10 L 3 0 Z" fill="none" stroke={d.color} strokeWidth="1.6" filter="url(#softGlow)" opacity="0.85" />
+            {/* crisp pass */}
+            <path d="M -3 0 L -3 -10 Q -3 -12 -1.6 -12.6 L -1.6 -15 L 1.6 -15 L 1.6 -12.6 Q 3 -12 3 -10 L 3 0 Z" fill="none" stroke={d.color} strokeWidth="0.8" className="neon-pulse" />
+            {/* foil cap */}
+            <rect x="-1.6" y="-15" width="3.2" height="2.5" fill={d.color} opacity="0.9" />
+            {/* glowing label */}
+            <ellipse cx="0" cy="-5" rx="2.2" ry="1.6" fill="#0d0c14" opacity="0.7" />
+            <ellipse cx="0" cy="-5" rx="2.2" ry="1.6" fill="none" stroke={d.color} strokeWidth="0.5" opacity="0.9" />
+            {/* rising, fading bubbles above the neck */}
+            <circle className="newyear-bubble-rise" cx="0" cy="-16" r="0.6" fill={d.color} style={{ animationDelay: '0s' }} />
+            <circle className="newyear-bubble-rise" cx="-1" cy="-16" r="0.5" fill={d.color} style={{ animationDelay: '0.6s' }} />
+            <circle className="newyear-bubble-rise" cx="1" cy="-16" r="0.45" fill={d.color} style={{ animationDelay: '1.2s' }} />
           </g>
         ))}
 

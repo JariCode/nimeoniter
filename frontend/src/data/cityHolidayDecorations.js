@@ -235,6 +235,23 @@ export const CITY_NEWYEAR_STREET_SPARKLE = GROUND_SLOTS.map((slot, i) => ({
 // A neon champagne-toast standee on the street, beside the survivor.
 export const CITY_NEWYEAR_NEON_TOAST = { x: FOREGROUND_STANDEE_X, y: FOREGROUND_STANDEE_Y, scale: 1.0 };
 
+// Standing neon champagne bottles filling the otherwise-bare pavement in
+// front of the casino and theater — the same empty street-level spots the
+// Halloween street pumpkins (CITY_HALLOWEEN_STREET_PUMPKINS) and the
+// Christmas tree/gifts use. Kept short (like the pumpkins) rather than tall
+// (like the tree) so they clear each building's own ground-contact shadow
+// (casino final ~62,270 / theater final ~345,270) with only a small, solid
+// overlap into the lowest edge of the facade — same margin the pumpkins
+// used successfully.
+export const CITY_NEWYEAR_STREET_DECOR = [
+  // In front of the casino (casino final footprint x 23-101)
+  { x: 50, y: 283, scale: 0.9, color: '#3de0ff' },
+  { x: 78, y: 277, scale: 0.7, color: '#ff3d9a' },
+  // In front of the theater (theater final footprint x 282-387)
+  { x: 315, y: 284, scale: 0.85, color: '#ffd23d' },
+  { x: 348, y: 274, scale: 0.65, color: '#b24bf3' },
+];
+
 // ---------------------------------------------------------------------------
 // Valentine's — neon hearts drifting past the skyline, small heart signs
 // standing on the open street, and a neon heart-glow standee.
