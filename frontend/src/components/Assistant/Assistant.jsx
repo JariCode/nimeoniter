@@ -27,8 +27,15 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
   // type immediately without clicking into the field first. Also re-run on
   // busy: an auto-opened chat greets with busy=true (input disabled), so
   // focus must land once busy flips back to false after the greeting.
+  // The very first open in this tab session is the automatic login greeting,
+  // so it is skipped; every open after that is user-initiated and gets focus.
+  const firstOpenRef = useRef(true);
   useEffect(() => {
     if (open && !busy && inputRef.current) {
+      if (firstOpenRef.current) {
+        firstOpenRef.current = false;
+        return;
+      }
       inputRef.current.focus();
     }
   }, [open, busy]);
