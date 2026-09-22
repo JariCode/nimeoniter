@@ -288,6 +288,22 @@ export const CITY_VALENTINES_HEART_SIGNS = [
 // (`.valentine-heart-glow`), recolored to hot neon pink/cyan.
 export const CITY_VALENTINES_NEON_HEART_GLOW = { x: FOREGROUND_STANDEE_X, y: FOREGROUND_STANDEE_Y, scale: 1.0 };
 
+// Small neon heart signs filling the same empty pavement spots in front of
+// the casino and theater that the Halloween street pumpkins
+// (CITY_HALLOWEEN_STREET_PUMPKINS) and New Year champagne bottles
+// (CITY_NEWYEAR_STREET_DECOR) already use, plus one at the theater. Kept
+// short like those (a backing-rect sign, not a tall standee) so they clear
+// each building's own ground-contact shadow (casino final ~62,270 / theater
+// final ~345,270) with only the same small, solid overlap those used.
+export const CITY_VALENTINES_STREET_HEARTS = [
+  // In front of the casino (casino final footprint x 23-101)
+  { x: 48, y: 280, scale: 0.7, color: '#ff3d9a' },
+  { x: 78, y: 284, scale: 0.55, color: '#ff6ab0' },
+  // In front of the theater (theater final footprint x 282-387)
+  { x: 312, y: 282, scale: 0.6, color: '#ff2d78' },
+  { x: 348, y: 276, scale: 0.5, color: '#ff3d9a' },
+];
+
 // ---------------------------------------------------------------------------
 // Easter — pastel-neon glow tint, softly bobbing pastel eggs drifting near
 // the rooftops (in place of the village's hanging garland, which would cut

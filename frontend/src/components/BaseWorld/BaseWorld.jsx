@@ -21,6 +21,7 @@ import {
   CITY_NEWYEAR_FIREWORKS, CITY_NEWYEAR_SPARKLES, CITY_NEWYEAR_STREET_SPARKLE, CITY_NEWYEAR_NEON_TOAST,
   CITY_NEWYEAR_STREET_DECOR,
   CITY_VALENTINES_GLOW, CITY_VALENTINES_NEON_HEARTS, CITY_VALENTINES_HEART_SIGNS, CITY_VALENTINES_NEON_HEART_GLOW,
+  CITY_VALENTINES_STREET_HEARTS,
   CITY_EASTER_GLOW, CITY_EASTER_NEON_EGG_FLOATERS, CITY_EASTER_NEON_EGGS, CITY_EASTER_NEON_BUNNY,
 } from '../../data/cityHolidayDecorations';
 
@@ -1527,6 +1528,24 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             <circle className="newyear-bubble-rise" cx="0" cy="-16" r="0.6" fill={d.color} style={{ animationDelay: '0s' }} />
             <circle className="newyear-bubble-rise" cx="-1" cy="-16" r="0.5" fill={d.color} style={{ animationDelay: '0.6s' }} />
             <circle className="newyear-bubble-rise" cx="1" cy="-16" r="0.45" fill={d.color} style={{ animationDelay: '1.2s' }} />
+          </g>
+        ))}
+
+        {/* ===== CITY VALENTINE'S: heart signs in front of the
+            casino/theater =====
+            Same backing-rect neon heart sign as CITY_VALENTINES_HEART_SIGNS
+            (opaque dark backing behind a glow-filtered + crisp double-stroke
+            heart outline), just placed in the same empty pavement spots the
+            Halloween street pumpkins and New Year champagne bottles use —
+            kept short so it clears each building's own ground-contact
+            shadow the same way those did. */}
+        {isCity && holiday === 'valentines' && CITY_VALENTINES_STREET_HEARTS.map((h, i) => (
+          <g key={i} transform={`translate(${h.x}, ${h.y}) scale(${h.scale})`}>
+            <rect x="-9" y="-17" width="18" height="17" rx="1.5" fill="#0d0c14" opacity="0.9" />
+            <g className="neon-pulse">
+              <path d={HEART_PATH} transform="translate(0, -7) scale(0.9)" fill="none" stroke={h.color} strokeWidth="1.2" filter="url(#softGlow)" />
+              <path d={HEART_PATH} transform="translate(0, -7) scale(0.9)" fill="none" stroke={h.color} strokeWidth="1.2" />
+            </g>
           </g>
         ))}
 
