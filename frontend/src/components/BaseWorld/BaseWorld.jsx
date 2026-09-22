@@ -17,6 +17,7 @@ import {
   CITY_HALLOWEEN_GLOW, CITY_HALLOWEEN_NEON_BATS, CITY_HALLOWEEN_MARQUEE_PUMPKINS, CITY_HALLOWEEN_NEON_SIGN,
   CITY_HALLOWEEN_NEON_WEB, CITY_HALLOWEEN_NEON_GHOSTS, CITY_HALLOWEEN_STREET_PUMPKINS,
   CITY_CHRISTMAS_ROOFLINE_LIGHTS, CITY_CHRISTMAS_AWNING_LIGHTS, CITY_CHRISTMAS_NEON_TREE,
+  CITY_CHRISTMAS_GIFTS, CITY_CHRISTMAS_ELVES,
   CITY_NEWYEAR_FIREWORKS, CITY_NEWYEAR_SPARKLES, CITY_NEWYEAR_STREET_SPARKLE, CITY_NEWYEAR_NEON_TOAST,
   CITY_VALENTINES_GLOW, CITY_VALENTINES_NEON_HEARTS, CITY_VALENTINES_HEART_SIGNS, CITY_VALENTINES_NEON_HEART_GLOW,
   CITY_EASTER_GLOW, CITY_EASTER_NEON_EGG_FLOATERS, CITY_EASTER_NEON_EGGS, CITY_EASTER_NEON_BUNNY,
@@ -1436,6 +1437,66 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
+        {/* ===== CITY CHRISTMAS: gifts at the foot of the tree =====
+            Same box/ribbon shape as the village's CHRISTMAS_GIFTS, recolored
+            neon: a dark box with a glow-filtered outline pass under a crisp
+            pulsing one (the same double-stroke trick used elsewhere in the
+            city decorations), plus a twinkling ribbon cross. Drawn after the
+            casino so they sit in front of its facade. */}
+        {isCity && holiday === 'christmas' && CITY_CHRISTMAS_GIFTS.map((g, i) => (
+          <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
+            <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill="#0d0c14" opacity="0.85" />
+            <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill="none" stroke={g.box} strokeWidth="1.6" filter="url(#softGlow)" opacity="0.85" />
+            <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill="none" stroke={g.box} strokeWidth="0.8" className="neon-pulse" />
+            <rect x="-1" y="-6" width="2" height="6" fill={g.ribbon} className="christmas-light-glow" />
+            <rect x="-4" y="-3.5" width="8" height="1.5" fill={g.ribbon} className="christmas-light-glow" />
+            <path d="M -2.2 -6 Q -3.2 -8 -0.6 -7.4 Z" fill={g.ribbon} />
+            <path d="M 2.2 -6 Q 3.2 -8 0.6 -7.4 Z" fill={g.ribbon} />
+          </g>
+        ))}
+
+        {/* ===== CITY CHRISTMAS: elves standing in the foreground =====
+            Recognizable elf figure (pointed red hat with a glowing pompom,
+            round face with pointed ears, green legs, red tunic) rather than
+            an abstract neon shape, with a single neon rim-light stroke
+            (`e.glow`) as the city touch. Positions (CITY_CHRISTMAS_ELVES)
+            are fixed open-pavement spots — one by the tree/casino, two in
+            front of the theater — not tucked behind any building. */}
+        {isCity && holiday === 'christmas' && CITY_CHRISTMAS_ELVES.map((e, i) => (
+          <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
+            <ellipse cx="0" cy="1" rx="5" ry="1.3" fill="#000" opacity="0.35" />
+            {/* legs */}
+            <rect x="-2.6" y="-8" width="2" height="8" rx="0.8" fill="#1c8a4a" />
+            <rect x="0.6" y="-8" width="2" height="8" rx="0.8" fill="#1c8a4a" />
+            {/* curled-toe shoes */}
+            <path d="M -3.4 0 Q -5.2 -0.2 -4.6 -1.6 L -1.6 -1.6 L -1.6 0 Z" fill="#ffd23d" />
+            <path d="M 3.4 0 Q 5.2 -0.2 4.6 -1.6 L 1.6 -1.6 L 1.6 0 Z" fill="#ffd23d" />
+            {/* tunic */}
+            <path d="M -3.2 -8 Q 0 -6.4 3.2 -8 L 3 -16 Q 0 -17.4 -3 -16 Z" fill="#d9342a" />
+            <rect x="-3.2" y="-10.5" width="6.4" height="1.4" fill="#f0c14a" />
+            {/* arms with mitten hands */}
+            <path d="M -3 -15 Q -6.5 -13 -6 -9" fill="none" stroke="#d9342a" strokeWidth="1.6" strokeLinecap="round" />
+            <path d="M 3 -15 Q 6.5 -13 6 -9" fill="none" stroke="#d9342a" strokeWidth="1.6" strokeLinecap="round" />
+            <circle cx="-6" cy="-9" r="1.1" fill="#f0c14a" />
+            <circle cx="6" cy="-9" r="1.1" fill="#f0c14a" />
+            {/* head with pointed ears */}
+            <path d="M -3.4 -19 L -5.6 -18 L -3.6 -17.2 Z" fill="#f2c8a0" />
+            <path d="M 3.4 -19 L 5.6 -18 L 3.6 -17.2 Z" fill="#f2c8a0" />
+            <circle cx="0" cy="-19" r="3.4" fill="#f2c8a0" />
+            <circle cx="-1.2" cy="-19.4" r="0.5" fill="#2a2a26" />
+            <circle cx="1.2" cy="-19.4" r="0.5" fill="#2a2a26" />
+            <path d="M -0.8 -17.6 Q 0 -17 0.8 -17.6" fill="none" stroke="#c06a4a" strokeWidth="0.5" />
+            {/* pointed, folded hat with a glowing pompom */}
+            <path d="M -3.6 -21 Q -1 -29 5 -25 Q 1.5 -25.6 -1 -23.6 Q -2.6 -22.2 -3.6 -21 Z" fill="#d9342a" />
+            <path d="M -3.6 -21 L 3.6 -21" stroke="#f0c14a" strokeWidth="1" opacity="0.9" />
+            <circle cx="5" cy="-25" r="1.3" fill="#fff6d8" filter="url(#softGlow)" />
+            <circle cx="5" cy="-25" r="0.8" fill="#fff6d8" className="christmas-light-glow" />
+            {/* neon rim-light on the tunic, the city's accent on an
+                otherwise traditionally-colored figure */}
+            <path d="M -3.2 -8 Q 0 -6.4 3.2 -8 L 3 -16 Q 0 -17.4 -3 -16 Z" fill="none" stroke={e.glow} strokeWidth="0.7" opacity="0.85" filter="url(#softGlow)" />
+          </g>
+        ))}
+
         {/* ===== CITY HOLIDAY STANDEES (foreground) =====
             The neon counterpart to the village's campfire-side props
             (ghost/snowman/toast/heart-glow/bunny) — a single glowing sign
@@ -1462,25 +1523,57 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
-        {/* CITY CHRISTMAS — neon-outline tree standee */}
+        {/* CITY CHRISTMAS — big, lit neon tree standing in front of the
+            casino (moved off the shared standee spot; see
+            CITY_CHRISTMAS_NEON_TREE for why). Each tier now has a solid dark
+            body under the neon outline — an earlier version was outline-only
+            (fill="none"), so where it overlapped the casino's window grid
+            the windows showed straight through it and it read as pasted
+            onto the wall instead of standing in front of it. The outline
+            itself is still drawn twice — a wide blurred glow pass, then a
+            crisp pass on top — the same double-stroke trick used by the
+            Halloween web/pumpkins, and the ornament count/palette is bumped
+            up (one per neon color, spread across all three tiers) so it
+            reads as lit rather than a bare wireframe. */}
         {isCity && holiday === 'christmas' && (
           <g transform={`translate(${CITY_CHRISTMAS_NEON_TREE.x}, ${CITY_CHRISTMAS_NEON_TREE.y}) scale(${CITY_CHRISTMAS_NEON_TREE.scale})`}>
             <ellipse cx="0" cy="1" rx="9" ry="2" fill="#000" opacity="0.35" />
             <g className="neon-sign-buzz">
               <rect x="-3" y="-6" width="6" height="6" fill="#0d0c14" />
-              <path d="M -9 -6 L 0 -16 L 9 -6 Z" fill="none" stroke="#3ddc6a" strokeWidth="1.4" filter="url(#softGlow)" />
+              {/* solid body, so the tree fully occludes whatever is behind
+                  it instead of letting it show through the outline */}
+              <path d="M -9 -6 L 0 -16 L 9 -6 Z" fill="#0f2e18" />
+              <path d="M -7 -12 L 0 -21 L 7 -12 Z" fill="#123a1e" />
+              <path d="M -5 -18 L 0 -26 L 5 -18 Z" fill="#164625" />
+              {/* glow pass */}
+              <path d="M -9 -6 L 0 -16 L 9 -6 Z" fill="none" stroke="#3ddc6a" strokeWidth="2.6" filter="url(#softGlow)" opacity="0.85" />
+              <path d="M -7 -12 L 0 -21 L 7 -12 Z" fill="none" stroke="#3ddc6a" strokeWidth="2.4" filter="url(#softGlow)" opacity="0.85" />
+              <path d="M -5 -18 L 0 -26 L 5 -18 Z" fill="none" stroke="#3ddc6a" strokeWidth="2.2" filter="url(#softGlow)" opacity="0.85" />
+              {/* crisp pass */}
               <path d="M -9 -6 L 0 -16 L 9 -6 Z" fill="none" stroke="#3ddc6a" strokeWidth="1.4" />
               <path d="M -7 -12 L 0 -21 L 7 -12 Z" fill="none" stroke="#3ddc6a" strokeWidth="1.3" />
               <path d="M -5 -18 L 0 -26 L 5 -18 Z" fill="none" stroke="#3ddc6a" strokeWidth="1.2" />
+              {/* bright glow-filtered star */}
+              <path
+                d="M 0 -30 L 1.1 -27.3 L 4 -27 L 1.8 -25 L 2.4 -22.2 L 0 -23.7 L -2.4 -22.2 L -1.8 -25 L -4 -27 L -1.1 -27.3 Z"
+                fill="#fff6d8"
+                filter="url(#softGlow)"
+              />
               <path
                 d="M 0 -30 L 1.1 -27.3 L 4 -27 L 1.8 -25 L 2.4 -22.2 L 0 -23.7 L -2.4 -22.2 L -1.8 -25 L -4 -27 L -1.1 -27.3 Z"
                 fill="#ffd23d"
                 className="christmas-light-glow"
               />
-              <circle cx="-4" cy="-9" r="1" fill="#ff3d9a" className="christmas-light-glow" style={{ animationDelay: '0.1s' }} />
-              <circle cx="4" cy="-10" r="1" fill="#3de0ff" className="christmas-light-glow" style={{ animationDelay: '0.5s' }} />
-              <circle cx="-3" cy="-15" r="0.9" fill="#ffd23d" className="christmas-light-glow" style={{ animationDelay: '0.9s' }} />
-              <circle cx="3" cy="-16" r="0.9" fill="#ff3d9a" className="christmas-light-glow" style={{ animationDelay: '0.3s' }} />
+              {/* ornaments spread across all three tiers, neon palette */}
+              <circle cx="-4" cy="-8" r="1.1" fill="#ff3d9a" className="christmas-light-glow" style={{ animationDelay: '0.1s' }} />
+              <circle cx="4" cy="-9" r="1.1" fill="#3de0ff" className="christmas-light-glow" style={{ animationDelay: '0.5s' }} />
+              <circle cx="0" cy="-7" r="1" fill="#ffd23d" className="christmas-light-glow" style={{ animationDelay: '0.8s' }} />
+              <circle cx="-4" cy="-14" r="1" fill="#3de0ff" className="christmas-light-glow" style={{ animationDelay: '0.3s' }} />
+              <circle cx="4" cy="-15" r="1" fill="#b24bf3" className="christmas-light-glow" style={{ animationDelay: '0.7s' }} />
+              <circle cx="0" cy="-13" r="0.9" fill="#ff3d9a" className="christmas-light-glow" style={{ animationDelay: '1.1s' }} />
+              <circle cx="-3" cy="-19" r="0.9" fill="#ffd23d" className="christmas-light-glow" style={{ animationDelay: '0.4s' }} />
+              <circle cx="3" cy="-20" r="0.9" fill="#ff3d9a" className="christmas-light-glow" style={{ animationDelay: '0.9s' }} />
+              <circle cx="0" cy="-22" r="0.8" fill="#3de0ff" className="christmas-light-glow" style={{ animationDelay: '0.2s' }} />
             </g>
           </g>
         )}

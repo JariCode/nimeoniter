@@ -160,8 +160,40 @@ export const CITY_CHRISTMAS_AWNING_LIGHTS = [
   { x: 200, y: 222, color: '#ffd23d', delay: 0.8 },
 ];
 
-// A neon-outline Christmas tree standee on the street, beside the survivor.
-export const CITY_CHRISTMAS_NEON_TREE = { x: FOREGROUND_STANDEE_X, y: FOREGROUND_STANDEE_Y, scale: 1.0 };
+// A big, lit neon Christmas tree standing in the empty pavement in front of
+// the casino (casino final footprint x 23-101) instead of the small dim
+// version that used to stand beside the survivor — moved off
+// FOREGROUND_STANDEE_X/Y (which the other three holiday standees still use)
+// and given its own position/scale so only Christmas is affected. Kept
+// clear of the casino's own "CASINO" marquee (final x ~1-19). y is pushed
+// down onto the pavement, past the casino's own ground-contact shadow
+// (final ~62,270 — the same depth the Halloween street pumpkins sit at) so
+// the tree reads as standing in front of the building rather than pasted
+// onto its window grid; the tree render itself was also given a solid dark
+// body under the neon outline for the same reason — see the JSX comment.
+export const CITY_CHRISTMAS_NEON_TREE = { x: 60, y: 278, scale: 1.9 };
+
+// Neon-glow wrapped gifts piled at the foot of the tree, same box/ribbon
+// shape as the village's CHRISTMAS_GIFTS, recolored neon and sized/placed
+// to sit visibly in front of (not under) the tree's lowest tier. Kept at
+// the same pavement depth as the tree (y 278-290), past the casino's own
+// ground-contact shadow, so they don't overlap its window grid either.
+export const CITY_CHRISTMAS_GIFTS = [
+  { x: 42, y: 282, scale: 0.9, box: '#ff3d9a', ribbon: '#fff6d8' },
+  { x: 62, y: 290, scale: 1.15, box: '#3de0ff', ribbon: '#ffd23d' },
+  { x: 82, y: 280, scale: 0.75, box: '#b24bf3', ribbon: '#3de0ff' },
+  { x: 72, y: 286, scale: 0.65, box: '#ffd23d', ribbon: '#ff3d9a' },
+];
+
+// Neon-accented elves standing still in the open foreground — one beside
+// the tree/casino, two in front of the theater (theater final footprint
+// x 282-387) — each with its own accent color used for its glowing
+// pompom/rim-light. Kept clear of the gift pile and the survivor (x 220-270).
+export const CITY_CHRISTMAS_ELVES = [
+  { x: 28, y: 270, scale: 1.0, glow: '#3de0ff' },
+  { x: 312, y: 268, scale: 0.9, glow: '#ff3d9a' },
+  { x: 346, y: 274, scale: 1.05, glow: '#ffd23d' },
+];
 
 // ---------------------------------------------------------------------------
 // New Year — a bigger neon fireworks show over the skyline, more sparkle
