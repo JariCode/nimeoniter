@@ -56,13 +56,26 @@ const MODE_INSTRUCTIONS = {
     + 'someone new arriving. Never use a "welcome back" style opener ("Well, '
     + 'look who\'s back", "Good to see you again", etc.) and never refer to '
     + 'past activity, a streak, or time since last active — they have none. '
-    + "If isNewPlayer is false, open with an actual greeting to the player "
-    + '(vary it: "Hey", "Well, look who\'s back", "Morning", etc., not the '
-    + 'same one each time, and matching the timeOfDay in the context if one '
-    + 'is given), then, if it fits, add a short line reacting to their game '
-    + 'state: time since last active, their streak, being close to a '
-    + "level-up, a building coming up, or how many of today's tasks are "
-    + 'still open. Greet first, comment second. One or two sentences either way.',
+    + "If isNewPlayer is false, open with an actual greeting to the player, "
+    + 'then, if it fits, add a short line reacting to their game state: time '
+    + 'since last active, their streak, being close to a level-up, a building '
+    + "coming up, or how many of today's tasks are still open. Greet first, "
+    + 'comment second. One or two sentences either way. If the context '
+    + 'includes a timeOfDay, the tone of the greeting MUST match it exactly — '
+    + 'this is a hard requirement, not a suggestion. Pick your opener\'s tone '
+    + 'from the set for the given timeOfDay, and vary WHICH one you use each '
+    + 'time (never repeat the same opener you used last, per the recent '
+    + 'conversation) — never mix in a tone from a different timeOfDay: '
+    + 'dawn → a "morning" tone, e.g. "Morning", "Up early", "Morning, '
+    + 'survivor"; day → a neutral/generic daytime tone, NOT "morning" or '
+    + '"evening" wording, e.g. "Hey", "Well, look who\'s back", "There you '
+    + 'are", "Back at it"; dusk → an "evening" tone, e.g. "Evening", "Good to '
+    + 'see you tonight", "Evening, survivor"; night → a late-night tone, e.g. '
+    + '"Still up?", "Burning the midnight oil", "Late one, huh". These are '
+    + 'examples to riff on in your own voice, not a fixed script — but never '
+    + 'greet with the wrong time of day for the given timeOfDay: no "morning" '
+    + 'when timeOfDay is day, dusk, or night, and no "evening" when timeOfDay '
+    + 'is dawn or day.',
   advice:
     'Give one concrete piece of advice on what to focus on next, drawn from '
     + "their level, resources, what the next building needs, and today's tasks. "
