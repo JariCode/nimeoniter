@@ -495,11 +495,70 @@
   53%      { opacity: 1; transform: scale(1); }
 }
 
+/* ===== Space-world conditions ===== */
+/* Solar flare: a warm rim glow breathing slowly along one edge of the sky. */
+.solar-flare-pulse {
+  animation: solar-flare-pulse 3.4s ease-in-out infinite;
+}
+@keyframes solar-flare-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 0.8; }
+}
+
+/* Meteor shower: same "invisible most of the cycle, quick streak" idea as
+   .shooting-star, but a faster, more frequent cycle so several streaks
+   overlap in time. */
+.meteor-shower-streak {
+  opacity: 0;
+  filter: drop-shadow(0 0 3px #cfe8ff);
+  animation-name: meteor-shower-streak;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+@keyframes meteor-shower-streak {
+  0%, 70%, 100% { opacity: 0; transform: translate(0, 0); }
+  72%           { opacity: 1; transform: translate(0, 0); }
+  88%           { opacity: 1; transform: translate(calc(var(--dx) * 1px), calc(var(--dy) * 1px)); }
+  92%           { opacity: 0; transform: translate(calc(var(--dx) * 1.1px), calc(var(--dy) * 1.1px)); }
+}
+
+/* Cosmic storm: shimmering energy clouds with an occasional whole-scene flash. */
+.cosmic-storm-pulse {
+  animation: cosmic-storm-shimmer 2.6s ease-in-out infinite;
+}
+@keyframes cosmic-storm-shimmer {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%      { opacity: 0.65; transform: scale(1.06); }
+}
+.cosmic-storm-flash {
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: cosmic-storm-flash-flicker 5s linear infinite;
+}
+@keyframes cosmic-storm-flash-flicker {
+  0%, 36%, 100% { opacity: 0; }
+  37%           { opacity: 0.4; }
+  38%           { opacity: 0.05; }
+  39%           { opacity: 0.3; }
+  40%           { opacity: 0; }
+}
+
+/* Eclipse: the corona ring around the celestial body pulses gently while
+   the scene sits darkened underneath it. */
+.eclipse-rim-glow {
+  animation: eclipse-rim-pulse 3s ease-in-out infinite;
+}
+@keyframes eclipse-rim-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bat, .bat-body, .pumpkin-glow, .ghost-float, .candle-flame, .christmas-light-glow,
   .bunting-flag, .newyear-sparkle, .newyear-rocket-trail, .newyear-firework, .newyear-bubble-rise,
   .valentine-heart-float, .valentine-garland-heart, .valentine-heart-glow,
-  .easter-egg-sway, .neon-pulse, .skyscraper-beacon, .coffee-steam, .neon-sign-buzz {
+  .easter-egg-sway, .neon-pulse, .skyscraper-beacon, .coffee-steam, .neon-sign-buzz,
+  .solar-flare-pulse, .meteor-shower-streak, .cosmic-storm-pulse, .cosmic-storm-flash, .eclipse-rim-glow {
     animation: none;
   }
 }

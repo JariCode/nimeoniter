@@ -2,6 +2,7 @@ import './BaseWorld.css';
 import Survivor from '../Survivor/Survivor';
 import { getTimeOfDay, SKY_STOPS, STAR_OPACITY, SKY_IS_RADIAL, CELESTIAL } from '../../data/timeOfDay';
 import { getSeason, GROUND_STOPS, SEASON_OVERLAY, FLOWERS, getWeather, WINTER_SNOWMAN } from '../../data/season';
+import { SPACE_SKY_STOPS, SPACE_GROUND_STOPS, getSpaceCondition } from '../../data/spaceEnv';
 import { currentWorldFromBuilt } from '../../data/world';
 import { Wall, House, Hut, Well, Field, Storage, Fence, Watchtower } from './buildings/medieval';
 import { Street, Apartment, Diner, Shop, Hotel, Casino, Theater, Skyscraper } from './buildings/city';
@@ -122,6 +123,45 @@ const BIRDS = [
 // Ray angles for a firework burst (8 evenly spaced spokes radiating out).
 const FIREWORK_RAY_ANGLES = Array.from({ length: 8 }, (_, i) => (i / 8) * Math.PI * 2);
 
+// ===== Space-world (World 3) background data =====
+
+// Background planet, one look per Space Time — colors only, so it's tinted
+// by the same tod key the sky gradient uses. Sits high in the sky, clear
+// of the celestial (sun/moon) band.
+const SPACE_PLANET = {
+  dawn:  { cx: 305, cy: 72, r: 44, base: '#8a6a9a', shade: '#3e2c4a', band: '#d29a78' },
+  day:   { cx: 305, cy: 64, r: 44, base: '#9aa8c4', shade: '#4a5470', band: '#d8e0ee' },
+  dusk:  { cx: 305, cy: 72, r: 44, base: '#5a4272', shade: '#241a34', band: '#8a5a7c' },
+  night: { cx: 305, cy: 68, r: 44, base: '#38395a', shade: '#16172a', band: '#565888' },
+};
+
+// Faint seasonal tint washed over the planet at low opacity — the only
+// place season shows in the space sky (space has no weather/foliage).
+const SPACE_SEASON_TINT = { winter: '#8fb8ff', spring: '#8fffb0', summer: '#ffd98f', autumn: '#ff9f6a' };
+
+// Dense starfield, always visible in space (no atmosphere to wash it out
+// at "day") — spread wider than the village/city star cluster.
+const SPACE_STARS = [
+  { x: 30, y: 30, r: 1 }, { x: 75, y: 55, r: 0.8 }, { x: 20, y: 100, r: 1.1 },
+  { x: 110, y: 20, r: 0.9 }, { x: 150, y: 90, r: 1 }, { x: 190, y: 45, r: 0.8 },
+  { x: 230, y: 110, r: 1.2 }, { x: 260, y: 30, r: 0.8 }, { x: 355, y: 100, r: 1 },
+  { x: 375, y: 50, r: 0.9 }, { x: 130, y: 130, r: 0.8 }, { x: 55, y: 150, r: 1 },
+  { x: 340, y: 150, r: 0.9 }, { x: 10, y: 60, r: 0.7 }, { x: 390, y: 20, r: 0.8 },
+  { x: 210, y: 160, r: 0.7 },
+];
+
+// Meteor shower streaks: same "invisible most of the cycle, quick streak"
+// idea as SHOOTING_STARS, but more of them cycling faster and closer
+// together so it reads as a shower rather than a rare single event.
+const METEOR_SHOWER_STREAKS = [
+  { x: 40, y: 10, dx: 45, dy: 55, duration: 2.2, delay: 0 },
+  { x: 140, y: 5, dx: 40, dy: 50, duration: 2.6, delay: 0.5 },
+  { x: 240, y: 15, dx: 42, dy: 52, duration: 2.1, delay: 1.1 },
+  { x: 320, y: 8, dx: 44, dy: 54, duration: 2.4, delay: 0.2 },
+  { x: 90, y: 25, dx: 38, dy: 48, duration: 2.8, delay: 1.6 },
+  { x: 280, y: 30, dx: 40, dy: 50, duration: 2.3, delay: 2.1 },
+];
+
 // Shared heart shape (roughly 16 wide, 18 tall), centered on its bottom
 // point, reused for the Valentine's floating hearts, garland, and glow.
 const HEART_PATH = 'M 0 6 C -2 3 -8 -1 -8 -6 C -8 -10 -4 -12 0 -8 C 4 -12 8 -10 8 -6 C 8 -1 2 3 0 6 Z';
@@ -142,29 +182,34 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
   // driving the same systems in both worlds, untouched.
   const world = currentWorldFromBuilt(buildStages, stageKey);
   const isCity = world === 'city';
+  const isSpace = world === 'space';
 
   // Time of day drives the sky gradient, star visibility, and sun/moon
   const tod = getTimeOfDay();
-  const skyStops = isCity ? CITY_SKY_STOPS[tod] : SKY_STOPS[tod];
+  const skyStops = isSpace ? SPACE_SKY_STOPS[tod] : (isCity ? CITY_SKY_STOPS[tod] : SKY_STOPS[tod]);
   const starOp = STAR_OPACITY[tod];
   const skyRadial = SKY_IS_RADIAL[tod];
   const celestial = CELESTIAL[tod];
 
   // Season drives the ground color and overlay (snow / flowers / puddles)
   const season = getSeason();
-  const groundStops = isCity ? CITY_GROUND_STOPS[season] : GROUND_STOPS[season];
+  const groundStops = isSpace ? SPACE_GROUND_STOPS[season] : (isCity ? CITY_GROUND_STOPS[season] : GROUND_STOPS[season]);
   const overlay = SEASON_OVERLAY[season];
 
-  // Active weather (rain in autumn, snow in winter) — not every day
+  // Active weather (rain in autumn, snow in winter) — not every day.
+  // Ground weather doesn't apply in space; getSpaceCondition() drives its
+  // own condition layer there instead (solar flares, meteor showers, etc).
   const weather = getWeather();
+  const condition = isSpace ? getSpaceCondition() : null;
 
   // Active holiday (Halloween week, etc.) — an extra decoration layer only,
   // it never changes the season/time/weather systems or any game mechanic.
   const holiday = getHoliday();
 
   // Clouds only show up with weather: dark and gloomy for rain/thunder,
-  // pale for a snowy sky. Clear weather gets no clouds at all.
-  const showClouds = weather === 'rain' || weather === 'thunder' || weather === 'snow';
+  // pale for a snowy sky. Clear weather gets no clouds at all. Ground
+  // weather doesn't apply in space, so clouds never show there.
+  const showClouds = !isSpace && (weather === 'rain' || weather === 'thunder' || weather === 'snow');
   const cloudColor = weather === 'snow' ? '#9aa5b0' : '#23262b';
   const cloudOpacity = weather === 'snow' ? 0.55 : 0.9;
 
@@ -275,6 +320,16 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             <stop offset="0%" stopColor="#b24bf3" stopOpacity="0.85" />
             <stop offset="100%" stopColor="#b24bf3" stopOpacity="0" />
           </radialGradient>
+
+          {/* ===== Space-world materials/effects ===== */}
+          <radialGradient id="solarFlareGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ff9a4a" stopOpacity="0.75" />
+            <stop offset="100%" stopColor="#ff9a4a" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="cosmicStormGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#b24bf3" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#b24bf3" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
         {/* Sky */}
@@ -303,6 +358,96 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           <circle className="star" cx="90" cy="90" r="0.8" fill="#e8dcc0" opacity="0.35" />
         </g>
 
+        {/* ===== SPACE: background starfield + planet =====
+            Always visible (no atmosphere to wash them out at "day"),
+            tinted by Space Time via SPACE_PLANET[tod] and by season via a
+            faint SPACE_SEASON_TINT wash. */}
+        {isSpace && (
+          <g>
+            {SPACE_STARS.map((s, i) => (
+              <circle
+                key={i}
+                className="star"
+                cx={s.x}
+                cy={s.y}
+                r={s.r}
+                fill="#e8dcc0"
+                opacity="0.6"
+                style={{ animationDelay: `${(i % 7) * 0.4}s` }}
+              />
+            ))}
+            {(() => {
+              const p = SPACE_PLANET[tod];
+              return (
+                <g>
+                  <circle cx={p.cx} cy={p.cy} r={p.r} fill={p.base} />
+                  <ellipse cx={p.cx + 4} cy={p.cy + 4} rx={p.r} ry={p.r} fill={p.shade} opacity="0.4" />
+                  <ellipse cx={p.cx - p.r * 0.6} cy={p.cy - p.r * 0.15} rx={p.r * 1.1} ry={p.r * 0.22} fill={p.band} opacity="0.5" />
+                  <ellipse cx={p.cx - p.r * 0.5} cy={p.cy + p.r * 0.3} rx={p.r * 1.05} ry={p.r * 0.18} fill={p.band} opacity="0.3" />
+                  <circle cx={p.cx} cy={p.cy} r={p.r} fill={SPACE_SEASON_TINT[season]} opacity="0.1" />
+                </g>
+              );
+            })()}
+          </g>
+        )}
+
+        {/* ===== SPACE CONDITIONS: solar flare / meteor shower / cosmic
+            storm / eclipse — the space-world equivalent of the ground's
+            weather layer (clear gets no effect). ===== */}
+        {isSpace && condition === 'solarflare' && (
+          <g className="solar-flare-pulse">
+            <ellipse cx="60" cy="20" rx="150" ry="90" fill="url(#solarFlareGlow)" />
+          </g>
+        )}
+        {isSpace && condition === 'meteor' && (
+          <g>
+            {METEOR_SHOWER_STREAKS.map((m, i) => {
+              const len = Math.hypot(m.dx, m.dy);
+              const tailX = m.x - (m.dx / len) * 20;
+              const tailY = m.y - (m.dy / len) * 20;
+              return (
+                <line
+                  key={i}
+                  x1={m.x}
+                  y1={m.y}
+                  x2={tailX}
+                  y2={tailY}
+                  stroke="#cfe8ff"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  className="meteor-shower-streak"
+                  style={{ '--dx': m.dx, '--dy': m.dy, animationDuration: `${m.duration}s`, animationDelay: `${m.delay}s` }}
+                />
+              );
+            })}
+          </g>
+        )}
+        {isSpace && condition === 'cosmicstorm' && (
+          <g>
+            <g className="cosmic-storm-pulse" opacity="0.5">
+              <ellipse cx="120" cy="60" rx="90" ry="40" fill="url(#cosmicStormGlow)" />
+              <ellipse cx="280" cy="100" rx="100" ry="45" fill="url(#cosmicStormGlow)" />
+            </g>
+            <rect x="0" y="0" width="400" height="230" fill="#c9a0ff" className="cosmic-storm-flash" />
+          </g>
+        )}
+        {isSpace && condition === 'eclipse' && (
+          <g>
+            <rect x="0" y="0" width="400" height="230" fill="#020208" opacity="0.4" />
+            <circle
+              cx={celestial.cx}
+              cy={celestial.cy}
+              r={celestial.r + 4}
+              fill="none"
+              stroke="#ffdca0"
+              strokeWidth="2"
+              opacity="0.8"
+              filter="url(#softGlow)"
+              className="eclipse-rim-glow"
+            />
+          </g>
+        )}
+
         {/* Shooting stars: rare streaks across the night sky. The tail end is
             placed opposite the travel vector (dx, dy) so it always trails
             behind the star, head first, whichever way it's flying. */}
@@ -326,8 +471,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           );
         })}
 
-        {/* Birds drifting across the daytime sky now and then */}
-        {tod === 'day' && BIRDS.map((b, i) => (
+        {/* Birds drifting across the daytime sky now and then — grounded
+            wildlife, so they don't show up in the space colony */}
+        {!isSpace && tod === 'day' && BIRDS.map((b, i) => (
           <g key={i} className="bird" style={{ animationDuration: `${b.duration}s`, animationDelay: `${b.delay}s` }}>
             <path
               d={`M -5 ${b.y} Q -2.5 ${b.y - 3} 0 ${b.y} Q 2.5 ${b.y - 3} 5 ${b.y}`}
@@ -360,8 +506,11 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         <ellipse cx="250" cy="245" rx="14" ry="3" fill="#1a160f" opacity="0.5" />
         <ellipse cx="60" cy="250" rx="12" ry="2.5" fill="#241f15" opacity="0.4" />
 
-        {/* Season overlay: snow blanket, flowers, or puddles */}
-        {overlay === 'snow' && (
+        {/* Season overlay: snow blanket, flowers, or puddles — ground
+            growth/weather, so none of it appears on the station deck.
+            Season still tints the deck's own gradient (SPACE_GROUND_STOPS)
+            and the background planet, just not as a physical overlay. */}
+        {!isSpace && overlay === 'snow' && (
           <g>
             {/* Opacities raised across the board (was 0.16-0.3) so the
                 ground reads as properly snow-covered rather than just
@@ -374,14 +523,14 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             <ellipse cx="360" cy="265" rx="40" ry="8" fill="#e8eef4" opacity="0.42" />
           </g>
         )}
-        {overlay === 'puddles' && (
+        {!isSpace && overlay === 'puddles' && (
           <g>
             <ellipse cx="120" cy="242" rx="22" ry="4" fill="#3a4a52" opacity="0.5" />
             <ellipse cx="300" cy="252" rx="28" ry="5" fill="#3a4a52" opacity="0.45" />
             <ellipse cx="120" cy="241" rx="14" ry="2" fill="#6a7a82" opacity="0.35" />
           </g>
         )}
-        {(overlay === 'flowers' || overlay === 'flowersDense') && (
+        {!isSpace && (overlay === 'flowers' || overlay === 'flowersDense') && (
           <g>
             {FLOWERS.slice(0, overlay === 'flowersDense' ? FLOWERS.length : 8).map((fl, i) => (
               <g key={i}>
@@ -394,7 +543,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== HALLOWEEN: sky-layer decorations (glow, cobwebs, bats) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'halloween' && (
+        {!isCity && !isSpace && holiday === 'halloween' && (
           <g>
             {/* Orange glow tint over the whole sky */}
             <rect
@@ -445,7 +594,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== CHRISTMAS: sky-layer decorations (string lights) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'christmas' && (
+        {!isCity && !isSpace && holiday === 'christmas' && (
           <g>
             {/* garland wire, swagged in two dips across the top of the scene */}
             <path
@@ -491,7 +640,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== NEW YEAR: sky-layer decorations (glow, bunting, sparkle, fireworks) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'newyear' && (
+        {!isCity && !isSpace && holiday === 'newyear' && (
           <g>
             {/* Faint golden glow tint over the whole sky */}
             <rect
@@ -565,7 +714,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== VALENTINE'S: sky-layer decorations (glow, garland, floating hearts) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'valentines' && (
+        {!isCity && !isSpace && holiday === 'valentines' && (
           <g>
             {/* Warm pink glow tint over the whole sky */}
             <rect
@@ -602,7 +751,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== EASTER: sky-layer decorations (glow, egg garland) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'easter' && (
+        {!isCity && !isSpace && holiday === 'easter' && (
           <g>
             {/* Pale spring glow tint over the whole sky */}
             <rect
@@ -906,8 +1055,10 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {!isCity && has('field') && <Field justBuilt={justBuilt} />}
 
         {/* Butterflies fluttering near the summer flowers — drawn in the
-            front layer so they stay clear of buildings, not hidden behind them */}
-        {season === 'summer' && BUTTERFLIES.map((b, i) => (
+            front layer so they stay clear of buildings, not hidden behind
+            them. Tied to the (ground-only) flower overlay, so they sit
+            out space along with it. */}
+        {!isSpace && season === 'summer' && BUTTERFLIES.map((b, i) => (
           <g key={i} className="butterfly" style={{ animationDuration: `${b.duration}s`, animationDelay: `${b.delay}s` }}>
             <ellipse cx={b.x - 1.5} cy={b.y} rx="2" ry="1.4" fill={b.cL} className="butterfly-wing" />
             <ellipse cx={b.x + 1.5} cy={b.y} rx="2" ry="1.4" fill={b.cR} className="butterfly-wing" />
@@ -916,7 +1067,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== HALLOWEEN: ground-layer decorations (jack-o'-lanterns) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'halloween' && HALLOWEEN_PUMPKINS.map((p, i) => (
+        {!isCity && !isSpace && holiday === 'halloween' && HALLOWEEN_PUMPKINS.map((p, i) => (
           <g key={i} transform={`translate(${p.x}, ${p.y}) scale(${p.scale})`}>
             {/* stalk */}
             <rect x="-1.5" y="-11" width="3" height="4" rx="1" fill="#3f5225" />
@@ -932,7 +1083,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* A skeleton resting on the ground, off to the side (village-only) */}
-        {!isCity && holiday === 'halloween' && HALLOWEEN_SKELETONS.map((sk, i) => (
+        {!isCity && !isSpace && holiday === 'halloween' && HALLOWEEN_SKELETONS.map((sk, i) => (
           <g key={i} transform={`translate(${sk.x}, ${sk.y}) scale(${sk.scale})`}>
             {/* skull */}
             <circle cx="0" cy="-10" r="4" fill="#d8d8cc" />
@@ -956,7 +1107,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* Small candles keeping the pumpkins company, flames flickering
             (village-only) */}
-        {!isCity && holiday === 'halloween' && HALLOWEEN_CANDLES.map((c, i) => (
+        {!isCity && !isSpace && holiday === 'halloween' && HALLOWEEN_CANDLES.map((c, i) => (
           <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
             {/* wax body */}
             <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill="#e8dcc0" />
@@ -976,12 +1127,12 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* ===== CHRISTMAS: ground-layer decorations (tree, gifts, candles, snow mounds) =====
             Village-only: positions are laid out for the medieval scenery. */}
         {/* Faint snow mounds for ground texture, drawn first so everything else sits on top */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_SNOWDRIFTS.map((d, i) => (
+        {!isCity && !isSpace && holiday === 'christmas' && CHRISTMAS_SNOWDRIFTS.map((d, i) => (
           <ellipse key={i} cx={d.x} cy={d.y} rx={d.rx} ry={d.ry} fill="#eef3f8" opacity={d.opacity} />
         ))}
 
         {/* A small decorated tree, ornaments glowing softly */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_TREES.map((t, i) => (
+        {!isCity && !isSpace && holiday === 'christmas' && CHRISTMAS_TREES.map((t, i) => (
           <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
             {/* trunk */}
             <rect x="-1.5" y="-4" width="3" height="4" fill="#4a2f1a" />
@@ -1006,7 +1157,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* Wrapped gifts at the foot of the tree (village-only) */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_GIFTS.map((g, i) => (
+        {!isCity && !isSpace && holiday === 'christmas' && CHRISTMAS_GIFTS.map((g, i) => (
           <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
             <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill={g.box} />
             <rect x="-1" y="-6" width="2" height="6" fill={g.ribbon} />
@@ -1019,7 +1170,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* Warm candles keeping watch nearby, flames flickering (same shape as
             the Halloween candles, festive wax colors) (village-only) */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_CANDLES.map((c, i) => (
+        {!isCity && !isSpace && holiday === 'christmas' && CHRISTMAS_CANDLES.map((c, i) => (
           <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
             {/* wax body */}
             <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill={c.wax} />
@@ -1037,7 +1188,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* A couple of red roses on the ground (village-only) */}
-        {!isCity && holiday === 'valentines' && VALENTINES_ROSES.map((r, i) => (
+        {!isCity && !isSpace && holiday === 'valentines' && VALENTINES_ROSES.map((r, i) => (
           <g key={i} transform={`translate(${r.x}, ${r.y}) scale(${r.scale}) rotate(${r.rotate})`}>
             {/* stem, curving slightly */}
             <path d="M 0 0 C 1 -6 -1 -10 0 -16" fill="none" stroke="#3f6b3a" strokeWidth="1.1" strokeLinecap="round" />
@@ -1067,7 +1218,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* Decorated Easter eggs on the ground, pastel bases with a
             stripe/dot pattern (village-only) */}
-        {!isCity && holiday === 'easter' && EASTER_EGGS.map((e, i) => (
+        {!isCity && !isSpace && holiday === 'easter' && EASTER_EGGS.map((e, i) => (
           <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
             <path
               d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z"
@@ -1092,7 +1243,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* Small spring flowers on the ground (village-only) */}
-        {!isCity && holiday === 'easter' && EASTER_FLOWERS.map((fl, i) => (
+        {!isCity && !isSpace && holiday === 'easter' && EASTER_FLOWERS.map((fl, i) => (
           <g key={i} transform={`translate(${fl.x}, ${fl.y}) scale(${fl.scale})`}>
             <line x1="0" y1="0" x2="0" y2="-5" stroke="#4a7a44" strokeWidth="1" />
             {Array.from({ length: 4 }, (_, j) => {
@@ -1228,7 +1379,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* HALLOWEEN GHOST (drawn in the foreground, after the buildings and
             campfire, so it isn't clipped by the wall/tower/storage)
             (village-only: sits beside the medieval campfire) */}
-        {!isCity && holiday === 'halloween' && HALLOWEEN_GHOSTS.map((g, i) => (
+        {!isCity && !isSpace && holiday === 'halloween' && HALLOWEEN_GHOSTS.map((g, i) => (
           <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
             <g
               className="ghost-float"
@@ -1254,7 +1405,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             pointed red hat with a pompom, round face with pointed ears,
             green legs, red tunic — minus the city's neon rim-light accent,
             since the village has no neon styling to match. */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_ELVES.map((e, i) => (
+        {!isCity && !isSpace && holiday === 'christmas' && CHRISTMAS_ELVES.map((e, i) => (
           <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
             <ellipse cx="0" cy="1" rx="5" ry="1.3" fill="#000" opacity="0.35" />
             {/* legs */}
@@ -1289,7 +1440,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             in the foreground, after the buildings and campfire, so it isn't
             clipped by the wall/tower/storage) (village-only: sits beside the
             medieval campfire) */}
-        {!isCity && holiday === 'newyear' && NEWYEAR_TOASTS.map((t, i) => (
+        {!isCity && !isSpace && holiday === 'newyear' && NEWYEAR_TOASTS.map((t, i) => (
           <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
             {/* left flute, tilted toward the right glass */}
             <line x1="-6" y1="0" x2="-5" y2="-9" stroke="#c9b98a" strokeWidth="1" />
@@ -1332,7 +1483,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             (drawn in the foreground, after the buildings and campfire, so it
             isn't clipped by the wall/tower/storage) (village-only: sits
             beside the medieval campfire) */}
-        {!isCity && holiday === 'valentines' && VALENTINES_HEART_GLOWS.map((hg, i) => (
+        {!isCity && !isSpace && holiday === 'valentines' && VALENTINES_HEART_GLOWS.map((hg, i) => (
           <g key={i} transform={`translate(${hg.x}, ${hg.y}) scale(${hg.scale})`}>
             {/* soft blurred backdrop for the glow */}
             <path d={HEART_PATH} transform="translate(0, -14) scale(2)" fill="#e85a7a" opacity="0.3" filter="url(#softGlow)" />
@@ -1347,7 +1498,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             after the buildings and campfire, so it isn't clipped by the
             wall/tower/storage) (village-only: sits beside the medieval
             campfire) */}
-        {!isCity && holiday === 'easter' && EASTER_BUNNIES.map((b, i) => (
+        {!isCity && !isSpace && holiday === 'easter' && EASTER_BUNNIES.map((b, i) => (
           <g key={i} transform={`translate(${b.x}, ${b.y}) scale(${b.scale})`}>
             {/* tail */}
             <circle cx="-5.5" cy="-2" r="2" fill="#fff" />
@@ -1746,8 +1897,10 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
-        {/* Weather: rain in autumn, snow in winter — not every day */}
-        {weather === 'rain' && (
+        {/* Weather: rain in autumn, snow in winter — not every day. Ground
+            weather doesn't reach the space colony (see condition effects
+            above instead). */}
+        {!isSpace && weather === 'rain' && (
           <g opacity="0.55">
             {RAIN_DROPS.map((d, i) => (
               <line
@@ -1765,7 +1918,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             ))}
           </g>
         )}
-        {weather === 'snow' && (
+        {!isSpace && weather === 'snow' && (
           <g opacity="0.85">
             {SNOW_FLAKES.map((f, i) => (
               <circle
@@ -1780,7 +1933,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             ))}
           </g>
         )}
-        {weather === 'thunder' && (
+        {!isSpace && weather === 'thunder' && (
           <g>
             {/* Heavy downpour */}
             <g opacity="0.6">
@@ -1900,7 +2053,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             campfire") used to be a second snowman here too, which read as
             redundant/floating next to this one — it's now an elf instead,
             so this is the only snowman in the village during Christmas. */}
-        {season === 'winter' && (() => {
+        {!isSpace && season === 'winter' && (() => {
           const sm = isCity ? WINTER_SNOWMAN.city : WINTER_SNOWMAN.village;
           return (
             <g transform={`translate(${sm.x}, ${sm.y}) scale(${sm.scale})`}>
@@ -1940,7 +2093,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* CHRISTMAS WREATH, hung above the sign board (village-only: sized
             and positioned for the wooden sign board, not the city's neon
             marquee) */}
-        {!isCity && holiday === 'christmas' && (
+        {!isCity && !isSpace && holiday === 'christmas' && (
           <g transform={`translate(${CHRISTMAS_WREATH.x}, ${CHRISTMAS_WREATH.y}) scale(${CHRISTMAS_WREATH.scale})`}>
             {/* pine ring */}
             <circle cx="0" cy="0" r="6.5" fill="none" stroke="#2f5c3a" strokeWidth="3.2" />
