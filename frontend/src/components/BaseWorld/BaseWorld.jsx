@@ -29,6 +29,10 @@ import {
   CITY_EASTER_GLOW, CITY_EASTER_NEON_EGG_FLOATERS, CITY_EASTER_NEON_EGGS, CITY_EASTER_NEON_BUNNY,
   CITY_EASTER_STREET_EGGS, CITY_EASTER_NEON_CHICK,
 } from '../../data/cityHolidayDecorations';
+import {
+  SPACE_HALLOWEEN_GLOW, SPACE_HALLOWEEN_HOLO_WEB, SPACE_HALLOWEEN_HOLO_SKELETON,
+  SPACE_HALLOWEEN_HOLO_GHOSTS, SPACE_HALLOWEEN_HOLO_PUMPKINS,
+} from '../../data/spaceHolidayDecorations';
 
 // How many buildings are built, from the current stage key.
 // 'camp' = 0 built; otherwise index in buildStages + 1.
@@ -876,6 +880,52 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== SPACE HALLOWEEN: sky-layer decorations (violet/green
+             hologram glow) =====
+             Space-only: a faint violet-green sky wash standing in for the
+             village's warm orange tint and the city's violet neon tint —
+             two soft blurred ellipses instead of a flat rect tint so it
+             reads as drifting haze, kept clear of the background planet
+             (SPACE_PLANET, x 261-349 / y 20-116). */}
+        {isSpace && holiday === 'halloween' && (
+          <g>
+            <ellipse cx="110" cy="90" rx="130" ry="80" fill={SPACE_HALLOWEEN_GLOW.violet} opacity="0.10" filter="url(#softGlow)" />
+            <ellipse cx="70" cy="130" rx="100" ry="60" fill={SPACE_HALLOWEEN_GLOW.green} opacity="0.08" filter="url(#softGlow)" />
+            {/* A holographic spiderweb projected in the top-left sky corner,
+                the same double-stroke (blurred glow pass + crisp pass)
+                technique as the city's neon web, recolored cyan and
+                flickering like a projection instead of pulsing like neon.
+                Kept small enough (scale 0.9) to stay clear of the floating
+                ghosts, which are positioned toward the center of the sky
+                for exactly this reason. */}
+            <g transform={`translate(${SPACE_HALLOWEEN_HOLO_WEB.x}, ${SPACE_HALLOWEEN_HOLO_WEB.y}) scale(${SPACE_HALLOWEEN_HOLO_WEB.scale})`}>
+              <circle cx="0" cy="0" r="72" fill="url(#neonCyanGlow)" opacity="0.22" />
+              <g className="hologram-flicker">
+                <g stroke="#3de0ff" strokeWidth="1.8" fill="none" filter="url(#softGlow)" opacity="0.7">
+                  <line x1="0" y1="0" x2="80" y2="14" />
+                  <line x1="0" y1="0" x2="72" y2="44" />
+                  <line x1="0" y1="0" x2="50" y2="70" />
+                  <line x1="0" y1="0" x2="16" y2="80" />
+                  <line x1="0" y1="0" x2="62" y2="56" />
+                  <path d="M 20 4 Q 24 22 6 24" />
+                  <path d="M 44 9 Q 51 40 13 47" />
+                  <path d="M 65 16 Q 72 58 18 69" />
+                </g>
+                <g stroke="#eafcff" strokeWidth="0.8" fill="none" opacity="0.9">
+                  <line x1="0" y1="0" x2="80" y2="14" />
+                  <line x1="0" y1="0" x2="72" y2="44" />
+                  <line x1="0" y1="0" x2="50" y2="70" />
+                  <line x1="0" y1="0" x2="16" y2="80" />
+                  <line x1="0" y1="0" x2="62" y2="56" />
+                  <path d="M 20 4 Q 24 22 6 24" />
+                  <path d="M 44 9 Q 51 40 13 47" />
+                  <path d="M 65 16 Q 72 58 18 69" />
+                </g>
+              </g>
+            </g>
+          </g>
+        )}
+
         {/* ===== CITY CHRISTMAS: sky-layer decorations (rooftop chase lights) =====
             Grouped per building along its own roofline rather than one
             continuous wire, since the skyscraper is far taller than the
@@ -1615,6 +1665,102 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             foot, the casino/theater equivalent */}
         {isSpace && has('reactor') && <Reactor justBuilt={justBuilt} />}
 
+        {/* ===== SPACE HALLOWEEN: floating holo ghosts (up in the sky) =====
+             Same ghost silhouette and `.ghost-float` bob as the village's
+             HALLOWEEN_GHOSTS, recolored as translucent holograms — a low-
+             opacity fill pass plus a `softGlow`-filtered outline pass, each
+             wrapped in `.hologram-flicker` for the unstable-projection
+             flicker, with a few horizontal scan lines clipped to the
+             ghost's own silhouette. One cyan/violet/green per ghost so the
+             trio reads as separate projections. Rendered here (after the
+             buildings) purely for code proximity to the other Halloween
+             decorations — their sky position means draw order relative to
+             the buildings no longer matters, same as the city's version. */}
+        {isSpace && holiday === 'halloween' && SPACE_HALLOWEEN_HOLO_GHOSTS.map((g, i) => (
+          <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
+            <clipPath id={`space-halloween-ghost-clip-${i}`}>
+              <rect x="-8" y="-19" width="16" height="26" />
+            </clipPath>
+            <g
+              className="ghost-float"
+              style={{ animationDuration: `${g.duration}s`, animationDelay: `${g.delay}s` }}
+            >
+              <g className="hologram-flicker">
+                <path
+                  d="M -7 -4 C -7 -13, -4 -18, 0 -18 C 4 -18, 7 -13, 7 -4 L 7 5
+                     C 7 5, 5.5 2, 4 5 C 2.5 8, 1 3, 0 6
+                     C -1 3, -2.5 8, -4 5 C -5.5 2, -7 5, -7 5 Z"
+                  fill={g.color}
+                  opacity="0.18"
+                />
+                <path
+                  d="M -7 -4 C -7 -13, -4 -18, 0 -18 C 4 -18, 7 -13, 7 -4 L 7 5
+                     C 7 5, 5.5 2, 4 5 C 2.5 8, 1 3, 0 6
+                     C -1 3, -2.5 8, -4 5 C -5.5 2, -7 5, -7 5 Z"
+                  fill="none"
+                  stroke={g.color}
+                  strokeWidth="1"
+                  opacity="0.75"
+                  filter="url(#softGlow)"
+                />
+                <ellipse cx="-2.5" cy="-8" rx="1" ry="1.3" fill={g.color} opacity="0.9" />
+                <ellipse cx="2.5" cy="-8" rx="1" ry="1.3" fill={g.color} opacity="0.9" />
+                <g clipPath={`url(#space-halloween-ghost-clip-${i})`} stroke={g.color} strokeWidth="0.5" opacity="0.35">
+                  <line x1="-8" y1="-15" x2="8" y2="-15" />
+                  <line x1="-8" y1="-9" x2="8" y2="-9" />
+                  <line x1="-8" y1="-3" x2="8" y2="-3" />
+                  <line x1="-8" y1="3" x2="8" y2="3" />
+                </g>
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE HALLOWEEN: holo skeleton on the landing-pad deck =====
+             Same skull/ribcage/limb shapes as the village's
+             HALLOWEEN_SKELETONS, recolored as a translucent cyan hologram
+             instead of solid bone — low-opacity fills/strokes, a
+             `softGlow`-filtered skull outline, and horizontal scan lines
+             clipped to the figure's bounding box, all wrapped in
+             `.hologram-flicker`. Drawn after the buildings so it isn't
+             clipped by anything in the left cluster. */}
+        {isSpace && holiday === 'halloween' && SPACE_HALLOWEEN_HOLO_SKELETON.map((sk, i) => (
+          <g key={i} transform={`translate(${sk.x}, ${sk.y}) scale(${sk.scale})`}>
+            <clipPath id={`space-halloween-skeleton-clip-${i}`}>
+              <rect x="-10" y="-13" width="20" height="21" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* faint ground glow — a hologram casts light, not shadow */}
+              <ellipse cx="0" cy="5" rx="10" ry="2" fill="#3de0ff" opacity="0.12" />
+              {/* skull */}
+              <circle cx="0" cy="-10" r="4" fill="#3de0ff" opacity="0.14" />
+              <circle cx="0" cy="-10" r="4" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.8" filter="url(#softGlow)" />
+              <circle cx="-1.4" cy="-10.5" r="0.7" fill="#eafcff" opacity="0.9" />
+              <circle cx="1.4" cy="-10.5" r="0.7" fill="#eafcff" opacity="0.9" />
+              {/* ribcage */}
+              <path d="M -3 -6 L -3.5 2 L 3.5 2 L 3 -6 Z" fill="#3de0ff" opacity="0.1" />
+              <path d="M -3 -6 L -3.5 2 L 3.5 2 L 3 -6 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.8" />
+              <line x1="-2.6" y1="-4" x2="2.6" y2="-4" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.6" />
+              <line x1="-2.8" y1="-2" x2="2.8" y2="-2" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.6" />
+              <line x1="-3" y1="0" x2="3" y2="0" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.6" />
+              {/* arms resting on the ground */}
+              <line x1="-3" y1="-5" x2="-7" y2="2" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+              <line x1="3" y1="-5" x2="6" y2="1" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+              {/* legs, sitting pose */}
+              <line x1="-2" y1="2" x2="-6" y2="5" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+              <line x1="-6" y1="5" x2="-9" y2="4" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+              <line x1="2" y1="2" x2="7" y2="4" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+              {/* scan lines clipped to the figure's bounding box */}
+              <g clipPath={`url(#space-halloween-skeleton-clip-${i})`} stroke="#eafcff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-10" y1="-9" x2="10" y2="-9" />
+                <line x1="-10" y1="-4" x2="10" y2="-4" />
+                <line x1="-10" y1="1" x2="10" y2="1" />
+                <line x1="-10" y1="6" x2="10" y2="6" />
+              </g>
+            </g>
+          </g>
+        ))}
+
         {/* ===== CITY HALLOWEEN: floating neon ghosts (up in the sky) =====
             Same ghost silhouette and `.ghost-float` bob as the village's
             HALLOWEEN_GHOSTS, recolored neon with a glow-filtered fill pass
@@ -2140,6 +2286,36 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         </g>
         )}
+
+        {/* ===== SPACE HALLOWEEN: holo jack-o'-lanterns on the landing-pad
+             deck ===== Same body/stalk/carved-face shapes as the village's
+             HALLOWEEN_PUMPKINS, recolored as translucent cyan holograms
+             with scan lines clipped to the body, wrapped in
+             `.hologram-flicker`. Drawn after the NIMEONITER sign (rather
+             than right after the reactor, where the rest of this file's
+             other Halloween decorations sit) so the two pumpkins tucked in
+             right against the sign's edge render on top of its panel
+             instead of being clipped by it. */}
+        {isSpace && holiday === 'halloween' && SPACE_HALLOWEEN_HOLO_PUMPKINS.map((p, i) => (
+          <g key={i} transform={`translate(${p.x}, ${p.y}) scale(${p.scale})`}>
+            <clipPath id={`space-halloween-pumpkin-clip-${i}`}>
+              <rect x="-10" y="-12" width="20" height="20" />
+            </clipPath>
+            <g className="hologram-flicker">
+              <rect x="-1.5" y="-11" width="3" height="4" rx="1" fill="#3de0ff" opacity="0.4" />
+              <ellipse cx="0" cy="0" rx="9" ry="7" fill="#3de0ff" opacity="0.14" />
+              <ellipse cx="0" cy="0" rx="9" ry="7" fill="none" stroke="#8fe0ff" strokeWidth="1" opacity="0.7" filter="url(#softGlow)" />
+              <path d="M -5 -2 L -2 -2 L -3.5 1 Z" fill="#eafcff" opacity="0.9" />
+              <path d="M 5 -2 L 2 -2 L 3.5 1 Z" fill="#eafcff" opacity="0.9" />
+              <path d="M -4 3 L -2 5 L 0 3 L 2 5 L 4 3 L 3 4.5 L -3 4.5 Z" fill="#eafcff" opacity="0.9" />
+              <g clipPath={`url(#space-halloween-pumpkin-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-10" y1="-7" x2="10" y2="-7" />
+                <line x1="-10" y1="-2" x2="10" y2="-2" />
+                <line x1="-10" y1="3" x2="10" y2="3" />
+              </g>
+            </g>
+          </g>
+        ))}
 
         {/* WINTER SNOWMAN — season-wide (season === 'winter'), independent
             of any holiday, so it can appear alongside a winter holiday's own
