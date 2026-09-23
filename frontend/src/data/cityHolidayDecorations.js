@@ -120,44 +120,61 @@ export const CITY_HALLOWEEN_STREET_PUMPKINS = [
 // deliberately NOT one continuous wire across the whole scene (unlike the
 // village garland), since the skyscraper is far taller than the other
 // buildings and a flat wire at village-garland height would cut straight
-// through it.
+// through it. Each bulb carries a `building` key matching the `has(...)`
+// build-stage key its roofline belongs to, so BaseWorld.jsx can hold a
+// bulb back until that building is actually built — otherwise the lights
+// hang in open air over a building that isn't there yet.
+//
+// Coordinates below are each building's own ROOF RECT (from
+// buildings/city.jsx) run through that building's own translate/scale, not
+// its wider ground-shadow ellipse — an earlier pass matched the shadow's
+// width instead, which put bulbs noticeably past the actual roof edge.
 export const CITY_CHRISTMAS_ROOFLINE_LIGHTS = [
-  // Apartment roofline (x 38-162, y ~142)
-  { x: 45, y: 142, color: '#ff3d9a', delay: 0 },
-  { x: 63, y: 142, color: '#3de0ff', delay: 0.15 },
-  { x: 81, y: 142, color: '#ffd23d', delay: 0.3 },
-  { x: 99, y: 142, color: '#ff3d9a', delay: 0.45 },
-  { x: 117, y: 142, color: '#3de0ff', delay: 0.6 },
-  { x: 135, y: 142, color: '#ffd23d', delay: 0.75 },
-  { x: 153, y: 142, color: '#ff3d9a', delay: 0.9 },
-  // Hotel roofline (x 157-233, y ~118)
-  { x: 165, y: 118, color: '#3de0ff', delay: 0.1 },
-  { x: 182, y: 118, color: '#ffd23d', delay: 0.3 },
-  { x: 199, y: 118, color: '#ff3d9a', delay: 0.5 },
-  { x: 216, y: 118, color: '#3de0ff', delay: 0.7 },
-  // Diner roofline (x 216-324, y ~148, above the DINER sign)
-  { x: 225, y: 148, color: '#ffd23d', delay: 0 },
-  { x: 243, y: 148, color: '#ff3d9a', delay: 0.2 },
-  { x: 261, y: 148, color: '#3de0ff', delay: 0.4 },
-  { x: 279, y: 148, color: '#ffd23d', delay: 0.6 },
-  { x: 297, y: 148, color: '#ff3d9a', delay: 0.8 },
-  { x: 315, y: 148, color: '#3de0ff', delay: 1.0 },
-  // Skyscraper crown (x 322-382, y ~18)
-  { x: 328, y: 18, color: '#ff3d9a', delay: 0 },
-  { x: 340.5, y: 18, color: '#3de0ff', delay: 0.25 },
-  { x: 353, y: 18, color: '#ffd23d', delay: 0.5 },
-  { x: 365.5, y: 18, color: '#ff3d9a', delay: 0.75 },
-  { x: 378, y: 18, color: '#3de0ff', delay: 1.0 },
+  // Apartment roof rect (local x56-126, y162) -> translate(-17,-66.6) scale(1.3)
+  // = final x55.8-146.8, y144
+  { x: 58, y: 141, color: '#ff3d9a', delay: 0, building: 'apartment' },
+  { x: 73, y: 141, color: '#3de0ff', delay: 0.15, building: 'apartment' },
+  { x: 88, y: 141, color: '#ffd23d', delay: 0.3, building: 'apartment' },
+  { x: 103, y: 141, color: '#ff3d9a', delay: 0.45, building: 'apartment' },
+  { x: 118, y: 141, color: '#3de0ff', delay: 0.6, building: 'apartment' },
+  { x: 133, y: 141, color: '#ffd23d', delay: 0.75, building: 'apartment' },
+  { x: 146, y: 141, color: '#ff3d9a', delay: 0.9, building: 'apartment' },
+  // Hotel roof rect (local x172-218, y140) -> translate(-48.75,-55.5) scale(1.25)
+  // = final x166.25-223.75, y119.5
+  { x: 168, y: 117, color: '#3de0ff', delay: 0.1, building: 'hotel' },
+  { x: 187, y: 117, color: '#ffd23d', delay: 0.3, building: 'hotel' },
+  { x: 205, y: 117, color: '#ff3d9a', delay: 0.5, building: 'hotel' },
+  { x: 222, y: 117, color: '#3de0ff', delay: 0.7, building: 'hotel' },
+  // Diner roof rect (local x235-325, y175, inside the diner's own extra
+  // translate(0,20)) -> translate(-66,-70.4) scale(1.2) = final x216-324, y163.6
+  { x: 220, y: 161, color: '#ffd23d', delay: 0, building: 'diner' },
+  { x: 240, y: 161, color: '#ff3d9a', delay: 0.2, building: 'diner' },
+  { x: 260, y: 161, color: '#3de0ff', delay: 0.4, building: 'diner' },
+  { x: 280, y: 161, color: '#ffd23d', delay: 0.6, building: 'diner' },
+  { x: 300, y: 161, color: '#ff3d9a', delay: 0.8, building: 'diner' },
+  { x: 320, y: 161, color: '#3de0ff', delay: 1.0, building: 'diner' },
+  // Skyscraper main-shaft roof rect (local x326-378, y42) -> translate(-52.8,-33.3)
+  // scale(1.15) = final x322.1-381.9, y15 (the tiered setback crown rises
+  // further above this, but the shaft's own edge is the building's roofline)
+  { x: 325, y: 12, color: '#ff3d9a', delay: 0, building: 'skyscraper' },
+  { x: 339, y: 12, color: '#3de0ff', delay: 0.25, building: 'skyscraper' },
+  { x: 352, y: 12, color: '#ffd23d', delay: 0.5, building: 'skyscraper' },
+  { x: 366, y: 12, color: '#ff3d9a', delay: 0.75, building: 'skyscraper' },
+  { x: 379, y: 12, color: '#3de0ff', delay: 1.0, building: 'skyscraper' },
 ];
 
-// A light strand along the shop's awning edge (awning final footprint is
-// x136-204, y216-232 — a trapezoid narrower at the top), ground layer.
+// A light strand along the shop's awning edge, ground layer. Every bulb
+// belongs to the shop, so they all carry the same `building` key — see
+// CITY_CHRISTMAS_ROOFLINE_LIGHTS above for why. Positions follow the
+// awning's own flat top edge (local trapezoid top y208, x22-48, inside the
+// shop's own translate(-2,-2)) -> translate(104,-196) scale(2) = final
+// x144-196, y216 — an earlier pass didn't match this shape either.
 export const CITY_CHRISTMAS_AWNING_LIGHTS = [
-  { x: 140, y: 222, color: '#ffd23d', delay: 0 },
-  { x: 153, y: 219, color: '#3de0ff', delay: 0.2 },
-  { x: 170, y: 218, color: '#ff3d9a', delay: 0.4 },
-  { x: 187, y: 219, color: '#3de0ff', delay: 0.6 },
-  { x: 200, y: 222, color: '#ffd23d', delay: 0.8 },
+  { x: 146, y: 213, color: '#ffd23d', delay: 0, building: 'shop' },
+  { x: 159, y: 213, color: '#3de0ff', delay: 0.2, building: 'shop' },
+  { x: 171, y: 213, color: '#ff3d9a', delay: 0.4, building: 'shop' },
+  { x: 184, y: 213, color: '#3de0ff', delay: 0.6, building: 'shop' },
+  { x: 196, y: 213, color: '#ffd23d', delay: 0.8, building: 'shop' },
 ];
 
 // A big, lit neon Christmas tree standing in the empty pavement in front of

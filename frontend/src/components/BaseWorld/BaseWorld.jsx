@@ -697,10 +697,12 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             Grouped per building along its own roofline rather than one
             continuous wire, since the skyscraper is far taller than the
             others and a flat wire at village-garland height would cut
-            straight through it. */}
+            straight through it. Filtered by has(l.building) so a bulb only
+            renders once its own roofline actually exists — otherwise the
+            lights hang in open air over a building that isn't built yet. */}
         {isCity && holiday === 'christmas' && (
           <g>
-            {CITY_CHRISTMAS_ROOFLINE_LIGHTS.map((l, i) => (
+            {CITY_CHRISTMAS_ROOFLINE_LIGHTS.filter((l) => has(l.building)).map((l, i) => (
               <circle
                 key={i}
                 cx={l.x}
@@ -1129,8 +1131,10 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         ))}
 
-        {/* ===== CITY CHRISTMAS: ground-layer decorations (shop awning lights) ===== */}
-        {isCity && holiday === 'christmas' && CITY_CHRISTMAS_AWNING_LIGHTS.map((l, i) => (
+        {/* ===== CITY CHRISTMAS: ground-layer decorations (shop awning lights) =====
+            Filtered by has(l.building) — see CITY_CHRISTMAS_ROOFLINE_LIGHTS
+            above for why: these shouldn't appear before the shop is built. */}
+        {isCity && holiday === 'christmas' && CITY_CHRISTMAS_AWNING_LIGHTS.filter((l) => has(l.building)).map((l, i) => (
           <circle
             key={i}
             cx={l.x}
