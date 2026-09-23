@@ -33,12 +33,11 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
   // themselves: halloween's skull mask has its own eye sockets, and
   // valentines has its own heart-shaped lenses.
   const showCitySunglasses = isCityWorld && holiday !== 'halloween' && !isValentines;
-  // The space helmet's visor is world 3's equivalent of the city
-  // sunglasses — same reasoning: halloween's mask and valentines' heart
-  // lenses already cover the eyes themselves, so the visor (which would
-  // otherwise sit on top of the whole face) is left off for those two so
-  // the costume shows through unobstructed.
-  const showSpaceVisor = isSpaceWorld && holiday !== 'halloween' && !isValentines;
+  // Unlike the city sunglasses, the visor is tinted glass rather than an
+  // opaque lens, so it always shows in space — the halloween mask and the
+  // valentines heart lenses (drawn on the face before the helmet) remain
+  // visible through it instead of being covered up.
+  const showSpaceVisor = isSpaceWorld;
   // Hood/jacket fill swaps to a holiday-specific gradient only while that
   // holiday is active; any other value (including null) falls back to the
   // city black in world 2, the spacesuit white in world 3, or the normal
@@ -355,7 +354,7 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
 
         {/* ---------- Holiday costume: worn over the finished face, never
              altering it when no holiday is active ---------- */}
-        {isChristmas && (
+        {isChristmas && !isSpaceWorld && (
           <g className="face__costume face__costume--christmas">
             {/* Fluffy white fur trim along the hood's front rim, following the
                 same inner curve as the rim above it */}
@@ -416,7 +415,7 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
             </g>
           </g>
         )}
-        {holiday === 'newyear' && (
+        {holiday === 'newyear' && !isSpaceWorld && (
           <g className="face__costume face__costume--newyear">
             {/* Golden party hat, resting on top of the hood */}
             <path
@@ -477,7 +476,7 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
             <circle cx="112" cy="121" r="1.6" fill="#fce4e9" opacity="0.85" />
           </g>
         )}
-        {isEaster && (
+        {isEaster && !isSpaceWorld && (
           <g className="face__costume face__costume--easter">
             {/* Bunny ears rising from the top of the hood */}
             <path
@@ -556,6 +555,80 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
             opacity="0.35"
             strokeLinecap="round"
           />
+        </g>
+      )}
+      {/* ---------- Space-world holiday headwear: worn over the helmet dome
+           (drawn after the visor group above, so it sits on top of the shell
+           rather than under it), replacing the hood-based versions drawn
+           earlier for medieval/city ---------- */}
+      {isChristmas && isSpaceWorld && (
+        <g className="face__costume face__costume--christmas-space">
+          {/* Red elf-style hat, worn over the helmet dome instead of the
+              fur-trimmed hood used in the other worlds */}
+          <path
+            d="M72 80 Q100 68 128 80 L112 26 Q100 20 88 26 Z"
+            fill="url(#hoodXmas)"
+            stroke="#6b1f1a"
+            strokeWidth="1.5"
+          />
+          {/* White trim band along the hat's base */}
+          <path
+            d="M72 80 Q100 68 128 80"
+            stroke="#f0ede6"
+            strokeWidth="7"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* White pom-pom at the tip */}
+          <circle cx="100" cy="22" r="6.5" fill="#f0ede6" />
+        </g>
+      )}
+      {holiday === 'newyear' && isSpaceWorld && (
+        <g className="face__costume face__costume--newyear">
+          {/* Golden party hat, resting on top of the helmet dome */}
+          <path
+            d="M78 78 Q100 66 122 78 L108 34 Q100 28 92 34 Z"
+            fill="url(#newyearHat)"
+            stroke="#a8842a"
+            strokeWidth="1.5"
+          />
+          {/* diagonal stripes for a little texture */}
+          <path d="M85 71 L97 39" stroke="#c89a2e" strokeWidth="3" opacity="0.5" strokeLinecap="round" />
+          <path d="M100 75 L104 36" stroke="#fff4d0" strokeWidth="2" opacity="0.4" strokeLinecap="round" />
+          <path d="M115 71 L106 41" stroke="#c89a2e" strokeWidth="3" opacity="0.5" strokeLinecap="round" />
+          {/* a small star at the tip in place of a pom-pom */}
+          <path
+            d="M100 22 L102.5 26.5 L107 29 L102.5 31.5 L100 36 L97.5 31.5 L93 29 L97.5 26.5 Z"
+            fill="#fff4d0"
+            stroke="#c89a2e"
+            strokeWidth="0.8"
+          />
+          {/* a few faint sparkles twinkling around the hat */}
+          <g className="face__sparkle">
+            <circle cx="66" cy="56" r="2" fill="#fff4d0" />
+            <circle cx="134" cy="58" r="2" fill="#fff4d0" />
+            <circle cx="100" cy="18" r="1.6" fill="#fff4d0" />
+          </g>
+        </g>
+      )}
+      {isEaster && isSpaceWorld && (
+        <g className="face__costume face__costume--easter">
+          {/* Bunny ears rising from the top of the helmet dome */}
+          <path
+            d="M75 78 Q70 45 78 18 Q82 8 86 18 Q94 45 89 78 Q82 84 75 78 Z"
+            fill="#efe7d8"
+            stroke="#b0a68e"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M125 78 Q130 45 122 18 Q118 8 114 18 Q106 45 111 78 Q118 84 125 78 Z"
+            fill="#efe7d8"
+            stroke="#b0a68e"
+            strokeWidth="1.5"
+          />
+          {/* pink inner ear on each */}
+          <path d="M78 74 Q74 48 80 26 Q82 20 84 26 Q90 48 86 74 Q82 78 78 74 Z" fill="#f6b8ce" />
+          <path d="M122 74 Q126 48 120 26 Q118 20 116 26 Q110 48 114 74 Q118 78 122 74 Z" fill="#f6b8ce" />
         </g>
       )}
       </g>
