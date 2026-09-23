@@ -36,6 +36,8 @@ import {
   SPACE_CHRISTMAS_HOLO_TREE, SPACE_CHRISTMAS_HOLO_LIGHTS, SPACE_CHRISTMAS_HOLO_SNOWFLAKES,
   SPACE_CHRISTMAS_HOLO_GIFTS, SPACE_CHRISTMAS_HOLO_CANDLES,
   SPACE_NEWYEAR_GLOW, SPACE_NEWYEAR_HOLO_FIREWORKS, SPACE_NEWYEAR_HOLO_SPARKLES, SPACE_NEWYEAR_HOLO_TOASTS,
+  SPACE_VALENTINES_GLOW, SPACE_VALENTINES_HOLO_HEARTS_SKY, SPACE_VALENTINES_HOLO_HEARTS_GROUND,
+  SPACE_VALENTINES_HOLO_ROBOT,
 } from '../../data/spaceHolidayDecorations';
 
 // How many buildings are built, from the current stage key.
@@ -1168,6 +1170,32 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== SPACE VALENTINE'S: sky-layer decorations (pink/cyan glow,
+             floating hologram hearts) =====
+             Space-only: same hologram technique as the other three space
+             holidays above (translucent fill, `softGlow`-filtered glow
+             pass, `.hologram-flicker`), reusing the village/city
+             `.valentine-heart-float` rise-and-fade animation. */}
+        {isSpace && holiday === 'valentines' && (
+          <g>
+            <ellipse cx="110" cy="90" rx="130" ry="80" fill={SPACE_VALENTINES_GLOW.pink} opacity="0.08" filter="url(#softGlow)" />
+            <ellipse cx="70" cy="130" rx="100" ry="60" fill={SPACE_VALENTINES_GLOW.cyan} opacity="0.07" filter="url(#softGlow)" />
+            {SPACE_VALENTINES_HOLO_HEARTS_SKY.map((h, i) => (
+              <g key={i} transform={`translate(${h.x}, ${h.y}) scale(0.55)`}>
+                <g
+                  className="valentine-heart-float"
+                  style={{ animationDuration: `${h.duration}s`, animationDelay: `${h.delay}s` }}
+                >
+                  <g className="hologram-flicker">
+                    <path d={HEART_PATH} fill={h.color} opacity="0.22" />
+                    <path d={HEART_PATH} fill="none" stroke={h.color} strokeWidth="1.2" opacity="0.8" filter="url(#softGlow)" />
+                  </g>
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
         {/* ===== CITY EASTER: sky-layer decorations (pastel-neon glow, floating eggs) =====
             Eggs bob gently near the rooftops instead of hanging from a
             strung garland, since a flat wire at village-garland height
@@ -1997,6 +2025,77 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
                 <line x1="-9" y1="-22" x2="16" y2="-22" />
                 <line x1="-9" y1="-14" x2="16" y2="-14" />
                 <line x1="-9" y1="-6" x2="16" y2="-6" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE VALENTINE'S: holo hearts on the landing-pad deck =====
+             Same HEART_PATH shape the sky-layer hearts above use, larger
+             and grounded rather than floating, wrapped in
+             `.hologram-flicker` with scan lines clipped to the heart's own
+             silhouette. Drawn after the buildings so it's never clipped by
+             the greenhouse/reactor it sits over. */}
+        {isSpace && holiday === 'valentines' && SPACE_VALENTINES_HOLO_HEARTS_GROUND.map((h, i) => (
+          <g key={i} transform={`translate(${h.x}, ${h.y}) scale(${h.scale})`}>
+            <clipPath id={`space-valentines-heart-clip-${i}`}>
+              <rect x="-8" y="-12" width="16" height="18" />
+            </clipPath>
+            <g className="hologram-flicker">
+              <path d={HEART_PATH} fill="#ff6ab0" opacity="0.18" />
+              <path d={HEART_PATH} fill="none" stroke="#ff9ac8" strokeWidth="1" opacity="0.8" filter="url(#softGlow)" />
+              <g clipPath={`url(#space-valentines-heart-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-8" y1="-4" x2="8" y2="-4" />
+                <line x1="-8" y1="0" x2="8" y2="0" />
+                <line x1="-8" y1="4" x2="8" y2="4" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE VALENTINE'S: holo robot companion beside the
+             survivor ===== A small, clearly-readable friendly robot — round
+             head with antenna, boxy body, stub arms, a tiny held heart —
+             recolored as a translucent cyan hologram with a pink/magenta
+             chest light and heart accent. Stands beside the survivor, not
+             on top of it (see SPACE_VALENTINES_HOLO_ROBOT for the
+             clearance math), drawn after the buildings for the same reason
+             as the hearts above. */}
+        {isSpace && holiday === 'valentines' && SPACE_VALENTINES_HOLO_ROBOT.map((r, i) => (
+          <g key={i} transform={`translate(${r.x}, ${r.y}) scale(${r.scale})`}>
+            <clipPath id={`space-valentines-robot-clip-${i}`}>
+              <rect x="-9" y="-26" width="27" height="26" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* base/feet */}
+              <ellipse cx="0" cy="0" rx="4" ry="1.5" fill="#3de0ff" opacity="0.15" />
+              <rect x="-3" y="-3" width="2.4" height="3" rx="1" fill="#3de0ff" opacity="0.18" />
+              <rect x="0.6" y="-3" width="2.4" height="3" rx="1" fill="#3de0ff" opacity="0.18" />
+              {/* boxy body */}
+              <rect x="-5" y="-14" width="10" height="11" rx="2" fill="#3de0ff" opacity="0.16" />
+              <rect x="-5" y="-14" width="10" height="11" rx="2" fill="none" stroke="#8fe0ff" strokeWidth="0.7" opacity="0.8" filter="url(#softGlow)" />
+              {/* chest light */}
+              <circle cx="0" cy="-8" r="1.4" fill="#ff6ab0" opacity="0.85" />
+              {/* stub arms */}
+              <line x1="-5" y1="-10" x2="-8.5" y2="-6" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.75" />
+              <line x1="5" y1="-10" x2="8" y2="-8" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.75" />
+              {/* round head with two eye dots */}
+              <circle cx="0" cy="-18" r="4.4" fill="#3de0ff" opacity="0.16" />
+              <circle cx="0" cy="-18" r="4.4" fill="none" stroke="#eafcff" strokeWidth="0.7" opacity="0.85" />
+              <circle cx="-1.6" cy="-18.5" r="0.8" fill="#eafcff" opacity="0.95" />
+              <circle cx="1.6" cy="-18.5" r="0.8" fill="#eafcff" opacity="0.95" />
+              {/* antenna */}
+              <line x1="0" y1="-22.4" x2="0" y2="-25" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.7" />
+              <circle cx="0" cy="-25" r="0.9" fill="#ff6ab0" opacity="0.9" />
+              {/* held heart, out in front of the body where it reads clearly
+                  rather than tucked in against the arm */}
+              <path d={HEART_PATH} transform="translate(-9, 7) scale(0.65)" fill="#ff6ab0" opacity="0.95" filter="url(#softGlow)" />
+              <path d={HEART_PATH} transform="translate(-9, 7) scale(0.65)" fill="none" stroke="#ffc2e0" strokeWidth="0.6" opacity="0.9" />
+              {/* scan lines clipped to the robot's bounding box */}
+              <g clipPath={`url(#space-valentines-robot-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-9" y1="-18" x2="11" y2="-18" />
+                <line x1="-9" y1="-11" x2="11" y2="-11" />
+                <line x1="-9" y1="-4" x2="11" y2="-4" />
               </g>
             </g>
           </g>

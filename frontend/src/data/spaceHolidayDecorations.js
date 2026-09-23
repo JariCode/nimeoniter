@@ -298,3 +298,66 @@ export const SPACE_NEWYEAR_HOLO_TOASTS = [
   // the boots' actual final y is 241, not 221.
   { x: 253, y: 255, scale: 0.85, glasses: false },
 ];
+
+// ---------------------------------------------------------------------------
+// Valentine's — same hologram technique as the Halloween/Christmas/New
+// Year sets above, in pink/magenta + cyan. Positions reuse the same safe
+// zones those three already proved out rather than reinventing them: the
+// open sky for floating hearts, the greenhouse/gap/reactor apron for
+// ground-standing hearts, and — new for this holiday — a small companion
+// robot standing beside (not on top of) the survivor, at the survivor's
+// own corrected ground level (final y 241, see the note on
+// SPACE_NEWYEAR_HOLO_TOASTS above for the translate(0, 20) wrapper this
+// accounts for). 2 glow ellipses + 14 floating hearts + 6 ground hearts +
+// 1 robot — comfortably in the same range as the other three space
+// holidays and past the village/city Valentine's sets.
+// ---------------------------------------------------------------------------
+
+// Ambient pink/cyan sky-glow tint, same two-ellipse technique and the same
+// safe positions as the other three space holidays' glow.
+export const SPACE_VALENTINES_GLOW = {
+  pink: '#ff2d9a',
+  cyan: '#3de0ff',
+};
+
+// Floating holographic hearts drifting up and fading on a loop
+// (`.valentine-heart-float`, already reduced-motion-safe), pink/cyan
+// alternating, spread through the same wide open-sky zone the Christmas
+// lights/snowflakes and New Year sparkles already use.
+export const SPACE_VALENTINES_HOLO_HEARTS_SKY = [
+  { x: 20, y: 40, color: '#ff6ab0', duration: 8, delay: 0 },
+  { x: 60, y: 30, color: '#3de0ff', duration: 9, delay: 1.2 },
+  { x: 100, y: 130, color: '#ff6ab0', duration: 7.5, delay: 0.5 },
+  { x: 140, y: 25, color: '#3de0ff', duration: 8.5, delay: 1.8 },
+  { x: 180, y: 100, color: '#ff6ab0', duration: 9.2, delay: 0.3 },
+  { x: 220, y: 50, color: '#3de0ff', duration: 7.8, delay: 1.5 },
+  { x: 240, y: 120, color: '#ff6ab0', duration: 8.8, delay: 0.9 },
+  { x: 30, y: 85, color: '#3de0ff', duration: 9.5, delay: 2.1 },
+  { x: 70, y: 145, color: '#ff6ab0', duration: 7.2, delay: 0.6 },
+  { x: 120, y: 55, color: '#3de0ff', duration: 8.3, delay: 1.1 },
+  { x: 160, y: 140, color: '#ff6ab0', duration: 9.0, delay: 0.2 },
+  { x: 200, y: 75, color: '#3de0ff', duration: 7.6, delay: 1.7 },
+  { x: 45, y: 115, color: '#ff6ab0', duration: 8.6, delay: 1.4 },
+  { x: 90, y: 40, color: '#3de0ff', duration: 9.3, delay: 0.8 },
+];
+
+// Holographic hearts standing on the landing-pad deck, scattered at mixed
+// depths across the same left-corner / mid-gap / right-reactor zones the
+// Halloween pumpkins, Christmas gifts, and New Year toasts already use.
+export const SPACE_VALENTINES_HOLO_HEARTS_GROUND = [
+  { x: 35, y: 292, scale: 1.0 },
+  { x: 110, y: 286, scale: 0.8 },
+  { x: 155, y: 258, scale: 0.9 },
+  { x: 310, y: 282, scale: 0.9 },
+  { x: 345, y: 274, scale: 0.8 },
+  { x: 378, y: 288, scale: 0.75 },
+];
+
+// A small friendly holo-robot companion standing beside the survivor (not
+// on top of it) — clear of the survivor's own narrow figure (x 237-253) by
+// a healthy margin, and clear of the solar array panels just above
+// (y <= 211), standing at the same corrected ground level (y 241) the
+// survivor's own boots land on.
+export const SPACE_VALENTINES_HOLO_ROBOT = [
+  { x: 278, y: 241, scale: 1.6 },
+];
