@@ -35,6 +35,7 @@ import {
   SPACE_CHRISTMAS_GLOW, SPACE_CHRISTMAS_HOLO_STAR, SPACE_CHRISTMAS_HOLO_ELVES,
   SPACE_CHRISTMAS_HOLO_TREE, SPACE_CHRISTMAS_HOLO_LIGHTS, SPACE_CHRISTMAS_HOLO_SNOWFLAKES,
   SPACE_CHRISTMAS_HOLO_GIFTS, SPACE_CHRISTMAS_HOLO_CANDLES,
+  SPACE_NEWYEAR_GLOW, SPACE_NEWYEAR_HOLO_FIREWORKS, SPACE_NEWYEAR_HOLO_SPARKLES, SPACE_NEWYEAR_HOLO_TOASTS,
 } from '../../data/spaceHolidayDecorations';
 
 // How many buildings are built, from the current stage key.
@@ -1021,6 +1022,79 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== SPACE NEW YEAR: sky-layer decorations (cyan/gold glow,
+             fireworks, sparkles) =====
+             Space-only: same hologram technique as SPACE HALLOWEEN/
+             CHRISTMAS above (translucent fills, softGlow-filtered outlines,
+             `.hologram-flicker`), reusing the village/city firework rise+
+             burst animation classes (`.newyear-rocket-trail`,
+             `.newyear-firework`, `.newyear-sparkle`) recolored cyan/gold. */}
+        {isSpace && holiday === 'newyear' && (
+          <g>
+            <ellipse cx="110" cy="90" rx="130" ry="80" fill={SPACE_NEWYEAR_GLOW.cyan} opacity="0.08" filter="url(#softGlow)" />
+            <ellipse cx="70" cy="130" rx="100" ry="60" fill={SPACE_NEWYEAR_GLOW.gold} opacity="0.07" filter="url(#softGlow)" />
+            {/* Scattered holo sparkle points */}
+            {SPACE_NEWYEAR_HOLO_SPARKLES.map((s, i) => (
+              <circle
+                key={i}
+                cx={s.x}
+                cy={s.y}
+                r="1.1"
+                fill="#eafcff"
+                opacity="0.9"
+                filter="url(#softGlow)"
+                className="newyear-sparkle"
+                style={{ animationDelay: `${s.delay}s` }}
+              />
+            ))}
+            {/* Holo fireworks: a rocket rises into each burst point, then a
+                translucent ray-burst with scan lines flickers through it */}
+            {SPACE_NEWYEAR_HOLO_FIREWORKS.map((f, i) => (
+              <g key={i} transform={`translate(${f.x}, ${f.burstY})`}>
+                <clipPath id={`space-newyear-firework-clip-${i}`}>
+                  <rect x="-13" y="-13" width="26" height="26" />
+                </clipPath>
+                <g
+                  className="newyear-rocket-trail"
+                  style={{ '--rise': `${f.rise}px`, animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+                >
+                  <path d="M 0 14 Q 1.5 7 0 0" fill="none" stroke={f.color} strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
+                  <circle cx="0" cy="0" r="1.3" fill="#eafcff" />
+                </g>
+                <g
+                  className="newyear-firework"
+                  style={{ animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+                >
+                  <g className="hologram-flicker">
+                    {FIREWORK_RAY_ANGLES.map((a, j) => (
+                      <line
+                        key={j}
+                        x1="0" y1="0"
+                        x2={Math.cos(a) * 12}
+                        y2={Math.sin(a) * 12}
+                        stroke={f.color}
+                        strokeWidth="1"
+                        strokeLinecap="round"
+                        opacity="0.75"
+                        filter="url(#softGlow)"
+                      />
+                    ))}
+                    {FIREWORK_RAY_ANGLES.map((a, j) => (
+                      <circle key={j} cx={Math.cos(a) * 12} cy={Math.sin(a) * 12} r="0.8" fill={f.color} opacity="0.85" />
+                    ))}
+                    <circle cx="0" cy="0" r="1.6" fill="#eafcff" opacity="0.9" />
+                    <g clipPath={`url(#space-newyear-firework-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.4" opacity="0.3">
+                      <line x1="-13" y1="-6" x2="13" y2="-6" />
+                      <line x1="-13" y1="0" x2="13" y2="0" />
+                      <line x1="-13" y1="6" x2="13" y2="6" />
+                    </g>
+                  </g>
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
         {/* ===== CITY NEW YEAR: sky-layer decorations (bigger neon fireworks show) ===== */}
         {isCity && holiday === 'newyear' && (
           <g>
@@ -1864,6 +1938,67 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
               opacity="0.85"
               filter="url(#softGlow)"
             />
+          </g>
+        ))}
+
+        {/* ===== SPACE NEW YEAR: holo champagne toasts ===== Same bottle +
+             two clinking flutes shape as the village's NEWYEAR_TOASTS,
+             recolored as a translucent cyan hologram with warm gold accents
+             (cork, cap), scan lines clipped to the bounding box, wrapped in
+             `.hologram-flicker`, plus a few rising `.newyear-bubble-rise`
+             bubbles off the bottle neck. Drawn after every building so
+             it's never clipped by the greenhouse/reactor it sits over. */}
+        {isSpace && holiday === 'newyear' && SPACE_NEWYEAR_HOLO_TOASTS.map((t, i) => (
+          <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
+            <clipPath id={`space-newyear-toast-clip-${i}`}>
+              <rect x="-9" y="-28" width="25" height="28" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* Two clinking flutes: only on the toast(s) that keep them
+                  (`glasses !== false`) — a whole row of toasts all clinking
+                  glasses read as too busy, so most of this set is bottle-only. */}
+              {t.glasses !== false && (
+                <>
+                  {/* left flute */}
+                  <line x1="-6" y1="0" x2="-5" y2="-9" stroke="#8fe0ff" strokeWidth="1" opacity="0.7" />
+                  <ellipse cx="-6" cy="0" rx="2" ry="0.7" fill="#3de0ff" opacity="0.3" />
+                  <path d="M -7.2 -9 L -2.8 -9 L -3.6 -16.5 L -6.4 -15.5 Z" fill="#3de0ff" opacity="0.16" stroke="#8fe0ff" strokeWidth="0.6" />
+                  {/* right flute */}
+                  <line x1="4" y1="0" x2="3" y2="-9" stroke="#8fe0ff" strokeWidth="1" opacity="0.7" />
+                  <ellipse cx="4" cy="0" rx="2" ry="0.7" fill="#3de0ff" opacity="0.3" />
+                  <path d="M 2.8 -9 L 7.2 -9 L 6.4 -16.5 L 3.6 -16.5 Z" fill="#3de0ff" opacity="0.16" stroke="#8fe0ff" strokeWidth="0.6" />
+                  {/* clink spark, right where the two rims almost meet */}
+                  <path
+                    d="M 0 -17.6 L 0.5 -16.3 L 1.8 -16 L 0.5 -15.7 L 0 -14.4 L -0.5 -15.7 L -1.8 -16 L -0.5 -16.3 Z"
+                    fill="#eafcff"
+                    className="newyear-sparkle"
+                    style={{ animationDelay: '0.4s' }}
+                  />
+                </>
+              )}
+              {/* champagne bottle, standing to the right */}
+              <rect x="9" y="-18" width="5" height="15" rx="1" fill="#3de0ff" opacity="0.16" />
+              <rect x="9" y="-18" width="5" height="15" rx="1" fill="none" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.7" filter="url(#softGlow)" />
+              <rect x="10.3" y="-23" width="2.4" height="6" fill="#3de0ff" opacity="0.2" />
+              <rect x="10" y="-24.5" width="3" height="2" fill="#f0c14a" opacity="0.85" />
+              {/* cork-pop sparkle */}
+              <path
+                d="M 11.5 -25 L 11.9 -27.4 L 12.3 -25 L 14.5 -25.6 L 12.6 -24.4 L 14 -22.8 L 11.9 -23.7 L 11.5 -21.4 L 11.1 -23.7 L 9 -22.8 L 10.4 -24.4 L 8.5 -25.6 Z"
+                fill="#f0c14a"
+                className="newyear-sparkle"
+                style={{ animationDelay: '0s' }}
+              />
+              {/* rising, fading bubbles above the bottle neck */}
+              <circle className="newyear-bubble-rise" cx="11.5" cy="-25" r="0.6" fill="#8fe0ff" style={{ animationDelay: '0s' }} />
+              <circle className="newyear-bubble-rise" cx="10.5" cy="-25" r="0.5" fill="#8fe0ff" style={{ animationDelay: '0.6s' }} />
+              <circle className="newyear-bubble-rise" cx="12.5" cy="-25" r="0.45" fill="#8fe0ff" style={{ animationDelay: '1.2s' }} />
+              {/* scan lines clipped to the toast's bounding box */}
+              <g clipPath={`url(#space-newyear-toast-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-9" y1="-22" x2="16" y2="-22" />
+                <line x1="-9" y1="-14" x2="16" y2="-14" />
+                <line x1="-9" y1="-6" x2="16" y2="-6" />
+              </g>
+            </g>
           </g>
         ))}
 

@@ -232,3 +232,69 @@ export const SPACE_CHRISTMAS_HOLO_SNOWFLAKES = [
   { x: 15, y: 100, scale: 0.95, duration: 6.8, delay: 1.8 },
   { x: 250, y: 70, scale: 0.85, duration: 7.2, delay: 0.9 },
 ];
+
+// ---------------------------------------------------------------------------
+// New Year — same hologram technique as the Halloween/Christmas sets above,
+// in cyan + warm gold. Positions reuse the same safe zones those two
+// holidays already proved out (not reinvented from scratch): the open sky
+// left of the planet for fireworks/sparkles, the gap beside the survivor
+// (x 135-180) for a natural-depth toast, and the greenhouse/reactor
+// footprints' forced-forward apron for the rest. A rich, busy set —
+// 2 glow ellipses + 6 fireworks + 22 sparkles + 5 toasts (each with its own
+// embedded champagne bubbles) — comfortably past the Halloween set's count
+// and in the same range as the Christmas one.
+// ---------------------------------------------------------------------------
+
+// Ambient cyan/gold sky-glow tint, same two-ellipse technique and the same
+// safe positions as SPACE_HALLOWEEN_GLOW/SPACE_CHRISTMAS_GLOW.
+export const SPACE_NEWYEAR_GLOW = {
+  cyan: '#3de0ff',
+  gold: '#f0c14a',
+};
+
+// Holographic fireworks bursting in the open sky, spread across the same
+// x 30-235 band the Halloween ghosts and Christmas star already proved
+// clear of the background planet (x 261-349) and the comms tower's dish
+// (x 106-133 / y 70-90).
+export const SPACE_NEWYEAR_HOLO_FIREWORKS = [
+  { x: 35, burstY: 55, rise: 90, color: '#3de0ff', duration: 4.2, delay: 0 },
+  { x: 85, burstY: 38, rise: 110, color: '#f0c14a', duration: 4.6, delay: 1.3 },
+  { x: 115, burstY: 45, rise: 100, color: '#3de0ff', duration: 4.3, delay: 3.0 },
+  { x: 150, burstY: 62, rise: 95, color: '#f0c14a', duration: 4.0, delay: 2.4 },
+  { x: 195, burstY: 40, rise: 105, color: '#3de0ff', duration: 4.4, delay: 0.7 },
+  { x: 232, burstY: 72, rise: 85, color: '#f0c14a', duration: 3.9, delay: 1.9 },
+];
+
+// Scattered holographic sparkle points twinkling through the open sky,
+// the same wide zone the Christmas lights/snowflakes already use
+// (x 10-250, y 20-160, clear of the habitat pods below).
+export const SPACE_NEWYEAR_HOLO_SPARKLES = [
+  { x: 15, y: 35, delay: 0 }, { x: 60, y: 25, delay: 0.3 }, { x: 100, y: 140, delay: 0.6 },
+  { x: 140, y: 30, delay: 0.9 }, { x: 180, y: 110, delay: 1.2 }, { x: 220, y: 55, delay: 0.15 },
+  { x: 240, y: 130, delay: 0.45 }, { x: 30, y: 90, delay: 0.75 }, { x: 70, y: 150, delay: 1.05 },
+  { x: 120, y: 60, delay: 1.35 }, { x: 160, y: 150, delay: 0.2 }, { x: 200, y: 20, delay: 0.5 },
+  { x: 45, y: 120, delay: 0.8 }, { x: 90, y: 45, delay: 1.1 }, { x: 230, y: 90, delay: 1.4 },
+  { x: 10, y: 60, delay: 0.1 }, { x: 50, y: 150, delay: 0.4 }, { x: 130, y: 100, delay: 0.7 },
+  { x: 170, y: 70, delay: 1.0 }, { x: 210, y: 135, delay: 1.3 }, { x: 25, y: 50, delay: 0.25 },
+  { x: 245, y: 40, delay: 0.55 },
+];
+
+// Holographic champagne toasts standing on the landing-pad deck, spread
+// across the whole scene rather than bunched on one side. Only the one in
+// the clear gap beside the survivor keeps the full bottle + two clinking
+// flutes (`glasses: true`, the default) — the rest are bottle-only
+// (`glasses: false`, see the JSX) so a cluster of toasts doesn't read as a
+// crowd of clinking glasses.
+export const SPACE_NEWYEAR_HOLO_TOASTS = [
+  { x: 48, y: 288, scale: 1.0, glasses: false },
+  { x: 155, y: 262, scale: 0.9 },
+  { x: 300, y: 278, scale: 0.9, glasses: false },
+  { x: 345, y: 272, scale: 0.85, glasses: false },
+  // Right beside the survivor, at the same height as its own feet. The
+  // space pose's own boots sit at y 221 inside <Survivor> (its outer
+  // "translate(243,221) scale(0.7) translate(-243,-221)" pivots exactly on
+  // that point), but BaseWorld.jsx wraps <Survivor> in its own
+  // `translate(0, 20)` — easy to miss, and missed in an earlier pass — so
+  // the boots' actual final y is 241, not 221.
+  { x: 253, y: 255, scale: 0.85, glasses: false },
+];
