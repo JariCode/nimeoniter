@@ -1,19 +1,23 @@
-// Space-world (world 3) Halloween decoration data, the holographic
+// Space-world (world 3) holiday decoration data, the holographic
 // counterpart to the village decorations in holiday.js and the neon
 // decorations in cityHolidayDecorations.js. Same viewBox (0 0 400 300) as
 // the other worlds, but positioned for the space colony's layout (buildings
 // defined in components/BaseWorld/buildings/space.jsx, landing-pad deck
 // underfoot) and styled as translucent, scanlined holographic projections
-// (low-opacity fills, `softGlow`-filtered cyan/violet/green outlines,
-// `.hologram-flicker` from BaseWorld.css) instead of hand-painted props or
-// neon signage — in keeping with the colony's already-established hologram
-// look (see the NIMEONITER sign's holographic panel in BaseWorld.jsx).
+// (low-opacity fills, `softGlow`-filtered outlines, `.hologram-flicker`
+// from BaseWorld.css) instead of hand-painted props or neon signage — in
+// keeping with the colony's already-established hologram look (see the
+// NIMEONITER sign's holographic panel in BaseWorld.jsx). Halloween uses a
+// cyan/violet/green palette; Christmas uses cyan plus warm gold/red accents
+// (ornaments, elf hats) so the two read as distinct holidays despite
+// sharing the same hologram technique.
 //
 // getHoliday() itself lives in holiday.js and is shared by every world —
-// only the decoration data is split. Currently only Halloween is built out
-// here; every other holiday still renders with no space-specific decoration
-// in the scenery (the companion's own costume in SurvivorFace.jsx already
-// covers every holiday in every world independently of this file).
+// only the decoration data is split. Halloween and Christmas are built out
+// here; the other three holidays still render with no space-specific
+// decoration in the scenery (the companion's own costume in
+// SurvivorFace.jsx already covers every holiday in every world
+// independently of this file).
 //
 // Reserved areas avoided by every position below (viewBox 0 0 400 300, all
 // building footprints are the FINAL rendered coordinates after each
@@ -25,6 +29,8 @@
 //   NIMEONITER sign       x 216-304  y 256-294  (holographic panel + base)
 //   Greenhouse dome/ring  x  15-135  y 206-278  (front-row, left cluster)
 //   Lab module            x  80-156  y 209-250  (back-row, left cluster)
+//   Comms tower dish      x 106-133  y  70-90   (back-row, left cluster)
+//   Habitat pods          x  90-211  y 168-227  (mid-row, left cluster)
 //   Reactor housing       x 295-385  y 188-266  (front-row, right cluster)
 // Empty areas used instead, at MIXED depths rather than one flat row —
 // x 135-180 (left of the survivor, clear of every building above) is at
@@ -33,9 +39,11 @@
 // y) to clear that building's solid geometry:
 //   Sky, top-left corner  x   0-70  y   0-70   (holo cobweb)
 //   Sky, center           x  90-235 y  20-175  (floating holo ghosts)
+//   Sky, wide             x  10-250 y  20-160  (floating lights/snowflakes,
+//                                               clear of the habitat pods below)
 //   Left, near the survivor  x 135-180 y 250-275 (mid-depth, not forced forward)
-//   Left, over the greenhouse x 15-135 y 285-295 (forced forward, its solid roof/ring reaches y 278)
-//   Right, over the reactor  x 305-390 y 272-292 (forced forward, its solid housing reaches y 266)
+//   Left, over the greenhouse x 15-135 y 285-299 (forced forward, its solid roof/ring reaches y 278)
+//   Right, over the reactor  x 305-390 y 272-293 (forced forward, its solid housing reaches y 266)
 
 // Ambient violet/green sky-glow tint, a cooler, more alien palette than the
 // village's warm orange and the city's single violet wash — kept as two
@@ -106,4 +114,121 @@ export const SPACE_HALLOWEEN_HOLO_PUMPKINS = [
   { x: 273, y: 252, scale: 0.45 },
   { x: 330, y: 291, scale: 0.85 },
   { x: 350, y: 276, scale: 0.65 },
+];
+
+// ---------------------------------------------------------------------------
+// Christmas — same hologram technique as the Halloween set above, in a
+// cyan + warm gold/red palette. Well past the Halloween set's own count and
+// the other worlds' own Christmas sets (3 elves + 1 tree + 13 gifts +
+// 8 candles + 1 star + 8 lights + 6 snowflakes + 2 glow ellipses = 42),
+// spread across mixed depths rather than one front row or a single pile.
+// ---------------------------------------------------------------------------
+
+// Ambient cyan/gold sky-glow tint, the Christmas counterpart to
+// SPACE_HALLOWEEN_GLOW — same two-ellipse technique and the same safe
+// positions (already verified clear of the background planet).
+export const SPACE_CHRISTMAS_GLOW = {
+  cyan: '#3de0ff',
+  gold: '#f0c14a',
+};
+
+// A big holographic Christmas star projected in the open sky, clear of the
+// comms tower's dish/mast (x 106-133 / y 70-90, the tallest point in that
+// corner of the left cluster once built).
+export const SPACE_CHRISTMAS_HOLO_STAR = { x: 85, y: 45, scale: 1.1 };
+
+// Three holographic elves, each in its own spot rather than lined up —
+// one in the far-left corner (bigger now: an earlier pass at scale 0.65
+// read as too small next to everything else), one in the clear gap beside
+// the survivor, one on the right. Every ground decoration in this file
+// (elves, tree, gifts, candles) is drawn AFTER every space building in
+// BaseWorld.jsx, so it always renders in front of — never clipped or hidden
+// by — the greenhouse/reactor/etc: there's no need to push these below a
+// building's roofline the way an earlier pass over-cautiously did. Depth
+// still varies (feet/base y 250-285, not one flat row) so the group reads
+// as figures standing at different distances rather than a lineup.
+export const SPACE_CHRISTMAS_HOLO_ELVES = [
+  { x: 45, y: 283, scale: 1.1 },
+  { x: 130, y: 258, scale: 1.0 },
+  { x: 348, y: 278, scale: 1.05 },
+];
+
+// A holographic Christmas tree standing front and center, right beside the
+// survivor — the scene's showpiece — instead of tucked over the reactor's
+// footprint on the far right. Kept clear of the survivor's actual figure
+// (x 237-253, narrower than its generous x 180-290 reserved box) and of
+// the NIMEONITER sign (x 216-304) by a healthy margin either side.
+export const SPACE_CHRISTMAS_HOLO_TREE = [
+  { x: 195, y: 270, scale: 1.5 },
+];
+
+// Holographic gift boxes, scattered at mixed depths across the whole scene
+// rather than piled in one spot: three at the foot of the tree, the rest
+// spread through the left corner, the mid-left gap, and both sides of the
+// reactor's footprint on the right.
+export const SPACE_CHRISTMAS_HOLO_GIFTS = [
+  // At the tree's foot
+  { x: 183, y: 274, scale: 1.3 },
+  { x: 206, y: 276, scale: 1.4 },
+  { x: 195, y: 281, scale: 1.15 },
+  // Right beside the survivor's own feet (final y 221 — the space pose's
+  // "translate(243,221) scale(0.7) translate(-243,-221)" pivots exactly on
+  // that point, so its boots sit at y 221 despite the scale-down — well
+  // above the y 270-300 "front apron" the rest of this scene's ground
+  // decorations use), clear of the solar array panels just above (y <= 211)
+  { x: 258, y: 222, scale: 0.9 },
+  { x: 270, y: 224, scale: 1.0 },
+  { x: 282, y: 220, scale: 0.85 },
+  // Left corner
+  { x: 28, y: 290, scale: 1.15 },
+  { x: 55, y: 270, scale: 1.0 },
+  // Mid-left gap, beside the second elf
+  { x: 133, y: 270, scale: 1.05 },
+  { x: 152, y: 250, scale: 0.95 },
+  // Right side, spread around the third elf
+  { x: 313, y: 267, scale: 1.0 },
+  { x: 340, y: 282, scale: 1.2 },
+  { x: 378, y: 291, scale: 1.05 },
+];
+
+// Holographic candles keeping the gifts/tree company, same wax-body shape
+// as the village's HALLOWEEN_CANDLES/CHRISTMAS_CANDLES, recolored as a
+// hologram with a warm gold flame — scattered across the same zones as the
+// gifts, at varying depths.
+export const SPACE_CHRISTMAS_HOLO_CANDLES = [
+  { x: 366, y: 294, scale: 1.2, delay: 0 },
+  { x: 384, y: 286, scale: 1.0, delay: 0.5 },
+  { x: 63, y: 296, scale: 1.15, delay: 0.25 },
+  { x: 33, y: 275, scale: 0.95, delay: 0.9 },
+  { x: 145, y: 258, scale: 1.05, delay: 1.2 },
+  { x: 168, y: 272, scale: 0.85, delay: 0.4 },
+  { x: 325, y: 272, scale: 1.1, delay: 0.7 },
+  { x: 357, y: 266, scale: 0.95, delay: 1.5 },
+];
+
+// Small floating holographic lights drifting through the open sky, cyan
+// and gold alternating — the space colony's replacement for the village's
+// wire-strung CHRISTMAS_LIGHTS (there's no eave to hang a wire from up
+// here). Kept clear of the star and the habitat pods below (y <= 140).
+export const SPACE_CHRISTMAS_HOLO_LIGHTS = [
+  { x: 20, y: 45, color: '#3de0ff', delay: 0 },
+  { x: 200, y: 50, color: '#f0c14a', delay: 0.3 },
+  { x: 240, y: 90, color: '#3de0ff', delay: 0.6 },
+  { x: 150, y: 120, color: '#f0c14a', delay: 0.9 },
+  { x: 30, y: 130, color: '#3de0ff', delay: 1.2 },
+  { x: 190, y: 140, color: '#f0c14a', delay: 0.15 },
+  { x: 60, y: 100, color: '#3de0ff', delay: 0.45 },
+  { x: 220, y: 35, color: '#f0c14a', delay: 0.75 },
+];
+
+// Floating holographic snowflakes drifting slowly through the open sky,
+// spread apart from the lights above so the two sets read as separate
+// layers of ambience rather than overlapping.
+export const SPACE_CHRISTMAS_HOLO_SNOWFLAKES = [
+  { x: 45, y: 60, scale: 1.0, duration: 6, delay: 0 },
+  { x: 170, y: 45, scale: 0.85, duration: 7, delay: 1.2 },
+  { x: 230, y: 130, scale: 0.9, duration: 6.5, delay: 0.5 },
+  { x: 100, y: 150, scale: 0.8, duration: 7.5, delay: 2 },
+  { x: 15, y: 100, scale: 0.95, duration: 6.8, delay: 1.8 },
+  { x: 250, y: 70, scale: 0.85, duration: 7.2, delay: 0.9 },
 ];

@@ -32,6 +32,9 @@ import {
 import {
   SPACE_HALLOWEEN_GLOW, SPACE_HALLOWEEN_HOLO_WEB, SPACE_HALLOWEEN_HOLO_SKELETON,
   SPACE_HALLOWEEN_HOLO_GHOSTS, SPACE_HALLOWEEN_HOLO_PUMPKINS,
+  SPACE_CHRISTMAS_GLOW, SPACE_CHRISTMAS_HOLO_STAR, SPACE_CHRISTMAS_HOLO_ELVES,
+  SPACE_CHRISTMAS_HOLO_TREE, SPACE_CHRISTMAS_HOLO_LIGHTS, SPACE_CHRISTMAS_HOLO_SNOWFLAKES,
+  SPACE_CHRISTMAS_HOLO_GIFTS, SPACE_CHRISTMAS_HOLO_CANDLES,
 } from '../../data/spaceHolidayDecorations';
 
 // How many buildings are built, from the current stage key.
@@ -926,6 +929,77 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== SPACE CHRISTMAS: sky-layer decorations (cyan/gold glow,
+             star, floating lights, snowflakes) =====
+             Space-only: same hologram technique as SPACE HALLOWEEN above
+             (translucent fills, softGlow-filtered outlines, scan lines
+             clipped to each shape, `.hologram-flicker`), in a cyan + warm
+             gold palette instead of violet/green. */}
+        {isSpace && holiday === 'christmas' && (
+          <g>
+            <ellipse cx="110" cy="90" rx="130" ry="80" fill={SPACE_CHRISTMAS_GLOW.cyan} opacity="0.08" filter="url(#softGlow)" />
+            <ellipse cx="70" cy="130" rx="100" ry="60" fill={SPACE_CHRISTMAS_GLOW.gold} opacity="0.07" filter="url(#softGlow)" />
+            {/* Big holographic Christmas star, an 8-point burst with a soft
+                glow halo underneath */}
+            <g transform={`translate(${SPACE_CHRISTMAS_HOLO_STAR.x}, ${SPACE_CHRISTMAS_HOLO_STAR.y}) scale(${SPACE_CHRISTMAS_HOLO_STAR.scale})`}>
+              <clipPath id="space-christmas-star-clip">
+                <rect x="-20" y="-20" width="40" height="40" />
+              </clipPath>
+              <circle cx="0" cy="0" r="22" fill="url(#neonCyanGlow)" opacity="0.25" />
+              <g className="hologram-flicker">
+                <path
+                  d="M 0 -20 L 5 -5 L 20 0 L 5 5 L 0 20 L -5 5 L -20 0 L -5 -5 Z"
+                  fill={SPACE_CHRISTMAS_GLOW.gold}
+                  opacity="0.18"
+                />
+                <path
+                  d="M 0 -20 L 5 -5 L 20 0 L 5 5 L 0 20 L -5 5 L -20 0 L -5 -5 Z"
+                  fill="none"
+                  stroke="#eafcff"
+                  strokeWidth="1"
+                  opacity="0.85"
+                  filter="url(#softGlow)"
+                />
+                <g clipPath="url(#space-christmas-star-clip)" stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                  <line x1="-20" y1="-8" x2="20" y2="-8" />
+                  <line x1="-20" y1="0" x2="20" y2="0" />
+                  <line x1="-20" y1="8" x2="20" y2="8" />
+                </g>
+              </g>
+            </g>
+            {/* Small floating holo lights, cyan/gold alternating, twinkling
+                like the village's wire-strung CHRISTMAS_LIGHTS but drifting
+                free in the open sky instead of hanging from a wire */}
+            {SPACE_CHRISTMAS_HOLO_LIGHTS.map((l, i) => (
+              <circle
+                key={i}
+                cx={l.x}
+                cy={l.y}
+                r="3.4"
+                fill={l.color}
+                opacity="0.85"
+                filter="url(#softGlow)"
+                className="christmas-light-glow"
+                style={{ animationDelay: `${l.delay}s` }}
+              />
+            ))}
+            {/* Floating holo snowflakes, gently bobbing like the Halloween
+                ghosts do */}
+            {SPACE_CHRISTMAS_HOLO_SNOWFLAKES.map((s, i) => (
+              <g key={i} transform={`translate(${s.x}, ${s.y}) scale(${s.scale})`}>
+                <g className="ghost-float" style={{ animationDuration: `${s.duration}s`, animationDelay: `${s.delay}s` }}>
+                  <g className="hologram-flicker" stroke="#eafcff" strokeWidth="0.8" opacity="0.75" filter="url(#softGlow)">
+                    <line x1="-5" y1="0" x2="5" y2="0" />
+                    <line x1="0" y1="-5" x2="0" y2="5" />
+                    <line x1="-3.5" y1="-3.5" x2="3.5" y2="3.5" />
+                    <line x1="-3.5" y1="3.5" x2="3.5" y2="-3.5" />
+                  </g>
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
         {/* ===== CITY CHRISTMAS: sky-layer decorations (rooftop chase lights) =====
             Grouped per building along its own roofline rather than one
             continuous wire, since the skyscraper is far taller than the
@@ -1664,6 +1738,134 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             build, a glowing energy core in front of the command tower's
             foot, the casino/theater equivalent */}
         {isSpace && has('reactor') && <Reactor justBuilt={justBuilt} />}
+
+        {/* ===== SPACE CHRISTMAS: holo elves on the landing-pad deck =====
+             Recognizable elf silhouette (pointed hat with pompom, round
+             head, tunic, legs) reused from the village/city elves, recolored
+             as a translucent cyan hologram with a warm holo-red hat accent,
+             scan lines clipped to the figure, wrapped in `.hologram-flicker`.
+             Drawn after the reactor so the two over its footprint sit in
+             front of it rather than behind. */}
+        {isSpace && holiday === 'christmas' && SPACE_CHRISTMAS_HOLO_ELVES.map((e, i) => (
+          <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
+            <clipPath id={`space-christmas-elf-clip-${i}`}>
+              <rect x="-8" y="-30" width="16" height="32" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* legs */}
+              <rect x="-2.6" y="-8" width="2" height="8" rx="0.8" fill="#3de0ff" opacity="0.15" />
+              <rect x="0.6" y="-8" width="2" height="8" rx="0.8" fill="#3de0ff" opacity="0.15" />
+              <rect x="-2.6" y="-8" width="2" height="8" rx="0.8" fill="none" stroke="#8fe0ff" strokeWidth="0.5" opacity="0.6" />
+              <rect x="0.6" y="-8" width="2" height="8" rx="0.8" fill="none" stroke="#8fe0ff" strokeWidth="0.5" opacity="0.6" />
+              {/* tunic */}
+              <path d="M -3.2 -8 Q 0 -6.4 3.2 -8 L 3 -16 Q 0 -17.4 -3 -16 Z" fill="#3de0ff" opacity="0.14" />
+              <path d="M -3.2 -8 Q 0 -6.4 3.2 -8 L 3 -16 Q 0 -17.4 -3 -16 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.7" opacity="0.75" filter="url(#softGlow)" />
+              {/* arms */}
+              <path d="M -3 -15 Q -6.5 -13 -6 -9" fill="none" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
+              <path d="M 3 -15 Q 6.5 -13 6 -9" fill="none" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
+              {/* head */}
+              <circle cx="0" cy="-19" r="3.4" fill="#3de0ff" opacity="0.14" />
+              <circle cx="0" cy="-19" r="3.4" fill="none" stroke="#eafcff" strokeWidth="0.7" opacity="0.8" />
+              <circle cx="-1.2" cy="-19.4" r="0.5" fill="#eafcff" opacity="0.9" />
+              <circle cx="1.2" cy="-19.4" r="0.5" fill="#eafcff" opacity="0.9" />
+              {/* pointed hat, warm holo-red accent so the elf reads apart
+                  from the cyan-only decorations */}
+              <path d="M -3.6 -21 Q -1 -29 5 -25 Q 1.5 -25.6 -1 -23.6 Q -2.6 -22.2 -3.6 -21 Z" fill="#ff6a4a" opacity="0.2" />
+              <path d="M -3.6 -21 Q -1 -29 5 -25 Q 1.5 -25.6 -1 -23.6 Q -2.6 -22.2 -3.6 -21 Z" fill="none" stroke="#ff9a7a" strokeWidth="0.8" opacity="0.85" filter="url(#softGlow)" />
+              <circle cx="5" cy="-25" r="1.1" fill="#eafcff" opacity="0.9" />
+              {/* scan lines clipped to the figure's bounding box */}
+              <g clipPath={`url(#space-christmas-elf-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-8" y1="-24" x2="8" y2="-24" />
+                <line x1="-8" y1="-16" x2="8" y2="-16" />
+                <line x1="-8" y1="-8" x2="8" y2="-8" />
+                <line x1="-8" y1="0" x2="8" y2="0" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE CHRISTMAS: holo Christmas tree on the landing-pad
+             deck ===== Same three-tier tree/ornaments/star shape as the
+             village's CHRISTMAS_TREES, recolored as a translucent cyan
+             hologram with warm gold holo ornaments. Sits over the reactor's
+             footprint, pushed forward to clear its solid housing, kept
+             clear of the elf beside it (x 350). */}
+        {isSpace && holiday === 'christmas' && SPACE_CHRISTMAS_HOLO_TREE.map((t, i) => (
+          <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
+            <clipPath id={`space-christmas-tree-clip-${i}`}>
+              <rect x="-9" y="-27" width="18" height="27" />
+            </clipPath>
+            <g className="hologram-flicker">
+              <rect x="-1.5" y="-4" width="3" height="4" fill="#3de0ff" opacity="0.3" />
+              <path d="M -9 -4 L 0 -14 L 9 -4 Z" fill="#3de0ff" opacity="0.12" />
+              <path d="M -7 -10 L 0 -19 L 7 -10 Z" fill="#3de0ff" opacity="0.12" />
+              <path d="M -5 -15 L 0 -23 L 5 -15 Z" fill="#3de0ff" opacity="0.12" />
+              <path d="M -9 -4 L 0 -14 L 9 -4 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.7" filter="url(#softGlow)" />
+              <path d="M -7 -10 L 0 -19 L 7 -10 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.7" />
+              <path d="M -5 -15 L 0 -23 L 5 -15 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.7" />
+              {/* ornaments — warm gold holo dots */}
+              <circle cx="-4" cy="-6" r="1" fill="#f0c14a" opacity="0.9" />
+              <circle cx="4" cy="-7" r="1" fill="#f0c14a" opacity="0.9" />
+              <circle cx="-3" cy="-12" r="0.9" fill="#f0c14a" opacity="0.9" />
+              <circle cx="3" cy="-13" r="0.9" fill="#f0c14a" opacity="0.9" />
+              <circle cx="0" cy="-17" r="0.8" fill="#f0c14a" opacity="0.9" />
+              {/* star on top */}
+              <path
+                d="M 0 -27 L 1.1 -24.3 L 4 -24 L 1.8 -22 L 2.4 -19.2 L 0 -20.7 L -2.4 -19.2 L -1.8 -22 L -4 -24 L -1.1 -24.3 Z"
+                fill="#eafcff"
+                opacity="0.9"
+                filter="url(#softGlow)"
+              />
+              {/* scan lines clipped to the tree's bounding box */}
+              <g clipPath={`url(#space-christmas-tree-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-9" y1="-20" x2="9" y2="-20" />
+                <line x1="-9" y1="-12" x2="9" y2="-12" />
+                <line x1="-9" y1="-4" x2="9" y2="-4" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE CHRISTMAS: holo gift boxes ===== Same box/ribbon/bow
+             shape as the village's CHRISTMAS_GIFTS, recolored as a
+             translucent cyan hologram with warm gold holo ribbon — small
+             enough to tuck in at the foot of the tree/beside the corner elf
+             without needing their own forward push to clear a building. */}
+        {isSpace && holiday === 'christmas' && SPACE_CHRISTMAS_HOLO_GIFTS.map((g, i) => (
+          <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
+            <g className="hologram-flicker">
+              <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill="#3de0ff" opacity="0.14" />
+              <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill="none" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.7" filter="url(#softGlow)" />
+              <rect x="-1" y="-6" width="2" height="6" fill="#f0c14a" opacity="0.8" />
+              <rect x="-4" y="-3.5" width="8" height="1.5" fill="#f0c14a" opacity="0.8" />
+              <path d="M -2.2 -6 Q -3.2 -8 -0.6 -7.4 Z" fill="#f0c14a" opacity="0.85" />
+              <path d="M 2.2 -6 Q 3.2 -8 0.6 -7.4 Z" fill="#f0c14a" opacity="0.85" />
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE CHRISTMAS: holo candles ===== Same wax-body shape as
+             the village's HALLOWEEN_CANDLES/CHRISTMAS_CANDLES, recolored as
+             a translucent cyan hologram with a warm gold flame (kept as the
+             existing `.candle-flame` flicker rather than the hologram one,
+             so it still reads as a flame). */}
+        {isSpace && holiday === 'christmas' && SPACE_CHRISTMAS_HOLO_CANDLES.map((c, i) => (
+          <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
+            <g className="hologram-flicker">
+              <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill="#3de0ff" opacity="0.16" />
+              <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill="none" stroke="#8fe0ff" strokeWidth="0.5" opacity="0.7" />
+              <ellipse cx="0" cy="-6" rx="1.6" ry="0.6" fill="#eafcff" opacity="0.4" />
+            </g>
+            <path
+              className="candle-flame"
+              style={{ animationDelay: `${c.delay}s` }}
+              d="M 0 -7.2 C 1.4 -8.6 1.2 -10.4 0 -11.6 C -1.2 -10.4 -1.4 -8.6 0 -7.2 Z"
+              fill="#f0c14a"
+              opacity="0.85"
+              filter="url(#softGlow)"
+            />
+          </g>
+        ))}
 
         {/* ===== SPACE HALLOWEEN: floating holo ghosts (up in the sky) =====
              Same ghost silhouette and `.ghost-float` bob as the village's
