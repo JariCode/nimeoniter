@@ -361,3 +361,71 @@ export const SPACE_VALENTINES_HOLO_HEARTS_GROUND = [
 export const SPACE_VALENTINES_HOLO_ROBOT = [
   { x: 278, y: 241, scale: 1.6 },
 ];
+
+// ---------------------------------------------------------------------------
+// Easter — same hologram technique as the other three space holidays above,
+// in pastel + cyan. Positions reuse the same safe zones those three already
+// proved out: the open sky for floating eggs, the greenhouse/gap/reactor
+// apron for ground-standing eggs, and — mirroring the Valentine's robot's
+// spot beside the survivor (y 241, the corrected ground level) — a bunny
+// companion there instead, with a separate chick in the gap. 2 glow
+// ellipses + 10 floating eggs + 7 ground eggs + 1 bunny + 1 chick = 21,
+// comfortably in the same range as the other three space holidays.
+// ---------------------------------------------------------------------------
+
+// Ambient pastel/cyan sky-glow tint, same two-ellipse technique and the
+// same safe positions as the other three space holidays' glow.
+export const SPACE_EASTER_GLOW = {
+  pastel: '#f4a8d8',
+  cyan: '#3de0ff',
+};
+
+// Floating holographic eggs bobbing gently through the open sky
+// (`.ghost-float`, already reduced-motion-safe), pastel colors with a
+// cyan hologram glow, spread through the same wide zone the other three
+// space holidays' sky decorations already use.
+export const SPACE_EASTER_HOLO_EGGS_SKY = [
+  { x: 20, y: 45, color: '#f4d9e0', duration: 6, delay: 0 },
+  { x: 60, y: 30, color: '#d9f0e8', duration: 6.5, delay: 0.8 },
+  { x: 100, y: 140, color: '#fff0c8', duration: 7, delay: 1.5 },
+  { x: 140, y: 35, color: '#d9e8f8', duration: 6.2, delay: 0.3 },
+  { x: 180, y: 110, color: '#f4e0f0', duration: 6.8, delay: 1.1 },
+  { x: 220, y: 55, color: '#f4d9e0', duration: 7.2, delay: 1.9 },
+  { x: 240, y: 125, color: '#d9f0e8', duration: 6.4, delay: 0.5 },
+  { x: 30, y: 90, color: '#fff0c8', duration: 6.9, delay: 1.3 },
+  { x: 70, y: 150, color: '#d9e8f8', duration: 6.1, delay: 0.2 },
+  { x: 120, y: 60, color: '#f4e0f0', duration: 7.1, delay: 1.7 },
+];
+
+// Holographic eggs standing on the landing-pad deck, scattered at mixed
+// depths/sizes across the same left-corner / mid-gap / right-reactor zones
+// the other three space holidays' ground props already use.
+export const SPACE_EASTER_HOLO_EGGS_GROUND = [
+  // Moved from the left corner to right beside the survivor, at the same
+  // spot/ground level (y 241 corrected) the Valentine's held heart ended
+  // up at (see SPACE_VALENTINES_HOLO_ROBOT's JSX).
+  { x: 263, y: 248, scale: 1.0, color: '#f4d9e0' },
+  { x: 105, y: 284, scale: 0.8, color: '#d9f0e8' },
+  { x: 60, y: 288, scale: 0.7, color: '#d9f0e8' },
+  // Nudged left off the chick's own spot (x 158) so they don't sit right
+  // on top of each other.
+  { x: 140, y: 260, scale: 0.9, color: '#fff0c8' },
+  { x: 310, y: 280, scale: 0.9, color: '#d9e8f8' },
+  { x: 345, y: 272, scale: 0.8, color: '#f4e0f0' },
+  { x: 378, y: 288, scale: 0.75, color: '#f4d9e0' },
+];
+
+// A holographic bunny companion standing beside the survivor (not on top
+// of it) — the same spot and corrected ground level (y 241) the
+// Valentine's robot uses, since it's the one proven-clear spot right next
+// to the survivor's own figure (x 237-253).
+export const SPACE_EASTER_HOLO_BUNNY = [
+  { x: 278, y: 241, scale: 1.3 },
+];
+
+// A holographic chick standing in the clear gap beside the survivor
+// (x 135-180, natural depth) — a different spot than the bunny so the two
+// don't crowd each other.
+export const SPACE_EASTER_HOLO_CHICK = [
+  { x: 158, y: 260, scale: 1.2 },
+];

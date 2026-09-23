@@ -38,6 +38,8 @@ import {
   SPACE_NEWYEAR_GLOW, SPACE_NEWYEAR_HOLO_FIREWORKS, SPACE_NEWYEAR_HOLO_SPARKLES, SPACE_NEWYEAR_HOLO_TOASTS,
   SPACE_VALENTINES_GLOW, SPACE_VALENTINES_HOLO_HEARTS_SKY, SPACE_VALENTINES_HOLO_HEARTS_GROUND,
   SPACE_VALENTINES_HOLO_ROBOT,
+  SPACE_EASTER_GLOW, SPACE_EASTER_HOLO_EGGS_SKY, SPACE_EASTER_HOLO_EGGS_GROUND,
+  SPACE_EASTER_HOLO_BUNNY, SPACE_EASTER_HOLO_CHICK,
 } from '../../data/spaceHolidayDecorations';
 
 // How many buildings are built, from the current stage key.
@@ -1221,6 +1223,31 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== SPACE EASTER: sky-layer decorations (pastel/cyan glow,
+             floating hologram eggs) =====
+             Space-only: same hologram technique as the other three space
+             holidays above, reusing the village's egg-shape path and the
+             `.ghost-float` gentle bob (already reduced-motion-safe). */}
+        {isSpace && holiday === 'easter' && (
+          <g>
+            <ellipse cx="110" cy="90" rx="130" ry="80" fill={SPACE_EASTER_GLOW.pastel} opacity="0.08" filter="url(#softGlow)" />
+            <ellipse cx="70" cy="130" rx="100" ry="60" fill={SPACE_EASTER_GLOW.cyan} opacity="0.07" filter="url(#softGlow)" />
+            {SPACE_EASTER_HOLO_EGGS_SKY.map((e, i) => (
+              <g key={i} transform={`translate(${e.x}, ${e.y}) scale(0.7)`}>
+                <g
+                  className="ghost-float"
+                  style={{ animationDuration: `${e.duration}s`, animationDelay: `${e.delay}s` }}
+                >
+                  <g className="hologram-flicker">
+                    <path d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z" fill={e.color} opacity="0.22" />
+                    <path d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z" fill="none" stroke={e.color} strokeWidth="1" opacity="0.85" filter="url(#softGlow)" />
+                  </g>
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
         {/* STREET — the city's first build: a paved lane with painted lines
             and a lamppost. Painted here, before any building, as part of
             the ground itself — the front-row buildings (shop/theater/
@@ -2096,6 +2123,112 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
                 <line x1="-9" y1="-18" x2="11" y2="-18" />
                 <line x1="-9" y1="-11" x2="11" y2="-11" />
                 <line x1="-9" y1="-4" x2="11" y2="-4" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE EASTER: holo eggs on the landing-pad deck ===== Same
+             egg-shape path the sky-layer eggs above use, wrapped in
+             `.hologram-flicker` with scan lines clipped to the egg's own
+             silhouette. Drawn after the buildings so it's never clipped by
+             the greenhouse/reactor it sits over. */}
+        {isSpace && holiday === 'easter' && SPACE_EASTER_HOLO_EGGS_GROUND.map((e, i) => (
+          <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
+            <clipPath id={`space-easter-egg-clip-${i}`}>
+              <rect x="-5" y="-8" width="10" height="16" />
+            </clipPath>
+            <g className="hologram-flicker">
+              <path d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z" fill={e.color} opacity="0.3" />
+              <path d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.8" filter="url(#softGlow)" />
+              <g clipPath={`url(#space-easter-egg-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-5" y1="-3" x2="5" y2="-3" />
+                <line x1="-5" y1="1" x2="5" y2="1" />
+                <line x1="-5" y1="5" x2="5" y2="5" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE EASTER: holo bunny companion beside the survivor =====
+             Same recognizable bunny shape (tail, body, ears, face) as the
+             village's EASTER_BUNNIES, recolored as a translucent cyan
+             hologram with pastel-pink inner-ear accents, scan lines clipped
+             to the bounding box, wrapped in `.hologram-flicker`. Stands
+             beside the survivor at the same corrected ground level (y 241)
+             the Valentine's robot uses — see SPACE_VALENTINES_HOLO_ROBOT for
+             the clearance math, which applies identically here. */}
+        {isSpace && holiday === 'easter' && SPACE_EASTER_HOLO_BUNNY.map((b, i) => (
+          <g key={i} transform={`translate(${b.x}, ${b.y}) scale(${b.scale})`}>
+            <clipPath id={`space-easter-bunny-clip-${i}`}>
+              <rect x="-8" y="-30" width="16" height="30" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* tail */}
+              <circle cx="-5.5" cy="-2" r="2" fill="#3de0ff" opacity="0.2" />
+              {/* body */}
+              <ellipse cx="0" cy="-7" rx="6" ry="7.5" fill="#3de0ff" opacity="0.16" />
+              <ellipse cx="0" cy="-7" rx="6" ry="7.5" fill="none" stroke="#8fe0ff" strokeWidth="0.7" opacity="0.8" filter="url(#softGlow)" />
+              {/* front paws */}
+              <ellipse cx="-3" cy="-1.2" rx="1.8" ry="1.3" fill="#3de0ff" opacity="0.16" />
+              <ellipse cx="3" cy="-1.2" rx="1.8" ry="1.3" fill="#3de0ff" opacity="0.16" />
+              {/* ears, standing up */}
+              <ellipse cx="-2.3" cy="-23" rx="1.6" ry="7" fill="#3de0ff" opacity="0.16" transform="rotate(-12 -2.3 -23)" />
+              <ellipse cx="2.3" cy="-23" rx="1.6" ry="7" fill="#3de0ff" opacity="0.16" transform="rotate(12 2.3 -23)" />
+              <ellipse cx="-2.3" cy="-23" rx="1.6" ry="7" fill="none" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.75" transform="rotate(-12 -2.3 -23)" />
+              <ellipse cx="2.3" cy="-23" rx="1.6" ry="7" fill="none" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.75" transform="rotate(12 2.3 -23)" />
+              <ellipse cx="-2.3" cy="-22" rx="0.8" ry="4.6" fill="#ff9ac8" opacity="0.6" transform="rotate(-12 -2.3 -22)" />
+              <ellipse cx="2.3" cy="-22" rx="0.8" ry="4.6" fill="#ff9ac8" opacity="0.6" transform="rotate(12 2.3 -22)" />
+              {/* head */}
+              <circle cx="0" cy="-15.5" r="4.6" fill="#3de0ff" opacity="0.16" />
+              <circle cx="0" cy="-15.5" r="4.6" fill="none" stroke="#eafcff" strokeWidth="0.7" opacity="0.85" />
+              {/* face */}
+              <circle cx="-1.6" cy="-15.5" r="0.6" fill="#eafcff" opacity="0.95" />
+              <circle cx="1.6" cy="-15.5" r="0.6" fill="#eafcff" opacity="0.95" />
+              <path d="M -0.6 -13.8 L 0.6 -13.8 L 0 -13 Z" fill="#ff9ac8" opacity="0.9" />
+              {/* scan lines clipped to the bunny's bounding box */}
+              <g clipPath={`url(#space-easter-bunny-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-8" y1="-22" x2="8" y2="-22" />
+                <line x1="-8" y1="-14" x2="8" y2="-14" />
+                <line x1="-8" y1="-6" x2="8" y2="-6" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE EASTER: holo chick beside the survivor's gap =====
+             Same recognizable chick shape (round fluffy body, wings, head
+             tuft, eyes, beak) as the city's CITY_EASTER_NEON_CHICK,
+             recolored as a translucent cyan hologram with a pastel-yellow
+             body accent, scan lines clipped to the bounding box, wrapped in
+             `.hologram-flicker`. */}
+        {isSpace && holiday === 'easter' && SPACE_EASTER_HOLO_CHICK.map((c, i) => (
+          <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
+            <clipPath id={`space-easter-chick-clip-${i}`}>
+              <rect x="-8" y="-19" width="16" height="21" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* legs and feet */}
+              <line x1="-2" y1="0" x2="-2" y2="-3" stroke="#8fe0ff" strokeWidth="0.9" opacity="0.7" />
+              <line x1="2" y1="0" x2="2" y2="-3" stroke="#8fe0ff" strokeWidth="0.9" opacity="0.7" />
+              {/* wings */}
+              <ellipse cx="-6" cy="-8" rx="2" ry="3.2" fill="#3de0ff" opacity="0.18" transform="rotate(-20 -6 -8)" />
+              <ellipse cx="6" cy="-8" rx="2" ry="3.2" fill="#3de0ff" opacity="0.18" transform="rotate(20 6 -8)" />
+              {/* round fluffy body */}
+              <ellipse cx="0" cy="-9" rx="6.5" ry="6" fill="#fff0a8" opacity="0.2" />
+              <ellipse cx="0" cy="-9" rx="6.5" ry="6" fill="none" stroke="#8fe0ff" strokeWidth="0.7" opacity="0.8" filter="url(#softGlow)" />
+              {/* head fluff tuft */}
+              <path d="M -1.2 -15.5 Q 0 -18.5 1.2 -15.5" fill="none" stroke="#8fe0ff" strokeWidth="1.1" strokeLinecap="round" opacity="0.7" />
+              {/* eyes */}
+              <circle cx="-2.2" cy="-11" r="0.8" fill="#eafcff" opacity="0.9" />
+              <circle cx="2.2" cy="-11" r="0.8" fill="#eafcff" opacity="0.9" />
+              {/* beak */}
+              <path d="M -1.6 -9 L 0 -7.5 L 1.6 -9 Z" fill="#ff9a4a" opacity="0.85" />
+              {/* scan lines clipped to the chick's bounding box */}
+              <g clipPath={`url(#space-easter-chick-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-8" y1="-14" x2="8" y2="-14" />
+                <line x1="-8" y1="-9" x2="8" y2="-9" />
+                <line x1="-8" y1="-4" x2="8" y2="-4" />
               </g>
             </g>
           </g>
