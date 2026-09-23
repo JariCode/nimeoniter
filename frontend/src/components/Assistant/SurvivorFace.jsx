@@ -508,37 +508,56 @@ function SurvivorFace({ speaking, holiday = null, world = 'medieval' }) {
             <path d="M110 120 Q114 118 119 120" stroke="#6a7080" strokeWidth="1.2" opacity="0.6" fill="none" />
           </g>
         )}
-        {showSpaceVisor && (
-          <g className="face__costume face__costume--space">
-            {/* Helmet shell — round dome on top, flaring out to a wide base
-                (evenodd fill with a face-shaped hole cut out). Now that the
-                fabric hood is withheld entirely in space (above), this wide
-                base is purely a styling choice (reads like a proper sealed
-                helmet base/collar ring) rather than needing to mask
-                anything underneath. Drawn last. */}
-            <path
-              d="M100 58 Q152 62 158 118 Q162 160 148 194
-                 Q124 208 100 208 Q76 208 52 194
-                 Q38 160 42 118 Q48 62 100 58 Z
-                 M100 60 A46 60 0 1 0 100 180 A46 60 0 1 0 100 60 Z"
-              fill="url(#helmetShell)"
-              fillRule="evenodd"
-              stroke="#8a929c"
-              strokeWidth="1.2"
-            />
-            {/* Inner rim highlight framing the visor opening */}
-            <ellipse cx="100" cy="120" rx="46" ry="60" fill="none" stroke="#eef0f3" strokeWidth="1" opacity="0.6" />
-            {/* Small indicator lights on the neck seal where the dome closes */}
-            <circle cx="76" cy="200" r="1.8" fill="#ffd97a" opacity="0.9" />
-            <circle cx="124" cy="200" r="1.8" fill="#3de0ff" opacity="0.9" />
-            {/* Visor glass: translucent amber, filling the face opening —
-                strong enough to read clearly as tinted glass, while the
-                eyes/beard still show through underneath. */}
-            <ellipse cx="100" cy="120" rx="46" ry="60" fill="#f0c860" opacity="0.34" />
-            {/* Glossy highlight streak on the visor */}
-            <path d="M74 88 Q68 124 74 158" stroke="#fff6d8" strokeWidth="2.5" fill="none" opacity="0.35" strokeLinecap="round" />
-          </g>
-        )}
+      {showSpaceVisor && (
+        <g className="face__costume face__costume--space">
+          {/* Helmet shell — rounded dome flaring to a slim sealed base, with a
+              wide D-shaped face opening cut out (evenodd). The metal reads as a
+              thin rim around the visor. Drawn last, over the finished face. */}
+          <path
+            d="M100 62 Q160 66 164 116 Q167 148 146 182
+              Q124 196 100 196 Q76 196 54 182
+              Q33 148 36 116 Q40 66 100 62 Z
+              M44 94 Q44 84 55 83 L145 83 Q156 84 156 94
+              Q156 144 141 160 Q123 172 100 172 Q77 172 59 160
+              Q44 144 44 94 Z"
+            fill="url(#helmetShell)"
+            fillRule="evenodd"
+            stroke="#8a929c"
+            strokeWidth="1.2"
+          />
+          {/* Inner rim highlight tracing the D-shaped visor opening */}
+          <path
+            d="M47 94 Q47 86 56 85 L144 85 Q153 86 153 94
+              Q153 143 138 158 Q121 170 100 170 Q79 170 62 158
+              Q47 143 47 94 Z"
+            fill="none"
+            stroke="#eef0f3"
+            strokeWidth="1"
+            opacity="0.6"
+          />
+          {/* Small indicator lights on the neck seal where the dome closes */}
+          <circle cx="80" cy="188" r="1.8" fill="#ffd97a" opacity="0.9" />
+          <circle cx="120" cy="188" r="1.8" fill="#3de0ff" opacity="0.9" />
+          {/* Visor glass: wide D-shaped tinted pane — flat top edge, curved
+              bottom, sitting low over the face like a real astronaut visor */}
+          <path
+            d="M45 94 Q45 85 55 84 L145 84 Q155 85 155 94
+              Q155 144 140 159 Q122 171 100 171 Q78 171 60 159
+              Q45 144 45 94 Z"
+            fill="#f0c860"
+            opacity="0.34"
+          />
+          {/* Glossy highlight streak across the top-left of the visor */}
+          <path
+            d="M60 92 Q55 118 64 148"
+            stroke="#fff6d8"
+            strokeWidth="2.5"
+            fill="none"
+            opacity="0.35"
+            strokeLinecap="round"
+          />
+        </g>
+      )}
       </g>
     </svg>
   );
