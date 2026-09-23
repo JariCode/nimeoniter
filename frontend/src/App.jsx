@@ -658,16 +658,23 @@ function App() {
             </div>
           </div>
 
-          <Assistant
-            open={assistantOpen}
-            speaking={assistantSpeaking}
-            history={assistantHistory}
-            busy={assistantBusy}
-            onOpen={openAssistant}
-            onClose={() => { setAssistantOpen(false); setAssistantSpeaking(false); }}
-            onSend={talkToAssistant}
-            world={currentWorld}
-          />
+          {/* Gated the same way as BaseStatus above: before stateLoaded/
+              buildStages arrive, currentWorld defaults to 'medieval', which
+              would flash the assistant in its village outfit on every
+              refresh for a city/space player. Wait for the real data so its
+              first visible outfit is always the correct one. */}
+          {stateLoaded && buildStages.length > 0 && (
+            <Assistant
+              open={assistantOpen}
+              speaking={assistantSpeaking}
+              history={assistantHistory}
+              busy={assistantBusy}
+              onOpen={openAssistant}
+              onClose={() => { setAssistantOpen(false); setAssistantSpeaking(false); }}
+              onSend={talkToAssistant}
+              world={currentWorld}
+            />
+          )}
         </>
       )}
     </>
