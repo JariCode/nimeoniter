@@ -2,9 +2,13 @@ import './BaseWorld.css';
 import Survivor from '../Survivor/Survivor';
 import { getTimeOfDay, SKY_STOPS, STAR_OPACITY, SKY_IS_RADIAL, CELESTIAL } from '../../data/timeOfDay';
 import { getSeason, GROUND_STOPS, SEASON_OVERLAY, FLOWERS, getWeather, WINTER_SNOWMAN } from '../../data/season';
+import { SPACE_SKY_STOPS, SPACE_GROUND_STOPS, getSpaceCondition } from '../../data/spaceEnv';
 import { currentWorldFromBuilt } from '../../data/world';
 import { Wall, House, Hut, Well, Field, Storage, Fence, Watchtower } from './buildings/medieval';
 import { Street, Apartment, Diner, Shop, Hotel, Casino, Theater, Skyscraper } from './buildings/city';
+import {
+  LandingPad, Habitat, Greenhouse, SolarArray, CommsTower, Lab, Reactor, CommandTower,
+} from './buildings/space';
 import {
   getHoliday,
   HALLOWEEN_PUMPKINS, HALLOWEEN_COBWEBS, HALLOWEEN_BATS, HALLOWEEN_GLOW, HALLOWEEN_SKELETONS, HALLOWEEN_GHOSTS, HALLOWEEN_CANDLES,
@@ -25,6 +29,18 @@ import {
   CITY_EASTER_GLOW, CITY_EASTER_NEON_EGG_FLOATERS, CITY_EASTER_NEON_EGGS, CITY_EASTER_NEON_BUNNY,
   CITY_EASTER_STREET_EGGS, CITY_EASTER_NEON_CHICK,
 } from '../../data/cityHolidayDecorations';
+import {
+  SPACE_HALLOWEEN_GLOW, SPACE_HALLOWEEN_HOLO_WEB, SPACE_HALLOWEEN_HOLO_SKELETON,
+  SPACE_HALLOWEEN_HOLO_GHOSTS, SPACE_HALLOWEEN_HOLO_PUMPKINS,
+  SPACE_CHRISTMAS_GLOW, SPACE_CHRISTMAS_HOLO_STAR, SPACE_CHRISTMAS_HOLO_ELVES,
+  SPACE_CHRISTMAS_HOLO_TREE, SPACE_CHRISTMAS_HOLO_LIGHTS, SPACE_CHRISTMAS_HOLO_SNOWFLAKES,
+  SPACE_CHRISTMAS_HOLO_GIFTS, SPACE_CHRISTMAS_HOLO_CANDLES,
+  SPACE_NEWYEAR_GLOW, SPACE_NEWYEAR_HOLO_FIREWORKS, SPACE_NEWYEAR_HOLO_SPARKLES, SPACE_NEWYEAR_HOLO_TOASTS,
+  SPACE_VALENTINES_GLOW, SPACE_VALENTINES_HOLO_HEARTS_SKY, SPACE_VALENTINES_HOLO_HEARTS_GROUND,
+  SPACE_VALENTINES_HOLO_ROBOT,
+  SPACE_EASTER_GLOW, SPACE_EASTER_HOLO_EGGS_SKY, SPACE_EASTER_HOLO_EGGS_GROUND,
+  SPACE_EASTER_HOLO_BUNNY, SPACE_EASTER_HOLO_CHICK,
+} from '../../data/spaceHolidayDecorations';
 
 // How many buildings are built, from the current stage key.
 // 'camp' = 0 built; otherwise index in buildStages + 1.
@@ -122,6 +138,45 @@ const BIRDS = [
 // Ray angles for a firework burst (8 evenly spaced spokes radiating out).
 const FIREWORK_RAY_ANGLES = Array.from({ length: 8 }, (_, i) => (i / 8) * Math.PI * 2);
 
+// ===== Space-world (World 3) background data =====
+
+// Background planet, one look per Space Time — colors only, so it's tinted
+// by the same tod key the sky gradient uses. Sits high in the sky, clear
+// of the celestial (sun/moon) band.
+const SPACE_PLANET = {
+  dawn:  { cx: 305, cy: 72, r: 44, base: '#8a6a9a', shade: '#3e2c4a', band: '#d29a78' },
+  day:   { cx: 305, cy: 64, r: 44, base: '#9aa8c4', shade: '#4a5470', band: '#d8e0ee' },
+  dusk:  { cx: 305, cy: 72, r: 44, base: '#5a4272', shade: '#241a34', band: '#8a5a7c' },
+  night: { cx: 305, cy: 68, r: 44, base: '#38395a', shade: '#16172a', band: '#565888' },
+};
+
+// Faint seasonal tint washed over the planet at low opacity — the only
+// place season shows in the space sky (space has no weather/foliage).
+const SPACE_SEASON_TINT = { winter: '#8fb8ff', spring: '#8fffb0', summer: '#ffd98f', autumn: '#ff9f6a' };
+
+// Dense starfield, always visible in space (no atmosphere to wash it out
+// at "day") — spread wider than the village/city star cluster.
+const SPACE_STARS = [
+  { x: 30, y: 30, r: 1 }, { x: 75, y: 55, r: 0.8 }, { x: 20, y: 100, r: 1.1 },
+  { x: 110, y: 20, r: 0.9 }, { x: 150, y: 90, r: 1 }, { x: 190, y: 45, r: 0.8 },
+  { x: 230, y: 110, r: 1.2 }, { x: 260, y: 30, r: 0.8 }, { x: 355, y: 100, r: 1 },
+  { x: 375, y: 50, r: 0.9 }, { x: 130, y: 130, r: 0.8 }, { x: 55, y: 150, r: 1 },
+  { x: 340, y: 150, r: 0.9 }, { x: 10, y: 60, r: 0.7 }, { x: 390, y: 20, r: 0.8 },
+  { x: 210, y: 160, r: 0.7 },
+];
+
+// Meteor shower streaks: same "invisible most of the cycle, quick streak"
+// idea as SHOOTING_STARS, but more of them cycling faster and closer
+// together so it reads as a shower rather than a rare single event.
+const METEOR_SHOWER_STREAKS = [
+  { x: 40, y: 10, dx: 45, dy: 55, duration: 2.2, delay: 0 },
+  { x: 140, y: 5, dx: 40, dy: 50, duration: 2.6, delay: 0.5 },
+  { x: 240, y: 15, dx: 42, dy: 52, duration: 2.1, delay: 1.1 },
+  { x: 320, y: 8, dx: 44, dy: 54, duration: 2.4, delay: 0.2 },
+  { x: 90, y: 25, dx: 38, dy: 48, duration: 2.8, delay: 1.6 },
+  { x: 280, y: 30, dx: 40, dy: 50, duration: 2.3, delay: 2.1 },
+];
+
 // Shared heart shape (roughly 16 wide, 18 tall), centered on its bottom
 // point, reused for the Valentine's floating hearts, garland, and glow.
 const HEART_PATH = 'M 0 6 C -2 3 -8 -1 -8 -6 C -8 -10 -4 -12 0 -8 C 4 -12 8 -10 8 -6 C 8 -1 2 3 0 6 Z';
@@ -142,29 +197,34 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
   // driving the same systems in both worlds, untouched.
   const world = currentWorldFromBuilt(buildStages, stageKey);
   const isCity = world === 'city';
+  const isSpace = world === 'space';
 
   // Time of day drives the sky gradient, star visibility, and sun/moon
   const tod = getTimeOfDay();
-  const skyStops = isCity ? CITY_SKY_STOPS[tod] : SKY_STOPS[tod];
+  const skyStops = isSpace ? SPACE_SKY_STOPS[tod] : (isCity ? CITY_SKY_STOPS[tod] : SKY_STOPS[tod]);
   const starOp = STAR_OPACITY[tod];
   const skyRadial = SKY_IS_RADIAL[tod];
   const celestial = CELESTIAL[tod];
 
   // Season drives the ground color and overlay (snow / flowers / puddles)
   const season = getSeason();
-  const groundStops = isCity ? CITY_GROUND_STOPS[season] : GROUND_STOPS[season];
+  const groundStops = isSpace ? SPACE_GROUND_STOPS[season] : (isCity ? CITY_GROUND_STOPS[season] : GROUND_STOPS[season]);
   const overlay = SEASON_OVERLAY[season];
 
-  // Active weather (rain in autumn, snow in winter) — not every day
+  // Active weather (rain in autumn, snow in winter) — not every day.
+  // Ground weather doesn't apply in space; getSpaceCondition() drives its
+  // own condition layer there instead (solar flares, meteor showers, etc).
   const weather = getWeather();
+  const condition = isSpace ? getSpaceCondition() : null;
 
   // Active holiday (Halloween week, etc.) — an extra decoration layer only,
   // it never changes the season/time/weather systems or any game mechanic.
   const holiday = getHoliday();
 
   // Clouds only show up with weather: dark and gloomy for rain/thunder,
-  // pale for a snowy sky. Clear weather gets no clouds at all.
-  const showClouds = weather === 'rain' || weather === 'thunder' || weather === 'snow';
+  // pale for a snowy sky. Clear weather gets no clouds at all. Ground
+  // weather doesn't apply in space, so clouds never show there.
+  const showClouds = !isSpace && (weather === 'rain' || weather === 'thunder' || weather === 'snow');
   const cloudColor = weather === 'snow' ? '#9aa5b0' : '#23262b';
   const cloudOpacity = weather === 'snow' ? 0.55 : 0.9;
 
@@ -275,6 +335,47 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             <stop offset="0%" stopColor="#b24bf3" stopOpacity="0.85" />
             <stop offset="100%" stopColor="#b24bf3" stopOpacity="0" />
           </radialGradient>
+
+          {/* ===== Space-world materials/effects ===== */}
+          <radialGradient id="solarFlareGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ff9a4a" stopOpacity="0.75" />
+            <stop offset="100%" stopColor="#ff9a4a" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="cosmicStormGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#b24bf3" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#b24bf3" stopOpacity="0" />
+          </radialGradient>
+
+          {/* ===== Space-world building materials ===== */}
+          <linearGradient id="spaceMetal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#7a8494" />
+            <stop offset="100%" stopColor="#363c48" />
+          </linearGradient>
+          <linearGradient id="spaceMetalDark" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#4a5058" />
+            <stop offset="100%" stopColor="#1e2228" />
+          </linearGradient>
+          <linearGradient id="spaceGlassCyan" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#a0eaff" />
+            <stop offset="100%" stopColor="#1a4a5a" />
+          </linearGradient>
+          <linearGradient id="greenhouseGlass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#b8f0c8" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#2a5a38" stopOpacity="0.55" />
+          </linearGradient>
+          <linearGradient id="solarPanel" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#3a5a8a" />
+            <stop offset="100%" stopColor="#0e1526" />
+          </linearGradient>
+          <radialGradient id="reactorCore" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#eafcff" />
+            <stop offset="45%" stopColor="#6fd8ff" />
+            <stop offset="100%" stopColor="#1a4a72" />
+          </radialGradient>
+          <radialGradient id="spaceBeaconGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ff5a5a" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#ff5a5a" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
         {/* Sky */}
@@ -303,6 +404,96 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           <circle className="star" cx="90" cy="90" r="0.8" fill="#e8dcc0" opacity="0.35" />
         </g>
 
+        {/* ===== SPACE: background starfield + planet =====
+            Always visible (no atmosphere to wash them out at "day"),
+            tinted by Space Time via SPACE_PLANET[tod] and by season via a
+            faint SPACE_SEASON_TINT wash. */}
+        {isSpace && (
+          <g>
+            {SPACE_STARS.map((s, i) => (
+              <circle
+                key={i}
+                className="star"
+                cx={s.x}
+                cy={s.y}
+                r={s.r}
+                fill="#e8dcc0"
+                opacity="0.6"
+                style={{ animationDelay: `${(i % 7) * 0.4}s` }}
+              />
+            ))}
+            {(() => {
+              const p = SPACE_PLANET[tod];
+              return (
+                <g>
+                  <circle cx={p.cx} cy={p.cy} r={p.r} fill={p.base} />
+                  <ellipse cx={p.cx + 4} cy={p.cy + 4} rx={p.r} ry={p.r} fill={p.shade} opacity="0.4" />
+                  <ellipse cx={p.cx - p.r * 0.6} cy={p.cy - p.r * 0.15} rx={p.r * 1.1} ry={p.r * 0.22} fill={p.band} opacity="0.5" />
+                  <ellipse cx={p.cx - p.r * 0.5} cy={p.cy + p.r * 0.3} rx={p.r * 1.05} ry={p.r * 0.18} fill={p.band} opacity="0.3" />
+                  <circle cx={p.cx} cy={p.cy} r={p.r} fill={SPACE_SEASON_TINT[season]} opacity="0.1" />
+                </g>
+              );
+            })()}
+          </g>
+        )}
+
+        {/* ===== SPACE CONDITIONS: solar flare / meteor shower / cosmic
+            storm / eclipse — the space-world equivalent of the ground's
+            weather layer (clear gets no effect). ===== */}
+        {isSpace && condition === 'solarflare' && (
+          <g className="solar-flare-pulse">
+            <ellipse cx="60" cy="20" rx="150" ry="90" fill="url(#solarFlareGlow)" />
+          </g>
+        )}
+        {isSpace && condition === 'meteor' && (
+          <g>
+            {METEOR_SHOWER_STREAKS.map((m, i) => {
+              const len = Math.hypot(m.dx, m.dy);
+              const tailX = m.x - (m.dx / len) * 20;
+              const tailY = m.y - (m.dy / len) * 20;
+              return (
+                <line
+                  key={i}
+                  x1={m.x}
+                  y1={m.y}
+                  x2={tailX}
+                  y2={tailY}
+                  stroke="#cfe8ff"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  className="meteor-shower-streak"
+                  style={{ '--dx': m.dx, '--dy': m.dy, animationDuration: `${m.duration}s`, animationDelay: `${m.delay}s` }}
+                />
+              );
+            })}
+          </g>
+        )}
+        {isSpace && condition === 'cosmicstorm' && (
+          <g>
+            <g className="cosmic-storm-pulse" opacity="0.5">
+              <ellipse cx="120" cy="60" rx="90" ry="40" fill="url(#cosmicStormGlow)" />
+              <ellipse cx="280" cy="100" rx="100" ry="45" fill="url(#cosmicStormGlow)" />
+            </g>
+            <rect x="0" y="0" width="400" height="230" fill="#c9a0ff" className="cosmic-storm-flash" />
+          </g>
+        )}
+        {isSpace && condition === 'eclipse' && (
+          <g>
+            <rect x="0" y="0" width="400" height="230" fill="#020208" opacity="0.4" />
+            <circle
+              cx={celestial.cx}
+              cy={celestial.cy}
+              r={celestial.r + 4}
+              fill="none"
+              stroke="#ffdca0"
+              strokeWidth="2"
+              opacity="0.8"
+              filter="url(#softGlow)"
+              className="eclipse-rim-glow"
+            />
+          </g>
+        )}
+
         {/* Shooting stars: rare streaks across the night sky. The tail end is
             placed opposite the travel vector (dx, dy) so it always trails
             behind the star, head first, whichever way it's flying. */}
@@ -326,8 +517,9 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           );
         })}
 
-        {/* Birds drifting across the daytime sky now and then */}
-        {tod === 'day' && BIRDS.map((b, i) => (
+        {/* Birds drifting across the daytime sky now and then — grounded
+            wildlife, so they don't show up in the space colony */}
+        {!isSpace && tod === 'day' && BIRDS.map((b, i) => (
           <g key={i} className="bird" style={{ animationDuration: `${b.duration}s`, animationDelay: `${b.delay}s` }}>
             <path
               d={`M -5 ${b.y} Q -2.5 ${b.y - 3} 0 ${b.y} Q 2.5 ${b.y - 3} 5 ${b.y}`}
@@ -360,8 +552,11 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         <ellipse cx="250" cy="245" rx="14" ry="3" fill="#1a160f" opacity="0.5" />
         <ellipse cx="60" cy="250" rx="12" ry="2.5" fill="#241f15" opacity="0.4" />
 
-        {/* Season overlay: snow blanket, flowers, or puddles */}
-        {overlay === 'snow' && (
+        {/* Season overlay: snow blanket, flowers, or puddles — ground
+            growth/weather, so none of it appears on the station deck.
+            Season still tints the deck's own gradient (SPACE_GROUND_STOPS)
+            and the background planet, just not as a physical overlay. */}
+        {!isSpace && overlay === 'snow' && (
           <g>
             {/* Opacities raised across the board (was 0.16-0.3) so the
                 ground reads as properly snow-covered rather than just
@@ -374,14 +569,14 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             <ellipse cx="360" cy="265" rx="40" ry="8" fill="#e8eef4" opacity="0.42" />
           </g>
         )}
-        {overlay === 'puddles' && (
+        {!isSpace && overlay === 'puddles' && (
           <g>
             <ellipse cx="120" cy="242" rx="22" ry="4" fill="#3a4a52" opacity="0.5" />
             <ellipse cx="300" cy="252" rx="28" ry="5" fill="#3a4a52" opacity="0.45" />
             <ellipse cx="120" cy="241" rx="14" ry="2" fill="#6a7a82" opacity="0.35" />
           </g>
         )}
-        {(overlay === 'flowers' || overlay === 'flowersDense') && (
+        {!isSpace && (overlay === 'flowers' || overlay === 'flowersDense') && (
           <g>
             {FLOWERS.slice(0, overlay === 'flowersDense' ? FLOWERS.length : 8).map((fl, i) => (
               <g key={i}>
@@ -394,7 +589,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== HALLOWEEN: sky-layer decorations (glow, cobwebs, bats) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'halloween' && (
+        {!isCity && !isSpace && holiday === 'halloween' && (
           <g>
             {/* Orange glow tint over the whole sky */}
             <rect
@@ -445,7 +640,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== CHRISTMAS: sky-layer decorations (string lights) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'christmas' && (
+        {!isCity && !isSpace && holiday === 'christmas' && (
           <g>
             {/* garland wire, swagged in two dips across the top of the scene */}
             <path
@@ -491,7 +686,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== NEW YEAR: sky-layer decorations (glow, bunting, sparkle, fireworks) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'newyear' && (
+        {!isCity && !isSpace && holiday === 'newyear' && (
           <g>
             {/* Faint golden glow tint over the whole sky */}
             <rect
@@ -565,7 +760,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== VALENTINE'S: sky-layer decorations (glow, garland, floating hearts) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'valentines' && (
+        {!isCity && !isSpace && holiday === 'valentines' && (
           <g>
             {/* Warm pink glow tint over the whole sky */}
             <rect
@@ -602,7 +797,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== EASTER: sky-layer decorations (glow, egg garland) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'easter' && (
+        {!isCity && !isSpace && holiday === 'easter' && (
           <g>
             {/* Pale spring glow tint over the whole sky */}
             <rect
@@ -693,6 +888,123 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== SPACE HALLOWEEN: sky-layer decorations (violet/green
+             hologram glow) =====
+             Space-only: a faint violet-green sky wash standing in for the
+             village's warm orange tint and the city's violet neon tint —
+             two soft blurred ellipses instead of a flat rect tint so it
+             reads as drifting haze, kept clear of the background planet
+             (SPACE_PLANET, x 261-349 / y 20-116). */}
+        {isSpace && holiday === 'halloween' && (
+          <g>
+            <ellipse cx="110" cy="90" rx="130" ry="80" fill={SPACE_HALLOWEEN_GLOW.violet} opacity="0.10" filter="url(#softGlow)" />
+            <ellipse cx="70" cy="130" rx="100" ry="60" fill={SPACE_HALLOWEEN_GLOW.green} opacity="0.08" filter="url(#softGlow)" />
+            {/* A holographic spiderweb projected in the top-left sky corner,
+                the same double-stroke (blurred glow pass + crisp pass)
+                technique as the city's neon web, recolored cyan and
+                flickering like a projection instead of pulsing like neon.
+                Kept small enough (scale 0.9) to stay clear of the floating
+                ghosts, which are positioned toward the center of the sky
+                for exactly this reason. */}
+            <g transform={`translate(${SPACE_HALLOWEEN_HOLO_WEB.x}, ${SPACE_HALLOWEEN_HOLO_WEB.y}) scale(${SPACE_HALLOWEEN_HOLO_WEB.scale})`}>
+              <circle cx="0" cy="0" r="72" fill="url(#neonCyanGlow)" opacity="0.22" />
+              <g className="hologram-flicker">
+                <g stroke="#3de0ff" strokeWidth="1.8" fill="none" filter="url(#softGlow)" opacity="0.7">
+                  <line x1="0" y1="0" x2="80" y2="14" />
+                  <line x1="0" y1="0" x2="72" y2="44" />
+                  <line x1="0" y1="0" x2="50" y2="70" />
+                  <line x1="0" y1="0" x2="16" y2="80" />
+                  <line x1="0" y1="0" x2="62" y2="56" />
+                  <path d="M 20 4 Q 24 22 6 24" />
+                  <path d="M 44 9 Q 51 40 13 47" />
+                  <path d="M 65 16 Q 72 58 18 69" />
+                </g>
+                <g stroke="#eafcff" strokeWidth="0.8" fill="none" opacity="0.9">
+                  <line x1="0" y1="0" x2="80" y2="14" />
+                  <line x1="0" y1="0" x2="72" y2="44" />
+                  <line x1="0" y1="0" x2="50" y2="70" />
+                  <line x1="0" y1="0" x2="16" y2="80" />
+                  <line x1="0" y1="0" x2="62" y2="56" />
+                  <path d="M 20 4 Q 24 22 6 24" />
+                  <path d="M 44 9 Q 51 40 13 47" />
+                  <path d="M 65 16 Q 72 58 18 69" />
+                </g>
+              </g>
+            </g>
+          </g>
+        )}
+
+        {/* ===== SPACE CHRISTMAS: sky-layer decorations (cyan/gold glow,
+             star, floating lights, snowflakes) =====
+             Space-only: same hologram technique as SPACE HALLOWEEN above
+             (translucent fills, softGlow-filtered outlines, scan lines
+             clipped to each shape, `.hologram-flicker`), in a cyan + warm
+             gold palette instead of violet/green. */}
+        {isSpace && holiday === 'christmas' && (
+          <g>
+            <ellipse cx="110" cy="90" rx="130" ry="80" fill={SPACE_CHRISTMAS_GLOW.cyan} opacity="0.08" filter="url(#softGlow)" />
+            <ellipse cx="70" cy="130" rx="100" ry="60" fill={SPACE_CHRISTMAS_GLOW.gold} opacity="0.07" filter="url(#softGlow)" />
+            {/* Big holographic Christmas star, an 8-point burst with a soft
+                glow halo underneath */}
+            <g transform={`translate(${SPACE_CHRISTMAS_HOLO_STAR.x}, ${SPACE_CHRISTMAS_HOLO_STAR.y}) scale(${SPACE_CHRISTMAS_HOLO_STAR.scale})`}>
+              <clipPath id="space-christmas-star-clip">
+                <rect x="-20" y="-20" width="40" height="40" />
+              </clipPath>
+              <circle cx="0" cy="0" r="22" fill="url(#neonCyanGlow)" opacity="0.25" />
+              <g className="hologram-flicker">
+                <path
+                  d="M 0 -20 L 5 -5 L 20 0 L 5 5 L 0 20 L -5 5 L -20 0 L -5 -5 Z"
+                  fill={SPACE_CHRISTMAS_GLOW.gold}
+                  opacity="0.18"
+                />
+                <path
+                  d="M 0 -20 L 5 -5 L 20 0 L 5 5 L 0 20 L -5 5 L -20 0 L -5 -5 Z"
+                  fill="none"
+                  stroke="#eafcff"
+                  strokeWidth="1"
+                  opacity="0.85"
+                  filter="url(#softGlow)"
+                />
+                <g clipPath="url(#space-christmas-star-clip)" stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                  <line x1="-20" y1="-8" x2="20" y2="-8" />
+                  <line x1="-20" y1="0" x2="20" y2="0" />
+                  <line x1="-20" y1="8" x2="20" y2="8" />
+                </g>
+              </g>
+            </g>
+            {/* Small floating holo lights, cyan/gold alternating, twinkling
+                like the village's wire-strung CHRISTMAS_LIGHTS but drifting
+                free in the open sky instead of hanging from a wire */}
+            {SPACE_CHRISTMAS_HOLO_LIGHTS.map((l, i) => (
+              <circle
+                key={i}
+                cx={l.x}
+                cy={l.y}
+                r="3.4"
+                fill={l.color}
+                opacity="0.85"
+                filter="url(#softGlow)"
+                className="christmas-light-glow"
+                style={{ animationDelay: `${l.delay}s` }}
+              />
+            ))}
+            {/* Floating holo snowflakes, gently bobbing like the Halloween
+                ghosts do */}
+            {SPACE_CHRISTMAS_HOLO_SNOWFLAKES.map((s, i) => (
+              <g key={i} transform={`translate(${s.x}, ${s.y}) scale(${s.scale})`}>
+                <g className="ghost-float" style={{ animationDuration: `${s.duration}s`, animationDelay: `${s.delay}s` }}>
+                  <g className="hologram-flicker" stroke="#eafcff" strokeWidth="0.8" opacity="0.75" filter="url(#softGlow)">
+                    <line x1="-5" y1="0" x2="5" y2="0" />
+                    <line x1="0" y1="-5" x2="0" y2="5" />
+                    <line x1="-3.5" y1="-3.5" x2="3.5" y2="3.5" />
+                    <line x1="-3.5" y1="3.5" x2="3.5" y2="-3.5" />
+                  </g>
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
         {/* ===== CITY CHRISTMAS: sky-layer decorations (rooftop chase lights) =====
             Grouped per building along its own roofline rather than one
             continuous wire, since the skyscraper is far taller than the
@@ -712,6 +1024,79 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
                 className="christmas-light-glow"
                 style={{ animationDelay: `${l.delay}s` }}
               />
+            ))}
+          </g>
+        )}
+
+        {/* ===== SPACE NEW YEAR: sky-layer decorations (cyan/gold glow,
+             fireworks, sparkles) =====
+             Space-only: same hologram technique as SPACE HALLOWEEN/
+             CHRISTMAS above (translucent fills, softGlow-filtered outlines,
+             `.hologram-flicker`), reusing the village/city firework rise+
+             burst animation classes (`.newyear-rocket-trail`,
+             `.newyear-firework`, `.newyear-sparkle`) recolored cyan/gold. */}
+        {isSpace && holiday === 'newyear' && (
+          <g>
+            <ellipse cx="110" cy="90" rx="130" ry="80" fill={SPACE_NEWYEAR_GLOW.cyan} opacity="0.08" filter="url(#softGlow)" />
+            <ellipse cx="70" cy="130" rx="100" ry="60" fill={SPACE_NEWYEAR_GLOW.gold} opacity="0.07" filter="url(#softGlow)" />
+            {/* Scattered holo sparkle points */}
+            {SPACE_NEWYEAR_HOLO_SPARKLES.map((s, i) => (
+              <circle
+                key={i}
+                cx={s.x}
+                cy={s.y}
+                r="1.1"
+                fill="#eafcff"
+                opacity="0.9"
+                filter="url(#softGlow)"
+                className="newyear-sparkle"
+                style={{ animationDelay: `${s.delay}s` }}
+              />
+            ))}
+            {/* Holo fireworks: a rocket rises into each burst point, then a
+                translucent ray-burst with scan lines flickers through it */}
+            {SPACE_NEWYEAR_HOLO_FIREWORKS.map((f, i) => (
+              <g key={i} transform={`translate(${f.x}, ${f.burstY})`}>
+                <clipPath id={`space-newyear-firework-clip-${i}`}>
+                  <rect x="-13" y="-13" width="26" height="26" />
+                </clipPath>
+                <g
+                  className="newyear-rocket-trail"
+                  style={{ '--rise': `${f.rise}px`, animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+                >
+                  <path d="M 0 14 Q 1.5 7 0 0" fill="none" stroke={f.color} strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
+                  <circle cx="0" cy="0" r="1.3" fill="#eafcff" />
+                </g>
+                <g
+                  className="newyear-firework"
+                  style={{ animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+                >
+                  <g className="hologram-flicker">
+                    {FIREWORK_RAY_ANGLES.map((a, j) => (
+                      <line
+                        key={j}
+                        x1="0" y1="0"
+                        x2={Math.cos(a) * 12}
+                        y2={Math.sin(a) * 12}
+                        stroke={f.color}
+                        strokeWidth="1"
+                        strokeLinecap="round"
+                        opacity="0.75"
+                        filter="url(#softGlow)"
+                      />
+                    ))}
+                    {FIREWORK_RAY_ANGLES.map((a, j) => (
+                      <circle key={j} cx={Math.cos(a) * 12} cy={Math.sin(a) * 12} r="0.8" fill={f.color} opacity="0.85" />
+                    ))}
+                    <circle cx="0" cy="0" r="1.6" fill="#eafcff" opacity="0.9" />
+                    <g clipPath={`url(#space-newyear-firework-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.4" opacity="0.3">
+                      <line x1="-13" y1="-6" x2="13" y2="-6" />
+                      <line x1="-13" y1="0" x2="13" y2="0" />
+                      <line x1="-13" y1="6" x2="13" y2="6" />
+                    </g>
+                  </g>
+                </g>
+              </g>
             ))}
           </g>
         )}
@@ -789,6 +1174,32 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== SPACE VALENTINE'S: sky-layer decorations (pink/cyan glow,
+             floating hologram hearts) =====
+             Space-only: same hologram technique as the other three space
+             holidays above (translucent fill, `softGlow`-filtered glow
+             pass, `.hologram-flicker`), reusing the village/city
+             `.valentine-heart-float` rise-and-fade animation. */}
+        {isSpace && holiday === 'valentines' && (
+          <g>
+            <ellipse cx="110" cy="90" rx="130" ry="80" fill={SPACE_VALENTINES_GLOW.pink} opacity="0.08" filter="url(#softGlow)" />
+            <ellipse cx="70" cy="130" rx="100" ry="60" fill={SPACE_VALENTINES_GLOW.cyan} opacity="0.07" filter="url(#softGlow)" />
+            {SPACE_VALENTINES_HOLO_HEARTS_SKY.map((h, i) => (
+              <g key={i} transform={`translate(${h.x}, ${h.y}) scale(0.55)`}>
+                <g
+                  className="valentine-heart-float"
+                  style={{ animationDuration: `${h.duration}s`, animationDelay: `${h.delay}s` }}
+                >
+                  <g className="hologram-flicker">
+                    <path d={HEART_PATH} fill={h.color} opacity="0.22" />
+                    <path d={HEART_PATH} fill="none" stroke={h.color} strokeWidth="1.2" opacity="0.8" filter="url(#softGlow)" />
+                  </g>
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
         {/* ===== CITY EASTER: sky-layer decorations (pastel-neon glow, floating eggs) =====
             Eggs bob gently near the rooftops instead of hanging from a
             strung garland, since a flat wire at village-garland height
@@ -814,6 +1225,31 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
+        {/* ===== SPACE EASTER: sky-layer decorations (pastel/cyan glow,
+             floating hologram eggs) =====
+             Space-only: same hologram technique as the other three space
+             holidays above, reusing the village's egg-shape path and the
+             `.ghost-float` gentle bob (already reduced-motion-safe). */}
+        {isSpace && holiday === 'easter' && (
+          <g>
+            <ellipse cx="110" cy="90" rx="130" ry="80" fill={SPACE_EASTER_GLOW.pastel} opacity="0.08" filter="url(#softGlow)" />
+            <ellipse cx="70" cy="130" rx="100" ry="60" fill={SPACE_EASTER_GLOW.cyan} opacity="0.07" filter="url(#softGlow)" />
+            {SPACE_EASTER_HOLO_EGGS_SKY.map((e, i) => (
+              <g key={i} transform={`translate(${e.x}, ${e.y}) scale(0.7)`}>
+                <g
+                  className="ghost-float"
+                  style={{ animationDuration: `${e.duration}s`, animationDelay: `${e.delay}s` }}
+                >
+                  <g className="hologram-flicker">
+                    <path d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z" fill={e.color} opacity="0.22" />
+                    <path d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z" fill="none" stroke={e.color} strokeWidth="1" opacity="0.85" filter="url(#softGlow)" />
+                  </g>
+                </g>
+              </g>
+            ))}
+          </g>
+        )}
+
         {/* STREET — the city's first build: a paved lane with painted lines
             and a lamppost. Painted here, before any building, as part of
             the ground itself — the front-row buildings (shop/theater/
@@ -822,25 +1258,42 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             would draw its dark road rect right over their lower halves. */}
         {isCity && has('street') && <Street justBuilt={justBuilt} />}
 
+        {/* LANDING PAD — the space world's first build: a metal deck with a
+            glowing landing ring, painted here for the same reason the
+            street is — front-row buildings sit deep enough into its depth
+            band that painting it later would draw over their lower halves. */}
+        {isSpace && has('landing-pad') && <LandingPad justBuilt={justBuilt} />}
+
         {/* ===== BACK LAYER ===== */}
 
         {/* WALL + big corner tower — final build */}
-        {!isCity && has('wall') && <Wall justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('wall') && <Wall justBuilt={justBuilt} />}
 
         {/* SKYSCRAPER — back-right tower, the city world's final build,
             occupying the same back-layer real estate as the wall+tower */}
         {isCity && has('skyscraper') && <Skyscraper justBuilt={justBuilt} />}
 
+        {/* COMMAND TOWER — back row, right cluster: the space world's final
+            build, occupying the same back-layer real estate as the
+            wall+tower/skyscraper */}
+        {isSpace && has('command-tower') && <CommandTower justBuilt={justBuilt} />}
+
+        {/* COMMS TOWER — back row, left cluster: a slim mast with a dish,
+            the space world's hotel equivalent. Drawn back here (not mid)
+            so the mid/front buildings in front of it partly cover its base,
+            leaving its tall mast/dish rising above them. */}
+        {isSpace && has('comms-tower') && <CommsTower justBuilt={justBuilt} />}
+
         {/* ===== MID LAYER (original buildings, unchanged) ===== */}
 
         {/* HOUSE (original) */}
-        {!isCity && has('house') && <House justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('house') && <House justBuilt={justBuilt} />}
 
         {/* HUT (original, enlarged so the doorway reads against the survivor) */}
-        {!isCity && has('hut') && <Hut justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('hut') && <Hut justBuilt={justBuilt} />}
 
         {/* WELL (brought forward and clear of the hut, shadow aligned to its base) */}
-        {!isCity && has('well') && <Well justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('well') && <Well justBuilt={justBuilt} />}
 
         {/* APARTMENT — mid-left block of flats, lit windows in mixed colors,
             rooftop water tank (same footprint the medieval house used) */}
@@ -849,6 +1302,14 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* HOTEL — mid-right tower, taller than the apartment, vertical neon
             sign running down its face */}
         {isCity && has('hotel') && <Hotel justBuilt={justBuilt} />}
+
+        {/* HABITAT — mid row, left cluster: round crew-quarters pods, the
+            space world's apartment equivalent */}
+        {isSpace && has('habitat') && <Habitat justBuilt={justBuilt} />}
+
+        {/* LAB — mid row, left cluster: modest research module at the far
+            left edge, the space world's hotel-slot equivalent */}
+        {isSpace && has('lab') && <Lab justBuilt={justBuilt} />}
 
         {/* Parked car on the street, drawn after the apartment/hotel (so it
             sits in front of those, not swallowed by the hotel's tall glass
@@ -881,10 +1342,14 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             the city's version of the campfire hangout */}
         {isCity && has('diner') && <Diner justBuilt={justBuilt} />}
 
+        {/* SOLAR ARRAY — angled panels on ground struts, the space world's
+            parked-car-street-prop equivalent */}
+        {isSpace && has('solar-array') && <SolarArray justBuilt={justBuilt} />}
+
         {/* ===== FRONT LAYER ===== */}
 
         {/* TENT (medieval, original) */}
-        {!isCity && (
+        {!isCity && !isSpace && (
         <g transform="translate(0, 18)">
           <ellipse cx="175" cy="222" rx="46" ry="8" fill="#000" opacity="0.4" />
           <path d="M 140 220 L 175 165 L 210 220 Z" fill="#43371f" />
@@ -905,11 +1370,13 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         )}
 
         {/* FIELD (medieval, foreground, enlarged, shifted left so it stays clear of the survivor) */}
-        {!isCity && has('field') && <Field justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('field') && <Field justBuilt={justBuilt} />}
 
         {/* Butterflies fluttering near the summer flowers — drawn in the
-            front layer so they stay clear of buildings, not hidden behind them */}
-        {season === 'summer' && BUTTERFLIES.map((b, i) => (
+            front layer so they stay clear of buildings, not hidden behind
+            them. Tied to the (ground-only) flower overlay, so they sit
+            out space along with it. */}
+        {!isSpace && season === 'summer' && BUTTERFLIES.map((b, i) => (
           <g key={i} className="butterfly" style={{ animationDuration: `${b.duration}s`, animationDelay: `${b.delay}s` }}>
             <ellipse cx={b.x - 1.5} cy={b.y} rx="2" ry="1.4" fill={b.cL} className="butterfly-wing" />
             <ellipse cx={b.x + 1.5} cy={b.y} rx="2" ry="1.4" fill={b.cR} className="butterfly-wing" />
@@ -918,7 +1385,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* ===== HALLOWEEN: ground-layer decorations (jack-o'-lanterns) =====
             Village-only: positions are laid out for the medieval scenery. */}
-        {!isCity && holiday === 'halloween' && HALLOWEEN_PUMPKINS.map((p, i) => (
+        {!isCity && !isSpace && holiday === 'halloween' && HALLOWEEN_PUMPKINS.map((p, i) => (
           <g key={i} transform={`translate(${p.x}, ${p.y}) scale(${p.scale})`}>
             {/* stalk */}
             <rect x="-1.5" y="-11" width="3" height="4" rx="1" fill="#3f5225" />
@@ -934,7 +1401,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* A skeleton resting on the ground, off to the side (village-only) */}
-        {!isCity && holiday === 'halloween' && HALLOWEEN_SKELETONS.map((sk, i) => (
+        {!isCity && !isSpace && holiday === 'halloween' && HALLOWEEN_SKELETONS.map((sk, i) => (
           <g key={i} transform={`translate(${sk.x}, ${sk.y}) scale(${sk.scale})`}>
             {/* skull */}
             <circle cx="0" cy="-10" r="4" fill="#d8d8cc" />
@@ -958,7 +1425,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* Small candles keeping the pumpkins company, flames flickering
             (village-only) */}
-        {!isCity && holiday === 'halloween' && HALLOWEEN_CANDLES.map((c, i) => (
+        {!isCity && !isSpace && holiday === 'halloween' && HALLOWEEN_CANDLES.map((c, i) => (
           <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
             {/* wax body */}
             <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill="#e8dcc0" />
@@ -978,12 +1445,12 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* ===== CHRISTMAS: ground-layer decorations (tree, gifts, candles, snow mounds) =====
             Village-only: positions are laid out for the medieval scenery. */}
         {/* Faint snow mounds for ground texture, drawn first so everything else sits on top */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_SNOWDRIFTS.map((d, i) => (
+        {!isCity && !isSpace && holiday === 'christmas' && CHRISTMAS_SNOWDRIFTS.map((d, i) => (
           <ellipse key={i} cx={d.x} cy={d.y} rx={d.rx} ry={d.ry} fill="#eef3f8" opacity={d.opacity} />
         ))}
 
         {/* A small decorated tree, ornaments glowing softly */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_TREES.map((t, i) => (
+        {!isCity && !isSpace && holiday === 'christmas' && CHRISTMAS_TREES.map((t, i) => (
           <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
             {/* trunk */}
             <rect x="-1.5" y="-4" width="3" height="4" fill="#4a2f1a" />
@@ -1008,7 +1475,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* Wrapped gifts at the foot of the tree (village-only) */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_GIFTS.map((g, i) => (
+        {!isCity && !isSpace && holiday === 'christmas' && CHRISTMAS_GIFTS.map((g, i) => (
           <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
             <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill={g.box} />
             <rect x="-1" y="-6" width="2" height="6" fill={g.ribbon} />
@@ -1021,7 +1488,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* Warm candles keeping watch nearby, flames flickering (same shape as
             the Halloween candles, festive wax colors) (village-only) */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_CANDLES.map((c, i) => (
+        {!isCity && !isSpace && holiday === 'christmas' && CHRISTMAS_CANDLES.map((c, i) => (
           <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
             {/* wax body */}
             <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill={c.wax} />
@@ -1039,7 +1506,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* A couple of red roses on the ground (village-only) */}
-        {!isCity && holiday === 'valentines' && VALENTINES_ROSES.map((r, i) => (
+        {!isCity && !isSpace && holiday === 'valentines' && VALENTINES_ROSES.map((r, i) => (
           <g key={i} transform={`translate(${r.x}, ${r.y}) scale(${r.scale}) rotate(${r.rotate})`}>
             {/* stem, curving slightly */}
             <path d="M 0 0 C 1 -6 -1 -10 0 -16" fill="none" stroke="#3f6b3a" strokeWidth="1.1" strokeLinecap="round" />
@@ -1069,7 +1536,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* Decorated Easter eggs on the ground, pastel bases with a
             stripe/dot pattern (village-only) */}
-        {!isCity && holiday === 'easter' && EASTER_EGGS.map((e, i) => (
+        {!isCity && !isSpace && holiday === 'easter' && EASTER_EGGS.map((e, i) => (
           <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
             <path
               d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z"
@@ -1094,7 +1561,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* Small spring flowers on the ground (village-only) */}
-        {!isCity && holiday === 'easter' && EASTER_FLOWERS.map((fl, i) => (
+        {!isCity && !isSpace && holiday === 'easter' && EASTER_FLOWERS.map((fl, i) => (
           <g key={i} transform={`translate(${fl.x}, ${fl.y}) scale(${fl.scale})`}>
             <line x1="0" y1="0" x2="0" y2="-5" stroke="#4a7a44" strokeWidth="1" />
             {Array.from({ length: 4 }, (_, j) => {
@@ -1200,9 +1667,12 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* CAMPFIRE (medieval only) — right where the survivor stands. The
             city figure holds its own (reasonably sized) coffee cup, so
-            there's no separate prop drawn here for the city world. */}
+            there's no separate prop drawn here for the city world. Also
+            withheld in space (no space-specific hangout prop yet — that
+            comes with the character phase), so no open flame shows up in
+            the station scene. */}
         <g transform="translate(0, 20)">
-          {!isCity ? (
+          {!isCity && !isSpace ? (
             <>
               <g filter="url(#glow)">
                 <rect x="266" y="211" width="26" height="5" rx="2" fill="#2a2018" transform="rotate(14 280 214)" />
@@ -1232,7 +1702,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* HALLOWEEN GHOST (drawn in the foreground, after the buildings and
             campfire, so it isn't clipped by the wall/tower/storage)
             (village-only: sits beside the medieval campfire) */}
-        {!isCity && holiday === 'halloween' && HALLOWEEN_GHOSTS.map((g, i) => (
+        {!isCity && !isSpace && holiday === 'halloween' && HALLOWEEN_GHOSTS.map((g, i) => (
           <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
             <g
               className="ghost-float"
@@ -1258,7 +1728,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             pointed red hat with a pompom, round face with pointed ears,
             green legs, red tunic — minus the city's neon rim-light accent,
             since the village has no neon styling to match. */}
-        {!isCity && holiday === 'christmas' && CHRISTMAS_ELVES.map((e, i) => (
+        {!isCity && !isSpace && holiday === 'christmas' && CHRISTMAS_ELVES.map((e, i) => (
           <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
             <ellipse cx="0" cy="1" rx="5" ry="1.3" fill="#000" opacity="0.35" />
             {/* legs */}
@@ -1293,7 +1763,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             in the foreground, after the buildings and campfire, so it isn't
             clipped by the wall/tower/storage) (village-only: sits beside the
             medieval campfire) */}
-        {!isCity && holiday === 'newyear' && NEWYEAR_TOASTS.map((t, i) => (
+        {!isCity && !isSpace && holiday === 'newyear' && NEWYEAR_TOASTS.map((t, i) => (
           <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
             {/* left flute, tilted toward the right glass */}
             <line x1="-6" y1="0" x2="-5" y2="-9" stroke="#c9b98a" strokeWidth="1" />
@@ -1336,7 +1806,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             (drawn in the foreground, after the buildings and campfire, so it
             isn't clipped by the wall/tower/storage) (village-only: sits
             beside the medieval campfire) */}
-        {!isCity && holiday === 'valentines' && VALENTINES_HEART_GLOWS.map((hg, i) => (
+        {!isCity && !isSpace && holiday === 'valentines' && VALENTINES_HEART_GLOWS.map((hg, i) => (
           <g key={i} transform={`translate(${hg.x}, ${hg.y}) scale(${hg.scale})`}>
             {/* soft blurred backdrop for the glow */}
             <path d={HEART_PATH} transform="translate(0, -14) scale(2)" fill="#e85a7a" opacity="0.3" filter="url(#softGlow)" />
@@ -1351,7 +1821,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             after the buildings and campfire, so it isn't clipped by the
             wall/tower/storage) (village-only: sits beside the medieval
             campfire) */}
-        {!isCity && holiday === 'easter' && EASTER_BUNNIES.map((b, i) => (
+        {!isCity && !isSpace && holiday === 'easter' && EASTER_BUNNIES.map((b, i) => (
           <g key={i} transform={`translate(${b.x}, ${b.y}) scale(${b.scale})`}>
             {/* tail */}
             <circle cx="-5.5" cy="-2" r="2" fill="#fff" />
@@ -1375,22 +1845,494 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         ))}
 
         {/* STORAGE (drawn after the campfire so its glow stays behind the building) */}
-        {!isCity && has('storage') && <Storage justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('storage') && <Storage justBuilt={justBuilt} />}
 
         {/* THEATER — showy marquee with a bulb-lined border, standing where
             the storage shed once did */}
         {isCity && has('theater') && <Theater justBuilt={justBuilt} />}
 
+        {/* GREENHOUSE — front row, left cluster: translucent dome with
+            plants glowing inside, the space world's theater-slot showpiece
+            on this side, standing where the storage shed/theater once did */}
+        {isSpace && has('greenhouse') && <Greenhouse justBuilt={justBuilt} />}
+
         {/* FENCE (right against the front edge of the field, matching its width) */}
-        {!isCity && has('fence') && <Fence justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('fence') && <Fence justBuilt={justBuilt} />}
 
         {/* WATCHTOWER (foreground, stays at the right edge) */}
-        {!isCity && has('watchtower') && <Watchtower justBuilt={justBuilt} />}
+        {!isCity && !isSpace && has('watchtower') && <Watchtower justBuilt={justBuilt} />}
 
         {/* CASINO — the city's showiest building, moved to the front-left to
             balance the composition, stacked neon signage and a blinking
             marquee crown */}
         {isCity && has('casino') && <Casino justBuilt={justBuilt} />}
+
+        {/* REACTOR — front row, right cluster: the space world's showiest
+            build, a glowing energy core in front of the command tower's
+            foot, the casino/theater equivalent */}
+        {isSpace && has('reactor') && <Reactor justBuilt={justBuilt} />}
+
+        {/* ===== SPACE CHRISTMAS: holo elves on the landing-pad deck =====
+             Recognizable elf silhouette (pointed hat with pompom, round
+             head, tunic, legs) reused from the village/city elves, recolored
+             as a translucent cyan hologram with a warm holo-red hat accent,
+             scan lines clipped to the figure, wrapped in `.hologram-flicker`.
+             Drawn after the reactor so the two over its footprint sit in
+             front of it rather than behind. */}
+        {isSpace && holiday === 'christmas' && SPACE_CHRISTMAS_HOLO_ELVES.map((e, i) => (
+          <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
+            <clipPath id={`space-christmas-elf-clip-${i}`}>
+              <rect x="-8" y="-30" width="16" height="32" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* legs */}
+              <rect x="-2.6" y="-8" width="2" height="8" rx="0.8" fill="#3de0ff" opacity="0.15" />
+              <rect x="0.6" y="-8" width="2" height="8" rx="0.8" fill="#3de0ff" opacity="0.15" />
+              <rect x="-2.6" y="-8" width="2" height="8" rx="0.8" fill="none" stroke="#8fe0ff" strokeWidth="0.5" opacity="0.6" />
+              <rect x="0.6" y="-8" width="2" height="8" rx="0.8" fill="none" stroke="#8fe0ff" strokeWidth="0.5" opacity="0.6" />
+              {/* tunic */}
+              <path d="M -3.2 -8 Q 0 -6.4 3.2 -8 L 3 -16 Q 0 -17.4 -3 -16 Z" fill="#3de0ff" opacity="0.14" />
+              <path d="M -3.2 -8 Q 0 -6.4 3.2 -8 L 3 -16 Q 0 -17.4 -3 -16 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.7" opacity="0.75" filter="url(#softGlow)" />
+              {/* arms */}
+              <path d="M -3 -15 Q -6.5 -13 -6 -9" fill="none" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
+              <path d="M 3 -15 Q 6.5 -13 6 -9" fill="none" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
+              {/* head */}
+              <circle cx="0" cy="-19" r="3.4" fill="#3de0ff" opacity="0.14" />
+              <circle cx="0" cy="-19" r="3.4" fill="none" stroke="#eafcff" strokeWidth="0.7" opacity="0.8" />
+              <circle cx="-1.2" cy="-19.4" r="0.5" fill="#eafcff" opacity="0.9" />
+              <circle cx="1.2" cy="-19.4" r="0.5" fill="#eafcff" opacity="0.9" />
+              {/* pointed hat, warm holo-red accent so the elf reads apart
+                  from the cyan-only decorations */}
+              <path d="M -3.6 -21 Q -1 -29 5 -25 Q 1.5 -25.6 -1 -23.6 Q -2.6 -22.2 -3.6 -21 Z" fill="#ff6a4a" opacity="0.2" />
+              <path d="M -3.6 -21 Q -1 -29 5 -25 Q 1.5 -25.6 -1 -23.6 Q -2.6 -22.2 -3.6 -21 Z" fill="none" stroke="#ff9a7a" strokeWidth="0.8" opacity="0.85" filter="url(#softGlow)" />
+              <circle cx="5" cy="-25" r="1.1" fill="#eafcff" opacity="0.9" />
+              {/* scan lines clipped to the figure's bounding box */}
+              <g clipPath={`url(#space-christmas-elf-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-8" y1="-24" x2="8" y2="-24" />
+                <line x1="-8" y1="-16" x2="8" y2="-16" />
+                <line x1="-8" y1="-8" x2="8" y2="-8" />
+                <line x1="-8" y1="0" x2="8" y2="0" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE CHRISTMAS: holo Christmas tree on the landing-pad
+             deck ===== Same three-tier tree/ornaments/star shape as the
+             village's CHRISTMAS_TREES, recolored as a translucent cyan
+             hologram with warm gold holo ornaments. Sits over the reactor's
+             footprint, pushed forward to clear its solid housing, kept
+             clear of the elf beside it (x 350). */}
+        {isSpace && holiday === 'christmas' && SPACE_CHRISTMAS_HOLO_TREE.map((t, i) => (
+          <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
+            <clipPath id={`space-christmas-tree-clip-${i}`}>
+              <rect x="-9" y="-27" width="18" height="27" />
+            </clipPath>
+            <g className="hologram-flicker">
+              <rect x="-1.5" y="-4" width="3" height="4" fill="#3de0ff" opacity="0.3" />
+              <path d="M -9 -4 L 0 -14 L 9 -4 Z" fill="#3de0ff" opacity="0.12" />
+              <path d="M -7 -10 L 0 -19 L 7 -10 Z" fill="#3de0ff" opacity="0.12" />
+              <path d="M -5 -15 L 0 -23 L 5 -15 Z" fill="#3de0ff" opacity="0.12" />
+              <path d="M -9 -4 L 0 -14 L 9 -4 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.7" filter="url(#softGlow)" />
+              <path d="M -7 -10 L 0 -19 L 7 -10 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.7" />
+              <path d="M -5 -15 L 0 -23 L 5 -15 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.7" />
+              {/* ornaments — warm gold holo dots */}
+              <circle cx="-4" cy="-6" r="1" fill="#f0c14a" opacity="0.9" />
+              <circle cx="4" cy="-7" r="1" fill="#f0c14a" opacity="0.9" />
+              <circle cx="-3" cy="-12" r="0.9" fill="#f0c14a" opacity="0.9" />
+              <circle cx="3" cy="-13" r="0.9" fill="#f0c14a" opacity="0.9" />
+              <circle cx="0" cy="-17" r="0.8" fill="#f0c14a" opacity="0.9" />
+              {/* star on top */}
+              <path
+                d="M 0 -27 L 1.1 -24.3 L 4 -24 L 1.8 -22 L 2.4 -19.2 L 0 -20.7 L -2.4 -19.2 L -1.8 -22 L -4 -24 L -1.1 -24.3 Z"
+                fill="#eafcff"
+                opacity="0.9"
+                filter="url(#softGlow)"
+              />
+              {/* scan lines clipped to the tree's bounding box */}
+              <g clipPath={`url(#space-christmas-tree-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-9" y1="-20" x2="9" y2="-20" />
+                <line x1="-9" y1="-12" x2="9" y2="-12" />
+                <line x1="-9" y1="-4" x2="9" y2="-4" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE CHRISTMAS: holo gift boxes ===== Same box/ribbon/bow
+             shape as the village's CHRISTMAS_GIFTS, recolored as a
+             translucent cyan hologram with warm gold holo ribbon — small
+             enough to tuck in at the foot of the tree/beside the corner elf
+             without needing their own forward push to clear a building. */}
+        {isSpace && holiday === 'christmas' && SPACE_CHRISTMAS_HOLO_GIFTS.map((g, i) => (
+          <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
+            <g className="hologram-flicker">
+              <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill="#3de0ff" opacity="0.14" />
+              <rect x="-4" y="-6" width="8" height="6" rx="0.6" fill="none" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.7" filter="url(#softGlow)" />
+              <rect x="-1" y="-6" width="2" height="6" fill="#f0c14a" opacity="0.8" />
+              <rect x="-4" y="-3.5" width="8" height="1.5" fill="#f0c14a" opacity="0.8" />
+              <path d="M -2.2 -6 Q -3.2 -8 -0.6 -7.4 Z" fill="#f0c14a" opacity="0.85" />
+              <path d="M 2.2 -6 Q 3.2 -8 0.6 -7.4 Z" fill="#f0c14a" opacity="0.85" />
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE CHRISTMAS: holo candles ===== Same wax-body shape as
+             the village's HALLOWEEN_CANDLES/CHRISTMAS_CANDLES, recolored as
+             a translucent cyan hologram with a warm gold flame (kept as the
+             existing `.candle-flame` flicker rather than the hologram one,
+             so it still reads as a flame). */}
+        {isSpace && holiday === 'christmas' && SPACE_CHRISTMAS_HOLO_CANDLES.map((c, i) => (
+          <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
+            <g className="hologram-flicker">
+              <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill="#3de0ff" opacity="0.16" />
+              <rect x="-1.6" y="-6" width="3.2" height="6" rx="0.6" fill="none" stroke="#8fe0ff" strokeWidth="0.5" opacity="0.7" />
+              <ellipse cx="0" cy="-6" rx="1.6" ry="0.6" fill="#eafcff" opacity="0.4" />
+            </g>
+            <path
+              className="candle-flame"
+              style={{ animationDelay: `${c.delay}s` }}
+              d="M 0 -7.2 C 1.4 -8.6 1.2 -10.4 0 -11.6 C -1.2 -10.4 -1.4 -8.6 0 -7.2 Z"
+              fill="#f0c14a"
+              opacity="0.85"
+              filter="url(#softGlow)"
+            />
+          </g>
+        ))}
+
+        {/* ===== SPACE NEW YEAR: holo champagne toasts ===== Same bottle +
+             two clinking flutes shape as the village's NEWYEAR_TOASTS,
+             recolored as a translucent cyan hologram with warm gold accents
+             (cork, cap), scan lines clipped to the bounding box, wrapped in
+             `.hologram-flicker`, plus a few rising `.newyear-bubble-rise`
+             bubbles off the bottle neck. Drawn after every building so
+             it's never clipped by the greenhouse/reactor it sits over. */}
+        {isSpace && holiday === 'newyear' && SPACE_NEWYEAR_HOLO_TOASTS.map((t, i) => (
+          <g key={i} transform={`translate(${t.x}, ${t.y}) scale(${t.scale})`}>
+            <clipPath id={`space-newyear-toast-clip-${i}`}>
+              <rect x="-9" y="-28" width="25" height="28" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* Two clinking flutes: only on the toast(s) that keep them
+                  (`glasses !== false`) — a whole row of toasts all clinking
+                  glasses read as too busy, so most of this set is bottle-only. */}
+              {t.glasses !== false && (
+                <>
+                  {/* left flute */}
+                  <line x1="-6" y1="0" x2="-5" y2="-9" stroke="#8fe0ff" strokeWidth="1" opacity="0.7" />
+                  <ellipse cx="-6" cy="0" rx="2" ry="0.7" fill="#3de0ff" opacity="0.3" />
+                  <path d="M -7.2 -9 L -2.8 -9 L -3.6 -16.5 L -6.4 -15.5 Z" fill="#3de0ff" opacity="0.16" stroke="#8fe0ff" strokeWidth="0.6" />
+                  {/* right flute */}
+                  <line x1="4" y1="0" x2="3" y2="-9" stroke="#8fe0ff" strokeWidth="1" opacity="0.7" />
+                  <ellipse cx="4" cy="0" rx="2" ry="0.7" fill="#3de0ff" opacity="0.3" />
+                  <path d="M 2.8 -9 L 7.2 -9 L 6.4 -16.5 L 3.6 -16.5 Z" fill="#3de0ff" opacity="0.16" stroke="#8fe0ff" strokeWidth="0.6" />
+                  {/* clink spark, right where the two rims almost meet */}
+                  <path
+                    d="M 0 -17.6 L 0.5 -16.3 L 1.8 -16 L 0.5 -15.7 L 0 -14.4 L -0.5 -15.7 L -1.8 -16 L -0.5 -16.3 Z"
+                    fill="#eafcff"
+                    className="newyear-sparkle"
+                    style={{ animationDelay: '0.4s' }}
+                  />
+                </>
+              )}
+              {/* champagne bottle, standing to the right */}
+              <rect x="9" y="-18" width="5" height="15" rx="1" fill="#3de0ff" opacity="0.16" />
+              <rect x="9" y="-18" width="5" height="15" rx="1" fill="none" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.7" filter="url(#softGlow)" />
+              <rect x="10.3" y="-23" width="2.4" height="6" fill="#3de0ff" opacity="0.2" />
+              <rect x="10" y="-24.5" width="3" height="2" fill="#f0c14a" opacity="0.85" />
+              {/* cork-pop sparkle */}
+              <path
+                d="M 11.5 -25 L 11.9 -27.4 L 12.3 -25 L 14.5 -25.6 L 12.6 -24.4 L 14 -22.8 L 11.9 -23.7 L 11.5 -21.4 L 11.1 -23.7 L 9 -22.8 L 10.4 -24.4 L 8.5 -25.6 Z"
+                fill="#f0c14a"
+                className="newyear-sparkle"
+                style={{ animationDelay: '0s' }}
+              />
+              {/* rising, fading bubbles above the bottle neck */}
+              <circle className="newyear-bubble-rise" cx="11.5" cy="-25" r="0.6" fill="#8fe0ff" style={{ animationDelay: '0s' }} />
+              <circle className="newyear-bubble-rise" cx="10.5" cy="-25" r="0.5" fill="#8fe0ff" style={{ animationDelay: '0.6s' }} />
+              <circle className="newyear-bubble-rise" cx="12.5" cy="-25" r="0.45" fill="#8fe0ff" style={{ animationDelay: '1.2s' }} />
+              {/* scan lines clipped to the toast's bounding box */}
+              <g clipPath={`url(#space-newyear-toast-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-9" y1="-22" x2="16" y2="-22" />
+                <line x1="-9" y1="-14" x2="16" y2="-14" />
+                <line x1="-9" y1="-6" x2="16" y2="-6" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE VALENTINE'S: holo hearts on the landing-pad deck =====
+             Same HEART_PATH shape the sky-layer hearts above use, larger
+             and grounded rather than floating, wrapped in
+             `.hologram-flicker` with scan lines clipped to the heart's own
+             silhouette. Drawn after the buildings so it's never clipped by
+             the greenhouse/reactor it sits over. */}
+        {isSpace && holiday === 'valentines' && SPACE_VALENTINES_HOLO_HEARTS_GROUND.map((h, i) => (
+          <g key={i} transform={`translate(${h.x}, ${h.y}) scale(${h.scale})`}>
+            <clipPath id={`space-valentines-heart-clip-${i}`}>
+              <rect x="-8" y="-12" width="16" height="18" />
+            </clipPath>
+            <g className="hologram-flicker">
+              <path d={HEART_PATH} fill="#ff6ab0" opacity="0.18" />
+              <path d={HEART_PATH} fill="none" stroke="#ff9ac8" strokeWidth="1" opacity="0.8" filter="url(#softGlow)" />
+              <g clipPath={`url(#space-valentines-heart-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-8" y1="-4" x2="8" y2="-4" />
+                <line x1="-8" y1="0" x2="8" y2="0" />
+                <line x1="-8" y1="4" x2="8" y2="4" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE VALENTINE'S: holo robot companion beside the
+             survivor ===== A small, clearly-readable friendly robot — round
+             head with antenna, boxy body, stub arms, a tiny held heart —
+             recolored as a translucent cyan hologram with a pink/magenta
+             chest light and heart accent. Stands beside the survivor, not
+             on top of it (see SPACE_VALENTINES_HOLO_ROBOT for the
+             clearance math), drawn after the buildings for the same reason
+             as the hearts above. */}
+        {isSpace && holiday === 'valentines' && SPACE_VALENTINES_HOLO_ROBOT.map((r, i) => (
+          <g key={i} transform={`translate(${r.x}, ${r.y}) scale(${r.scale})`}>
+            <clipPath id={`space-valentines-robot-clip-${i}`}>
+              <rect x="-9" y="-26" width="27" height="26" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* base/feet */}
+              <ellipse cx="0" cy="0" rx="4" ry="1.5" fill="#3de0ff" opacity="0.15" />
+              <rect x="-3" y="-3" width="2.4" height="3" rx="1" fill="#3de0ff" opacity="0.18" />
+              <rect x="0.6" y="-3" width="2.4" height="3" rx="1" fill="#3de0ff" opacity="0.18" />
+              {/* boxy body */}
+              <rect x="-5" y="-14" width="10" height="11" rx="2" fill="#3de0ff" opacity="0.16" />
+              <rect x="-5" y="-14" width="10" height="11" rx="2" fill="none" stroke="#8fe0ff" strokeWidth="0.7" opacity="0.8" filter="url(#softGlow)" />
+              {/* chest light */}
+              <circle cx="0" cy="-8" r="1.4" fill="#ff6ab0" opacity="0.85" />
+              {/* stub arms */}
+              <line x1="-5" y1="-10" x2="-8.5" y2="-6" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.75" />
+              <line x1="5" y1="-10" x2="8" y2="-8" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.75" />
+              {/* round head with two eye dots */}
+              <circle cx="0" cy="-18" r="4.4" fill="#3de0ff" opacity="0.16" />
+              <circle cx="0" cy="-18" r="4.4" fill="none" stroke="#eafcff" strokeWidth="0.7" opacity="0.85" />
+              <circle cx="-1.6" cy="-18.5" r="0.8" fill="#eafcff" opacity="0.95" />
+              <circle cx="1.6" cy="-18.5" r="0.8" fill="#eafcff" opacity="0.95" />
+              {/* antenna */}
+              <line x1="0" y1="-22.4" x2="0" y2="-25" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.7" />
+              <circle cx="0" cy="-25" r="0.9" fill="#ff6ab0" opacity="0.9" />
+              {/* held heart, out in front of the body where it reads clearly
+                  rather than tucked in against the arm */}
+              <path d={HEART_PATH} transform="translate(-9, 7) scale(0.65)" fill="#ff6ab0" opacity="0.95" filter="url(#softGlow)" />
+              <path d={HEART_PATH} transform="translate(-9, 7) scale(0.65)" fill="none" stroke="#ffc2e0" strokeWidth="0.6" opacity="0.9" />
+              {/* scan lines clipped to the robot's bounding box */}
+              <g clipPath={`url(#space-valentines-robot-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-9" y1="-18" x2="11" y2="-18" />
+                <line x1="-9" y1="-11" x2="11" y2="-11" />
+                <line x1="-9" y1="-4" x2="11" y2="-4" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE EASTER: holo eggs on the landing-pad deck ===== Same
+             egg-shape path the sky-layer eggs above use, wrapped in
+             `.hologram-flicker` with scan lines clipped to the egg's own
+             silhouette. Drawn after the buildings so it's never clipped by
+             the greenhouse/reactor it sits over. */}
+        {isSpace && holiday === 'easter' && SPACE_EASTER_HOLO_EGGS_GROUND.map((e, i) => (
+          <g key={i} transform={`translate(${e.x}, ${e.y}) scale(${e.scale})`}>
+            <clipPath id={`space-easter-egg-clip-${i}`}>
+              <rect x="-5" y="-8" width="10" height="16" />
+            </clipPath>
+            <g className="hologram-flicker">
+              <path d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z" fill={e.color} opacity="0.3" />
+              <path d="M 0 -8 C 4 -8 5 -2 5 2 C 5 6 2.5 8 0 8 C -2.5 8 -5 6 -5 2 C -5 -2 -4 -8 0 -8 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.8" filter="url(#softGlow)" />
+              <g clipPath={`url(#space-easter-egg-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-5" y1="-3" x2="5" y2="-3" />
+                <line x1="-5" y1="1" x2="5" y2="1" />
+                <line x1="-5" y1="5" x2="5" y2="5" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE EASTER: holo bunny companion beside the survivor =====
+             Same recognizable bunny shape (tail, body, ears, face) as the
+             village's EASTER_BUNNIES, recolored as a translucent cyan
+             hologram with pastel-pink inner-ear accents, scan lines clipped
+             to the bounding box, wrapped in `.hologram-flicker`. Stands
+             beside the survivor at the same corrected ground level (y 241)
+             the Valentine's robot uses — see SPACE_VALENTINES_HOLO_ROBOT for
+             the clearance math, which applies identically here. */}
+        {isSpace && holiday === 'easter' && SPACE_EASTER_HOLO_BUNNY.map((b, i) => (
+          <g key={i} transform={`translate(${b.x}, ${b.y}) scale(${b.scale})`}>
+            <clipPath id={`space-easter-bunny-clip-${i}`}>
+              <rect x="-8" y="-30" width="16" height="30" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* tail */}
+              <circle cx="-5.5" cy="-2" r="2" fill="#3de0ff" opacity="0.2" />
+              {/* body */}
+              <ellipse cx="0" cy="-7" rx="6" ry="7.5" fill="#3de0ff" opacity="0.16" />
+              <ellipse cx="0" cy="-7" rx="6" ry="7.5" fill="none" stroke="#8fe0ff" strokeWidth="0.7" opacity="0.8" filter="url(#softGlow)" />
+              {/* front paws */}
+              <ellipse cx="-3" cy="-1.2" rx="1.8" ry="1.3" fill="#3de0ff" opacity="0.16" />
+              <ellipse cx="3" cy="-1.2" rx="1.8" ry="1.3" fill="#3de0ff" opacity="0.16" />
+              {/* ears, standing up */}
+              <ellipse cx="-2.3" cy="-23" rx="1.6" ry="7" fill="#3de0ff" opacity="0.16" transform="rotate(-12 -2.3 -23)" />
+              <ellipse cx="2.3" cy="-23" rx="1.6" ry="7" fill="#3de0ff" opacity="0.16" transform="rotate(12 2.3 -23)" />
+              <ellipse cx="-2.3" cy="-23" rx="1.6" ry="7" fill="none" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.75" transform="rotate(-12 -2.3 -23)" />
+              <ellipse cx="2.3" cy="-23" rx="1.6" ry="7" fill="none" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.75" transform="rotate(12 2.3 -23)" />
+              <ellipse cx="-2.3" cy="-22" rx="0.8" ry="4.6" fill="#ff9ac8" opacity="0.6" transform="rotate(-12 -2.3 -22)" />
+              <ellipse cx="2.3" cy="-22" rx="0.8" ry="4.6" fill="#ff9ac8" opacity="0.6" transform="rotate(12 2.3 -22)" />
+              {/* head */}
+              <circle cx="0" cy="-15.5" r="4.6" fill="#3de0ff" opacity="0.16" />
+              <circle cx="0" cy="-15.5" r="4.6" fill="none" stroke="#eafcff" strokeWidth="0.7" opacity="0.85" />
+              {/* face */}
+              <circle cx="-1.6" cy="-15.5" r="0.6" fill="#eafcff" opacity="0.95" />
+              <circle cx="1.6" cy="-15.5" r="0.6" fill="#eafcff" opacity="0.95" />
+              <path d="M -0.6 -13.8 L 0.6 -13.8 L 0 -13 Z" fill="#ff9ac8" opacity="0.9" />
+              {/* scan lines clipped to the bunny's bounding box */}
+              <g clipPath={`url(#space-easter-bunny-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-8" y1="-22" x2="8" y2="-22" />
+                <line x1="-8" y1="-14" x2="8" y2="-14" />
+                <line x1="-8" y1="-6" x2="8" y2="-6" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE EASTER: holo chick beside the survivor's gap =====
+             Same recognizable chick shape (round fluffy body, wings, head
+             tuft, eyes, beak) as the city's CITY_EASTER_NEON_CHICK,
+             recolored as a translucent cyan hologram with a pastel-yellow
+             body accent, scan lines clipped to the bounding box, wrapped in
+             `.hologram-flicker`. */}
+        {isSpace && holiday === 'easter' && SPACE_EASTER_HOLO_CHICK.map((c, i) => (
+          <g key={i} transform={`translate(${c.x}, ${c.y}) scale(${c.scale})`}>
+            <clipPath id={`space-easter-chick-clip-${i}`}>
+              <rect x="-8" y="-19" width="16" height="21" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* legs and feet */}
+              <line x1="-2" y1="0" x2="-2" y2="-3" stroke="#8fe0ff" strokeWidth="0.9" opacity="0.7" />
+              <line x1="2" y1="0" x2="2" y2="-3" stroke="#8fe0ff" strokeWidth="0.9" opacity="0.7" />
+              {/* wings */}
+              <ellipse cx="-6" cy="-8" rx="2" ry="3.2" fill="#3de0ff" opacity="0.18" transform="rotate(-20 -6 -8)" />
+              <ellipse cx="6" cy="-8" rx="2" ry="3.2" fill="#3de0ff" opacity="0.18" transform="rotate(20 6 -8)" />
+              {/* round fluffy body */}
+              <ellipse cx="0" cy="-9" rx="6.5" ry="6" fill="#fff0a8" opacity="0.2" />
+              <ellipse cx="0" cy="-9" rx="6.5" ry="6" fill="none" stroke="#8fe0ff" strokeWidth="0.7" opacity="0.8" filter="url(#softGlow)" />
+              {/* head fluff tuft */}
+              <path d="M -1.2 -15.5 Q 0 -18.5 1.2 -15.5" fill="none" stroke="#8fe0ff" strokeWidth="1.1" strokeLinecap="round" opacity="0.7" />
+              {/* eyes */}
+              <circle cx="-2.2" cy="-11" r="0.8" fill="#eafcff" opacity="0.9" />
+              <circle cx="2.2" cy="-11" r="0.8" fill="#eafcff" opacity="0.9" />
+              {/* beak */}
+              <path d="M -1.6 -9 L 0 -7.5 L 1.6 -9 Z" fill="#ff9a4a" opacity="0.85" />
+              {/* scan lines clipped to the chick's bounding box */}
+              <g clipPath={`url(#space-easter-chick-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-8" y1="-14" x2="8" y2="-14" />
+                <line x1="-8" y1="-9" x2="8" y2="-9" />
+                <line x1="-8" y1="-4" x2="8" y2="-4" />
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE HALLOWEEN: floating holo ghosts (up in the sky) =====
+             Same ghost silhouette and `.ghost-float` bob as the village's
+             HALLOWEEN_GHOSTS, recolored as translucent holograms — a low-
+             opacity fill pass plus a `softGlow`-filtered outline pass, each
+             wrapped in `.hologram-flicker` for the unstable-projection
+             flicker, with a few horizontal scan lines clipped to the
+             ghost's own silhouette. One cyan/violet/green per ghost so the
+             trio reads as separate projections. Rendered here (after the
+             buildings) purely for code proximity to the other Halloween
+             decorations — their sky position means draw order relative to
+             the buildings no longer matters, same as the city's version. */}
+        {isSpace && holiday === 'halloween' && SPACE_HALLOWEEN_HOLO_GHOSTS.map((g, i) => (
+          <g key={i} transform={`translate(${g.x}, ${g.y}) scale(${g.scale})`}>
+            <clipPath id={`space-halloween-ghost-clip-${i}`}>
+              <rect x="-8" y="-19" width="16" height="26" />
+            </clipPath>
+            <g
+              className="ghost-float"
+              style={{ animationDuration: `${g.duration}s`, animationDelay: `${g.delay}s` }}
+            >
+              <g className="hologram-flicker">
+                <path
+                  d="M -7 -4 C -7 -13, -4 -18, 0 -18 C 4 -18, 7 -13, 7 -4 L 7 5
+                     C 7 5, 5.5 2, 4 5 C 2.5 8, 1 3, 0 6
+                     C -1 3, -2.5 8, -4 5 C -5.5 2, -7 5, -7 5 Z"
+                  fill={g.color}
+                  opacity="0.18"
+                />
+                <path
+                  d="M -7 -4 C -7 -13, -4 -18, 0 -18 C 4 -18, 7 -13, 7 -4 L 7 5
+                     C 7 5, 5.5 2, 4 5 C 2.5 8, 1 3, 0 6
+                     C -1 3, -2.5 8, -4 5 C -5.5 2, -7 5, -7 5 Z"
+                  fill="none"
+                  stroke={g.color}
+                  strokeWidth="1"
+                  opacity="0.75"
+                  filter="url(#softGlow)"
+                />
+                <ellipse cx="-2.5" cy="-8" rx="1" ry="1.3" fill={g.color} opacity="0.9" />
+                <ellipse cx="2.5" cy="-8" rx="1" ry="1.3" fill={g.color} opacity="0.9" />
+                <g clipPath={`url(#space-halloween-ghost-clip-${i})`} stroke={g.color} strokeWidth="0.5" opacity="0.35">
+                  <line x1="-8" y1="-15" x2="8" y2="-15" />
+                  <line x1="-8" y1="-9" x2="8" y2="-9" />
+                  <line x1="-8" y1="-3" x2="8" y2="-3" />
+                  <line x1="-8" y1="3" x2="8" y2="3" />
+                </g>
+              </g>
+            </g>
+          </g>
+        ))}
+
+        {/* ===== SPACE HALLOWEEN: holo skeleton on the landing-pad deck =====
+             Same skull/ribcage/limb shapes as the village's
+             HALLOWEEN_SKELETONS, recolored as a translucent cyan hologram
+             instead of solid bone — low-opacity fills/strokes, a
+             `softGlow`-filtered skull outline, and horizontal scan lines
+             clipped to the figure's bounding box, all wrapped in
+             `.hologram-flicker`. Drawn after the buildings so it isn't
+             clipped by anything in the left cluster. */}
+        {isSpace && holiday === 'halloween' && SPACE_HALLOWEEN_HOLO_SKELETON.map((sk, i) => (
+          <g key={i} transform={`translate(${sk.x}, ${sk.y}) scale(${sk.scale})`}>
+            <clipPath id={`space-halloween-skeleton-clip-${i}`}>
+              <rect x="-10" y="-13" width="20" height="21" />
+            </clipPath>
+            <g className="hologram-flicker">
+              {/* faint ground glow — a hologram casts light, not shadow */}
+              <ellipse cx="0" cy="5" rx="10" ry="2" fill="#3de0ff" opacity="0.12" />
+              {/* skull */}
+              <circle cx="0" cy="-10" r="4" fill="#3de0ff" opacity="0.14" />
+              <circle cx="0" cy="-10" r="4" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.8" filter="url(#softGlow)" />
+              <circle cx="-1.4" cy="-10.5" r="0.7" fill="#eafcff" opacity="0.9" />
+              <circle cx="1.4" cy="-10.5" r="0.7" fill="#eafcff" opacity="0.9" />
+              {/* ribcage */}
+              <path d="M -3 -6 L -3.5 2 L 3.5 2 L 3 -6 Z" fill="#3de0ff" opacity="0.1" />
+              <path d="M -3 -6 L -3.5 2 L 3.5 2 L 3 -6 Z" fill="none" stroke="#8fe0ff" strokeWidth="0.8" opacity="0.8" />
+              <line x1="-2.6" y1="-4" x2="2.6" y2="-4" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.6" />
+              <line x1="-2.8" y1="-2" x2="2.8" y2="-2" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.6" />
+              <line x1="-3" y1="0" x2="3" y2="0" stroke="#8fe0ff" strokeWidth="0.6" opacity="0.6" />
+              {/* arms resting on the ground */}
+              <line x1="-3" y1="-5" x2="-7" y2="2" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+              <line x1="3" y1="-5" x2="6" y2="1" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+              {/* legs, sitting pose */}
+              <line x1="-2" y1="2" x2="-6" y2="5" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+              <line x1="-6" y1="5" x2="-9" y2="4" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+              <line x1="2" y1="2" x2="7" y2="4" stroke="#8fe0ff" strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+              {/* scan lines clipped to the figure's bounding box */}
+              <g clipPath={`url(#space-halloween-skeleton-clip-${i})`} stroke="#eafcff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-10" y1="-9" x2="10" y2="-9" />
+                <line x1="-10" y1="-4" x2="10" y2="-4" />
+                <line x1="-10" y1="1" x2="10" y2="1" />
+                <line x1="-10" y1="6" x2="10" y2="6" />
+              </g>
+            </g>
+          </g>
+        ))}
 
         {/* ===== CITY HALLOWEEN: floating neon ghosts (up in the sky) =====
             Same ghost silhouette and `.ghost-float` bob as the village's
@@ -1750,8 +2692,10 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
           </g>
         )}
 
-        {/* Weather: rain in autumn, snow in winter — not every day */}
-        {weather === 'rain' && (
+        {/* Weather: rain in autumn, snow in winter — not every day. Ground
+            weather doesn't reach the space colony (see condition effects
+            above instead). */}
+        {!isSpace && weather === 'rain' && (
           <g opacity="0.55">
             {RAIN_DROPS.map((d, i) => (
               <line
@@ -1769,7 +2713,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             ))}
           </g>
         )}
-        {weather === 'snow' && (
+        {!isSpace && weather === 'snow' && (
           <g opacity="0.85">
             {SNOW_FLAKES.map((f, i) => (
               <circle
@@ -1784,7 +2728,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             ))}
           </g>
         )}
-        {weather === 'thunder' && (
+        {!isSpace && weather === 'thunder' && (
           <g>
             {/* Heavy downpour */}
             <g opacity="0.6">
@@ -1823,8 +2767,30 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
 
         {/* NIMEONITER sign (always, front — in the gap right of the fence,
             ahead of the storage shed and watchtower): carved wood in the
-            medieval world, a Las Vegas-style neon tube sign in the city */}
-        {!isCity ? (
+            medieval world, a Las Vegas-style neon tube sign in the city, a
+            flickering hologram projection in the space colony */}
+        {isSpace ? (
+        <g>
+          {/* a hologram casts light, not shade — a faint ground glow stands
+              in for the other worlds' solid post shadow */}
+          <ellipse cx="260" cy="294" rx="44" ry="4" fill="#3de0ff" opacity="0.12" />
+          {/* projector base */}
+          <rect x="245" y="288" width="30" height="6" rx="2" fill="url(#spaceMetalDark)" />
+          <circle cx="260" cy="288" r="2" fill="#3de0ff" opacity="0.9" />
+          {/* holographic panel: translucent, scanlined, flickering */}
+          <g className="hologram-flicker">
+            <rect x="216" y="256" width="88" height="30" rx="2" fill="#3de0ff" opacity="0.08" />
+            <rect x="216" y="256" width="88" height="30" rx="2" fill="none" stroke="#3de0ff" strokeWidth="1" opacity="0.6" />
+            {Array.from({ length: 6 }, (_, i) => (
+              <line key={i} x1="216" y1={260 + i * 5} x2="304" y2={260 + i * 5} stroke="#8fe0ff" strokeWidth="0.6" opacity="0.25" />
+            ))}
+            <text x="260" y="275" fontFamily="Georgia, serif" fontSize="9" fontWeight="bold" letterSpacing="0.6" textAnchor="middle" fill="none" stroke="#8fe0ff" strokeWidth="1.4" filter="url(#glow)" opacity="0.9">NIMEONITER</text>
+            <text x="260" y="275" fontFamily="Georgia, serif" fontSize="9" fontWeight="bold" letterSpacing="0.6" textAnchor="middle" fill="#eafcff" opacity="0.95">NIMEONITER</text>
+            {/* moving scan sweep */}
+            <rect x="216" y="256" width="6" height="30" fill="#eafcff" opacity="0.25" className="hologram-scan-sweep" />
+          </g>
+        </g>
+        ) : !isCity ? (
         <g>
           <ellipse cx="260" cy="294" rx="42" ry="4" fill="#000" opacity="0.4" />
           {/* posts */}
@@ -1894,6 +2860,36 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         </g>
         )}
 
+        {/* ===== SPACE HALLOWEEN: holo jack-o'-lanterns on the landing-pad
+             deck ===== Same body/stalk/carved-face shapes as the village's
+             HALLOWEEN_PUMPKINS, recolored as translucent cyan holograms
+             with scan lines clipped to the body, wrapped in
+             `.hologram-flicker`. Drawn after the NIMEONITER sign (rather
+             than right after the reactor, where the rest of this file's
+             other Halloween decorations sit) so the two pumpkins tucked in
+             right against the sign's edge render on top of its panel
+             instead of being clipped by it. */}
+        {isSpace && holiday === 'halloween' && SPACE_HALLOWEEN_HOLO_PUMPKINS.map((p, i) => (
+          <g key={i} transform={`translate(${p.x}, ${p.y}) scale(${p.scale})`}>
+            <clipPath id={`space-halloween-pumpkin-clip-${i}`}>
+              <rect x="-10" y="-12" width="20" height="20" />
+            </clipPath>
+            <g className="hologram-flicker">
+              <rect x="-1.5" y="-11" width="3" height="4" rx="1" fill="#3de0ff" opacity="0.4" />
+              <ellipse cx="0" cy="0" rx="9" ry="7" fill="#3de0ff" opacity="0.14" />
+              <ellipse cx="0" cy="0" rx="9" ry="7" fill="none" stroke="#8fe0ff" strokeWidth="1" opacity="0.7" filter="url(#softGlow)" />
+              <path d="M -5 -2 L -2 -2 L -3.5 1 Z" fill="#eafcff" opacity="0.9" />
+              <path d="M 5 -2 L 2 -2 L 3.5 1 Z" fill="#eafcff" opacity="0.9" />
+              <path d="M -4 3 L -2 5 L 0 3 L 2 5 L 4 3 L 3 4.5 L -3 4.5 Z" fill="#eafcff" opacity="0.9" />
+              <g clipPath={`url(#space-halloween-pumpkin-clip-${i})`} stroke="#8fe0ff" strokeWidth="0.5" opacity="0.3">
+                <line x1="-10" y1="-7" x2="10" y2="-7" />
+                <line x1="-10" y1="-2" x2="10" y2="-2" />
+                <line x1="-10" y1="3" x2="10" y2="3" />
+              </g>
+            </g>
+          </g>
+        ))}
+
         {/* WINTER SNOWMAN — season-wide (season === 'winter'), independent
             of any holiday, so it can appear alongside a winter holiday's own
             standee (Christmas/New Year/Valentine's all fall in winter) as
@@ -1904,7 +2900,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             campfire") used to be a second snowman here too, which read as
             redundant/floating next to this one — it's now an elf instead,
             so this is the only snowman in the village during Christmas. */}
-        {season === 'winter' && (() => {
+        {!isSpace && season === 'winter' && (() => {
           const sm = isCity ? WINTER_SNOWMAN.city : WINTER_SNOWMAN.village;
           return (
             <g transform={`translate(${sm.x}, ${sm.y}) scale(${sm.scale})`}>
@@ -1944,7 +2940,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* CHRISTMAS WREATH, hung above the sign board (village-only: sized
             and positioned for the wooden sign board, not the city's neon
             marquee) */}
-        {!isCity && holiday === 'christmas' && (
+        {!isCity && !isSpace && holiday === 'christmas' && (
           <g transform={`translate(${CHRISTMAS_WREATH.x}, ${CHRISTMAS_WREATH.y}) scale(${CHRISTMAS_WREATH.scale})`}>
             {/* pine ring */}
             <circle cx="0" cy="0" r="6.5" fill="none" stroke="#2f5c3a" strokeWidth="3.2" />
