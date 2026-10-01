@@ -116,7 +116,7 @@ function Landing({ onStart }) {
       <div className="landing-inner">
         <div className="landing-image-wrap">
           <img
-            src="/img/Nimeoniter-Landing-Page.png"
+            src="/img/Nimeoniter-Langing-Page.webp"
             alt="A lone survivor by a campfire in the dark"
             className="landing-image"
             width="1536"
