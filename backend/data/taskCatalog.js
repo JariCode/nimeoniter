@@ -128,6 +128,17 @@ const TASK_CATALOG = [
   { key: 'changetires', icon: '🚙', name: 'Change car tires',    xp: 20, resources: { stone: 2, wood: 1 } },
   { key: 'carwash',   icon: '🧼', name: 'Wash the car',            xp: 10, resources: { stone: 1, wood: 1 } },
 
+// --- Seasonal & holiday preparation ---
+{ key: 'shovel_snow',       icon: '❄️', name: 'Shovel snow',                  xp: 25, resources: { wood: 1, stone: 2 } },
+{ key: 'clear_ice',         icon: '🧊', name: 'Clear ice',                    xp: 25, resources: { wood: 1, stone: 2 } },
+{ key: 'summer_setup',      icon: '☀️', name: 'Set up outdoor furniture',     xp: 10, resources: { wood: 2, stone: 1 } },
+{ key: 'summer_store',      icon: '📦', name: 'Store summer equipment',       xp: 20, resources: { wood: 1, stone: 1 } },
+{ key: 'winter_prep',       icon: '❄️', name: 'Prepare for winter',            xp: 20, resources: { wood: 1, stone: 2 } },
+{ key: 'autumn_lights',     icon: '💡', name: 'Put up seasonal lights',        xp: 10, resources: { wood: 1, stone: 1 } },
+{ key: 'seasonal_clothes',  icon: '👕', name: 'Switch seasonal clothes',       xp: 10, resources: { wood: 1, stone: 1 } },
+{ key: 'holiday_decor',     icon: '🎉', name: 'Decorate for a holiday',        xp: 10, resources: { wood: 1, stone: 1 } },
+{ key: 'holiday_prep',      icon: '🎁', name: 'Prepare for a holiday',         xp: 10, resources: { wood: 1, stone: 1 } },
+
   // --- Health & appointments (mixed) ---
   { key: 'dentist',   icon: '🦷', name: 'Dentist appointment', xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'doctor',    icon: '🩺', name: "Doctor's appointment", xp: 10, resources: { food: 1, stone: 1 } },
