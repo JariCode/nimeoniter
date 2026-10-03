@@ -13,11 +13,14 @@ import './Survivor.css';
 // `holiday` layers a seasonal costume on top of the current world's pose;
 // currently only 'medieval' + 'christmas', 'medieval' + 'newyear',
 // 'medieval' + 'valentines', 'medieval' + 'easter', 'city' + 'halloween',
-// 'city' + 'christmas', 'city' + 'newyear', 'city' + 'valentines', and
-// 'city' + 'easter' are implemented, every other combination renders
-// exactly as before.
+// 'city' + 'christmas', 'city' + 'newyear', 'city' + 'valentines',
+// 'city' + 'easter', and 'space' + 'halloween' are implemented, every other
+// combination renders exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
+    // Halloween: the spacesuit/helmet/visor stay exactly as-is — only a
+    // skull mask is added inside the helmet, under the face.
+    const isHalloween = holiday === 'halloween';
     return (
       <g className="survivor">
         <g transform="translate(243,221) scale(0.7) translate(-243,-221)">
@@ -85,6 +88,33 @@ function Survivor({ world = 'medieval', holiday = null }) {
             {/* Small collar indicator lights */}
             <circle cx="242" cy="178.5" r="0.9" fill="#ffd97a" opacity="0.9" />
             <circle cx="250" cy="178.5" r="0.9" fill="#3de0ff" opacity="0.9" />
+
+            {isHalloween && (
+              // Bone-white skull mask, same shape/coordinates as the city
+              // world's own mask — the head sits at the same (246,170) spot
+              // in both worlds, so it lines up directly without rework.
+              // MUST stay before the visor below: the visor is drawn last
+              // and is translucent, so the mask shows through it instead of
+              // being hidden under it.
+              <g className="survivor-skull-mask">
+                <path
+                  d="M 246 162.5 Q 239 163 239 170 Q 239 177 246 179 Q 253 177 253 170 Q 253 163 246 162.5 Z"
+                  fill="#e8e4d8"
+                  stroke="#b0a996"
+                  strokeWidth="0.5"
+                />
+                {/* Dark eye sockets, same position as the space world's own eye dots */}
+                <ellipse cx="243" cy="170" rx="2.4" ry="2.7" fill="#1a1712" />
+                <ellipse cx="249" cy="170" rx="2.4" ry="2.7" fill="#1a1712" />
+                {/* Triangular nasal cavity */}
+                <path d="M 246 171.5 L 244.7 174.3 L 247.3 174.3 Z" fill="#1a1712" />
+                {/* Faint mouth hint — a closed line with a couple of tooth
+                    gaps, not full teeth, since they wouldn't read at this size */}
+                <line x1="243.5" y1="176.8" x2="248.5" y2="176.8" stroke="#1a1712" strokeWidth="0.6" />
+                <line x1="245.3" y1="176.3" x2="245.3" y2="177.3" stroke="#1a1712" strokeWidth="0.4" />
+                <line x1="246.7" y1="176.3" x2="246.7" y2="177.3" stroke="#1a1712" strokeWidth="0.4" />
+              </g>
+            )}
 
             {/* Visor: translucent amber, covering the whole face — kept
                 light enough that the eyes/beard stay clearly visible
