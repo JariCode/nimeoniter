@@ -13,8 +13,8 @@ import './Survivor.css';
 // `holiday` layers a seasonal costume on top of the current world's pose;
 // currently only 'medieval' + 'christmas', 'medieval' + 'newyear',
 // 'medieval' + 'valentines', 'medieval' + 'easter', 'city' + 'halloween',
-// 'city' + 'christmas', and 'city' + 'newyear' are implemented, every other
-// combination renders exactly as before.
+// 'city' + 'christmas', 'city' + 'newyear', and 'city' + 'valentines' are
+// implemented, every other combination renders exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     return (
@@ -111,14 +111,17 @@ function Survivor({ world = 'medieval', holiday = null }) {
     // New Year: like the village, just a gold party hat added on top — no
     // outfit recolor, face stays untouched.
     const isNewyear = holiday === 'newyear';
-    // Outfit fills: black coat/arms and blue jeans swapped for Christmas
-    // red when active. Jeans and coat start as different base colors, so
-    // each needs its own fallback even though both become the same red.
-    const coatFill = isChristmas ? '#8a2f2a' : '#1c1c20'; // torso + both arms
-    const legFillLight = isChristmas ? '#8a2f2a' : '#2a4a78'; // front leg
-    const legFillDark = isChristmas ? '#6e231f' : '#24406a'; // back leg
-    const legSeamHighlight = isChristmas ? '#a8453d' : '#4a6ea6'; // jean seam highlights
-    const coatHighlightStroke = isChristmas ? '#a8453d' : '#38383e'; // coat sheen stroke
+    // Valentine's: outfit recolors pink (same tiers the village uses) and
+    // the sunglasses are swapped for heart-shaped lenses. Beard untouched.
+    const isValentines = holiday === 'valentines';
+    // Outfit fills: black coat/arms and blue jeans swapped for a holiday
+    // color when active. Jeans and coat start as different base colors, so
+    // each needs its own fallback even though both become the same color.
+    const coatFill = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : '#1c1c20'; // torso + both arms
+    const legFillLight = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : '#2a4a78'; // front leg
+    const legFillDark = isChristmas ? '#6e231f' : isValentines ? '#8a2f45' : '#24406a'; // back leg
+    const legSeamHighlight = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : '#4a6ea6'; // jean seam highlights
+    const coatHighlightStroke = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : '#38383e'; // coat sheen stroke
     return (
       <g className="survivor">
         <g transform="translate(243,221) scale(0.7) translate(-243,-221)">
@@ -164,8 +167,10 @@ function Survivor({ world = 'medieval', holiday = null }) {
 
             {/* Head */}
             <circle cx="246" cy="170" r="7.2" fill="#8a7361" stroke="#0c0c0e" strokeWidth="0.8" />
-            {/* Aviator sunglasses — withheld on Halloween, replaced by the skull mask below */}
-            {!isHalloween && (
+            {/* Aviator sunglasses — withheld on Halloween (replaced by the
+                skull mask below) and on Valentine's (replaced by heart
+                lenses below) */}
+            {!isHalloween && !isValentines && (
               <>
                 <ellipse cx="243" cy="170" rx="2.6" ry="2.1" fill="#0c0c0e" />
                 <ellipse cx="249" cy="170" rx="2.6" ry="2.1" fill="#0c0c0e" />
@@ -175,6 +180,45 @@ function Survivor({ world = 'medieval', holiday = null }) {
             )}
             {/* Beard, matching the AI companion's grey beard */}
             <path d="M 242.8 173.5 Q 246 178.5 249.2 173.5 Q 248.5 176.8 246 177.5 Q 243.5 176.8 242.8 173.5 Z" fill="#8a8a7c" opacity="0.85" />
+
+            {isValentines && (
+              // Heart-shaped glasses, same shape/color as the assistant's
+              // own Valentine's lenses, scaled to roughly match the footprint
+              // of the aviator lenses they replace (rx2.6/ry2.1) so they
+              // read clearly at this figure's small size, recentered on the
+              // sunglasses' spot.
+              <g className="survivor-heart-glasses">
+                {/* Temple arms, reaching back from each lens */}
+                <path
+                  d="M 240.5 170.1 L 238 169 M 251.5 170.1 L 254 169"
+                  stroke="#a8335a"
+                  strokeWidth="0.65"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+                {/* Bridge across the nose, linking the two lenses */}
+                <path d="M 245.5 168.7 Q 246 168 246.5 168.7" stroke="#a8335a" strokeWidth="0.6" fill="none" strokeLinecap="round" />
+                {/* Left heart lens */}
+                <path
+                  d="M 243 172.6 C 240.5 170.1 240.5 167.4 243 168.9 C 245.5 167.4 245.5 170.1 243 172.6 Z"
+                  fill="#f08aa0"
+                  fillOpacity="0.9"
+                  stroke="#a8335a"
+                  strokeWidth="0.55"
+                />
+                {/* Right heart lens */}
+                <path
+                  d="M 249 172.6 C 246.5 170.1 246.5 167.4 249 168.9 C 251.5 167.4 251.5 170.1 249 172.6 Z"
+                  fill="#f08aa0"
+                  fillOpacity="0.9"
+                  stroke="#a8335a"
+                  strokeWidth="0.55"
+                />
+                {/* Small glossy highlight on each lens */}
+                <circle cx="241.9" cy="169.3" r="0.35" fill="#fce4e9" opacity="0.85" />
+                <circle cx="250.1" cy="169.3" r="0.35" fill="#fce4e9" opacity="0.85" />
+              </g>
+            )}
 
             {isHalloween && (
               // Bone-white skull mask, same technique as the assistant's own
