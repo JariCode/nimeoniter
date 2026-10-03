@@ -1072,19 +1072,32 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
                   style={{ animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
                 >
                   <g className="hologram-flicker">
-                    {FIREWORK_RAY_ANGLES.map((a, j) => (
-                      <line
-                        key={j}
-                        x1="0" y1="0"
-                        x2={Math.cos(a) * 12}
-                        y2={Math.sin(a) * 12}
-                        stroke={f.color}
-                        strokeWidth="1"
-                        strokeLinecap="round"
-                        opacity="0.75"
-                        filter="url(#softGlow)"
-                      />
-                    ))}
+                    {/* filter lives on this wrapping <g>, not on each
+                        <line>: SVG filter regions default to
+                        objectBoundingBox units, computed from the filtered
+                        element's OWN bounding box. The 0-degree ray is
+                        perfectly horizontal (Math.sin(0) is exactly 0, no
+                        floating-point residue like the other near-axis
+                        rays get), giving it an exactly-zero-height bounding
+                        box — which breaks the filter region's percentage
+                        math, so that one ray renders unblurred while its
+                        softGlow-blurred neighbors look fainter, reading as
+                        a bold stray line. The group's bounding box spans a
+                        real 2D area, so it never hits this degenerate case. */}
+                    <g filter="url(#softGlow)">
+                      {FIREWORK_RAY_ANGLES.map((a, j) => (
+                        <line
+                          key={j}
+                          x1="0" y1="0"
+                          x2={Math.cos(a) * 12}
+                          y2={Math.sin(a) * 12}
+                          stroke={f.color}
+                          strokeWidth="1"
+                          strokeLinecap="round"
+                          opacity="0.75"
+                        />
+                      ))}
+                    </g>
                     {FIREWORK_RAY_ANGLES.map((a, j) => (
                       <circle key={j} cx={Math.cos(a) * 12} cy={Math.sin(a) * 12} r="0.8" fill={f.color} opacity="0.85" />
                     ))}
