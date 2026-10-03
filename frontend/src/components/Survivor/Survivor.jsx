@@ -13,8 +13,8 @@ import './Survivor.css';
 // `holiday` layers a seasonal costume on top of the current world's pose;
 // currently only 'medieval' + 'christmas', 'medieval' + 'newyear',
 // 'medieval' + 'valentines', 'medieval' + 'easter', 'city' + 'halloween',
-// and 'city' + 'christmas' are implemented, every other combination renders
-// exactly as before.
+// 'city' + 'christmas', and 'city' + 'newyear' are implemented, every other
+// combination renders exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     return (
@@ -108,6 +108,9 @@ function Survivor({ world = 'medieval', holiday = null }) {
     // face (sunglasses + beard) stays untouched, since Christmas doesn't
     // touch the face.
     const isChristmas = holiday === 'christmas';
+    // New Year: like the village, just a gold party hat added on top — no
+    // outfit recolor, face stays untouched.
+    const isNewyear = holiday === 'newyear';
     // Outfit fills: black coat/arms and blue jeans swapped for Christmas
     // red when active. Jeans and coat start as different base colors, so
     // each needs its own fallback even though both become the same red.
@@ -216,6 +219,39 @@ function Survivor({ world = 'medieval', holiday = null }) {
                 <circle cx="253" cy="156.5" r="1.8" fill="#f4f4f0" stroke="#cfcfc2" strokeWidth="0.3" />
                 {/* White fur trim band at the base */}
                 <path d="M 240 165 Q 246 160.5 252 165" fill="none" stroke="#f4f4f0" strokeWidth="2" strokeLinecap="round" />
+              </g>
+            )}
+
+            {isNewyear && (
+              // Same gold party hat as the village (same shape, same
+              // scaled-up-to-head-size tip/star/sparkle technique), but
+              // with NO rotate transform: this figure faces the camera
+              // straight-on, so the hat sits straight up on the crown
+              // instead of leaning back like the village's does.
+              <g className="survivor-newyear-hat-city">
+                {/* Small gold cone, sized to sit on the crown of the head (r=7.2) */}
+                <path
+                  d="M 241 165 L 244 156 L 251 165 Z"
+                  fill="#f0c14a"
+                  stroke="#a8842a"
+                  strokeWidth="0.45"
+                />
+                {/* Diagonal shine/shadow stripes */}
+                <path d="M 242.4 162.8 L 243.8 158.3" stroke="#f7d97a" strokeWidth="0.7" opacity="0.5" strokeLinecap="round" />
+                <path d="M 249.6 162.8 L 245.1 158.3" stroke="#c89a2e" strokeWidth="0.7" opacity="0.5" strokeLinecap="round" />
+                {/* Small star at the tip, in place of a pompom */}
+                <path
+                  d="M 244.2 153.4 L 244.6 154.3 L 245.4 154.7 L 244.6 155.1 L 244.2 156.1 L 243.8 155.1 L 243 154.7 L 243.8 154.3 Z"
+                  fill="#f7d97a"
+                  stroke="#c89a2e"
+                  strokeWidth="0.3"
+                />
+                {/* Faint gold sparkles twinkling around the hat */}
+                <g className="survivor-sparkle">
+                  <circle cx="237" cy="159.2" r="0.6" fill="#f7d97a" />
+                  <circle cx="252.3" cy="161" r="0.6" fill="#f7d97a" />
+                  <circle cx="244.2" cy="151.1" r="0.55" fill="#f7d97a" />
+                </g>
               </g>
             )}
           </g>
