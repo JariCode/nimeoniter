@@ -49,8 +49,27 @@
   50%      { transform: rotate(10deg); }
 }
 
+/* New Year party hat: faint gold sparkles twinkling around it, same
+   technique as the assistant's own hat sparkles. */
+.survivor-sparkle circle {
+  animation: survivor-twinkle 1.8s ease-in-out infinite;
+}
+.survivor-sparkle circle:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.survivor-sparkle circle:nth-child(3) {
+  animation-delay: 0.9s;
+}
+@keyframes survivor-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .survivor-wave {
+    animation: none;
+  }
+  .survivor-sparkle circle {
     animation: none;
   }
 }

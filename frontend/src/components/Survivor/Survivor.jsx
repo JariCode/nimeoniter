@@ -11,8 +11,8 @@ import './Survivor.css';
 // sunglasses. All three share the same outer scale/anchor so the figure's
 // on-screen size and ground position stay identical between worlds.
 // `holiday` layers a seasonal costume on top of the current world's pose;
-// currently only 'medieval' + 'christmas' is implemented, every other
-// combination renders exactly as before.
+// currently only 'medieval' + 'christmas' and 'medieval' + 'newyear' are
+// implemented, every other combination renders exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     return (
@@ -167,6 +167,7 @@ function Survivor({ world = 'medieval', holiday = null }) {
   // top of the head. No mask/glasses/face props, since there's no face to put
   // them on.
   const isChristmas = holiday === 'christmas';
+  const isNewyear = holiday === 'newyear';
   // Outfit fills: khaki-green swapped for Christmas red when active, leaving
   // every other color (skin, outlines, campfire rim light) untouched.
   const bodyFill = isChristmas ? '#8a2f2a' : '#4a4b32';
@@ -241,6 +242,39 @@ function Survivor({ world = 'medieval', holiday = null }) {
                 stroke="#cfcfc2"
                 strokeWidth="0.4"
               />
+            </g>
+          )}
+
+          {isNewyear && (
+            // Same rotate scheme as the Christmas hat so it leans back
+            // toward the back of the head the same way; no extra vertical
+            // nudge needed for this small cone.
+            <g className="survivor-newyear-hat" transform="rotate(-20 240 178)">
+              {/* Small gold cone, sized to sit on the crown of the head
+                  (r=8) rather than towering over it */}
+              <path
+                d="M 234 172 L 238 162 L 246 172 Z"
+                fill="#f0c14a"
+                stroke="#a8842a"
+                strokeWidth="0.5"
+              />
+              {/* Diagonal shine/shadow stripes, matching the assistant's own party hat */}
+              <path d="M 236 170 L 237.5 165" stroke="#f7d97a" strokeWidth="0.8" opacity="0.5" strokeLinecap="round" />
+              <path d="M 244 170 L 239 165" stroke="#c89a2e" strokeWidth="0.8" opacity="0.5" strokeLinecap="round" />
+              {/* Small star at the tip, in place of a pompom */}
+              <path
+                d="M 238 159.6 L 238.4 160.6 L 239.3 161 L 238.4 161.4 L 238 162.5 L 237.6 161.4 L 236.7 161 L 237.6 160.6 Z"
+                fill="#f7d97a"
+                stroke="#c89a2e"
+                strokeWidth="0.35"
+              />
+              {/* Faint gold sparkles twinkling around the hat, same technique
+                  as the assistant's own hat sparkles */}
+              <g className="survivor-sparkle">
+                <circle cx="230" cy="166" r="0.7" fill="#f7d97a" />
+                <circle cx="247" cy="168" r="0.7" fill="#f7d97a" />
+                <circle cx="238" cy="157" r="0.6" fill="#f7d97a" />
+              </g>
             </g>
           )}
 
