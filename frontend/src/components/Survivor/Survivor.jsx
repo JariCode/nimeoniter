@@ -13,8 +13,9 @@ import './Survivor.css';
 // `holiday` layers a seasonal costume on top of the current world's pose;
 // currently only 'medieval' + 'christmas', 'medieval' + 'newyear',
 // 'medieval' + 'valentines', 'medieval' + 'easter', 'city' + 'halloween',
-// 'city' + 'christmas', 'city' + 'newyear', and 'city' + 'valentines' are
-// implemented, every other combination renders exactly as before.
+// 'city' + 'christmas', 'city' + 'newyear', 'city' + 'valentines', and
+// 'city' + 'easter' are implemented, every other combination renders
+// exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     return (
@@ -114,14 +115,18 @@ function Survivor({ world = 'medieval', holiday = null }) {
     // Valentine's: outfit recolors pink (same tiers the village uses) and
     // the sunglasses are swapped for heart-shaped lenses. Beard untouched.
     const isValentines = holiday === 'valentines';
+    // Easter: outfit recolors yellow (same tiers the village uses) and
+    // bunny ears are added on top of the head — sunglasses and beard stay
+    // untouched, since Easter doesn't touch the face.
+    const isEaster = holiday === 'easter';
     // Outfit fills: black coat/arms and blue jeans swapped for a holiday
     // color when active. Jeans and coat start as different base colors, so
     // each needs its own fallback even though both become the same color.
-    const coatFill = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : '#1c1c20'; // torso + both arms
-    const legFillLight = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : '#2a4a78'; // front leg
-    const legFillDark = isChristmas ? '#6e231f' : isValentines ? '#8a2f45' : '#24406a'; // back leg
-    const legSeamHighlight = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : '#4a6ea6'; // jean seam highlights
-    const coatHighlightStroke = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : '#38383e'; // coat sheen stroke
+    const coatFill = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : isEaster ? '#c99328' : '#1c1c20'; // torso + both arms
+    const legFillLight = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : isEaster ? '#c99328' : '#2a4a78'; // front leg
+    const legFillDark = isChristmas ? '#6e231f' : isValentines ? '#8a2f45' : isEaster ? '#8a661a' : '#24406a'; // back leg
+    const legSeamHighlight = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : isEaster ? '#f7dd6e' : '#4a6ea6'; // jean seam highlights
+    const coatHighlightStroke = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : isEaster ? '#f7dd6e' : '#38383e'; // coat sheen stroke
     return (
       <g className="survivor">
         <g transform="translate(243,221) scale(0.7) translate(-243,-221)">
@@ -296,6 +301,23 @@ function Survivor({ world = 'medieval', holiday = null }) {
                   <circle cx="252.3" cy="161" r="0.6" fill="#f7d97a" />
                   <circle cx="244.2" cy="151.1" r="0.55" fill="#f7d97a" />
                 </g>
+              </g>
+            )}
+
+            {isEaster && (
+              // Same bunny-ear shape/palette as the village (cream outer,
+              // pink inner), but with NO rotate transform and centered
+              // symmetrically on the head: this figure faces the camera
+              // straight-on, so the ears stand straight up on the crown
+              // instead of leaning back like the village's does.
+              <g className="survivor-bunny-ears-city">
+                {/* Left ear — nudged 0.6 left of the shared center so the
+                    pair has a small gap instead of touching */}
+                <path d="M 242.7 164.6 Q 242.07 157.4 244.05 152 Q 246.03 157.4 245.4 164.6 Z" fill="#efe7d8" stroke="#b0a68e" strokeWidth="0.4" />
+                <path d="M 243.24 163.7 Q 242.79 157.4 244.05 153.35 Q 245.31 157.4 244.86 163.7 Z" fill="#f6b8ce" />
+                {/* Right ear — nudged 0.6 right of the shared center */}
+                <path d="M 246.6 164.6 Q 245.97 157.4 247.95 152 Q 249.93 157.4 249.3 164.6 Z" fill="#efe7d8" stroke="#b0a68e" strokeWidth="0.4" />
+                <path d="M 247.14 163.7 Q 246.69 157.4 247.95 153.35 Q 249.21 157.4 248.76 163.7 Z" fill="#f6b8ce" />
               </g>
             )}
           </g>
