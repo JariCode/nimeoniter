@@ -12,8 +12,9 @@ import './Survivor.css';
 // on-screen size and ground position stay identical between worlds.
 // `holiday` layers a seasonal costume on top of the current world's pose;
 // currently only 'medieval' + 'christmas', 'medieval' + 'newyear',
-// 'medieval' + 'valentines', and 'medieval' + 'easter' are implemented,
-// every other combination renders exactly as before.
+// 'medieval' + 'valentines', 'medieval' + 'easter', and
+// 'city' + 'halloween' are implemented, every other combination renders
+// exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     return (
@@ -99,6 +100,9 @@ function Survivor({ world = 'medieval', holiday = null }) {
   }
 
   if (world === 'city') {
+    // Halloween: the black city outfit stays exactly as-is — only the
+    // sunglasses are swapped for a skull mask over the face.
+    const isHalloween = holiday === 'halloween';
     return (
       <g className="survivor">
         <g transform="translate(243,221) scale(0.7) translate(-243,-221)">
@@ -144,13 +148,43 @@ function Survivor({ world = 'medieval', holiday = null }) {
 
             {/* Head */}
             <circle cx="246" cy="170" r="7.2" fill="#8a7361" stroke="#0c0c0e" strokeWidth="0.8" />
-            {/* Aviator sunglasses */}
-            <ellipse cx="243" cy="170" rx="2.6" ry="2.1" fill="#0c0c0e" />
-            <ellipse cx="249" cy="170" rx="2.6" ry="2.1" fill="#0c0c0e" />
-            <line x1="245.6" y1="169.8" x2="246.4" y2="169.8" stroke="#0c0c0e" strokeWidth="1" />
-            <path d="M 240.5 169.3 Q 242.5 168 245 169.3" stroke="#5c6270" strokeWidth="0.5" opacity="0.6" fill="none" />
+            {/* Aviator sunglasses — withheld on Halloween, replaced by the skull mask below */}
+            {!isHalloween && (
+              <>
+                <ellipse cx="243" cy="170" rx="2.6" ry="2.1" fill="#0c0c0e" />
+                <ellipse cx="249" cy="170" rx="2.6" ry="2.1" fill="#0c0c0e" />
+                <line x1="245.6" y1="169.8" x2="246.4" y2="169.8" stroke="#0c0c0e" strokeWidth="1" />
+                <path d="M 240.5 169.3 Q 242.5 168 245 169.3" stroke="#5c6270" strokeWidth="0.5" opacity="0.6" fill="none" />
+              </>
+            )}
             {/* Beard, matching the AI companion's grey beard */}
             <path d="M 242.8 173.5 Q 246 178.5 249.2 173.5 Q 248.5 176.8 246 177.5 Q 243.5 176.8 242.8 173.5 Z" fill="#8a8a7c" opacity="0.85" />
+
+            {isHalloween && (
+              // Bone-white skull mask, same technique as the assistant's own
+              // Halloween mask: an opaque shape over the whole head/jaw area
+              // (covering the beard below it, same as the assistant does),
+              // with dark eye sockets, a triangular nasal cavity, and a
+              // faint mouth line — no detailed teeth, too small to read.
+              <g className="survivor-skull-mask">
+                <path
+                  d="M 246 162.5 Q 239 163 239 170 Q 239 177 246 179 Q 253 177 253 170 Q 253 163 246 162.5 Z"
+                  fill="#e8e4d8"
+                  stroke="#b0a996"
+                  strokeWidth="0.5"
+                />
+                {/* Dark eye sockets, same position as the sunglasses lenses */}
+                <ellipse cx="243" cy="170" rx="2.4" ry="2.7" fill="#1a1712" />
+                <ellipse cx="249" cy="170" rx="2.4" ry="2.7" fill="#1a1712" />
+                {/* Triangular nasal cavity */}
+                <path d="M 246 171.5 L 244.7 174.3 L 247.3 174.3 Z" fill="#1a1712" />
+                {/* Faint mouth hint — a closed line with a couple of tooth
+                    gaps, not full teeth, since they wouldn't read at this size */}
+                <line x1="243.5" y1="176.8" x2="248.5" y2="176.8" stroke="#1a1712" strokeWidth="0.6" />
+                <line x1="245.3" y1="176.3" x2="245.3" y2="177.3" stroke="#1a1712" strokeWidth="0.4" />
+                <line x1="246.7" y1="176.3" x2="246.7" y2="177.3" stroke="#1a1712" strokeWidth="0.4" />
+              </g>
+            )}
           </g>
         </g>
       </g>
