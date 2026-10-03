@@ -12,8 +12,8 @@ import './Survivor.css';
 // on-screen size and ground position stay identical between worlds.
 // `holiday` layers a seasonal costume on top of the current world's pose;
 // currently only 'medieval' + 'christmas', 'medieval' + 'newyear',
-// 'medieval' + 'valentines', 'medieval' + 'easter', and
-// 'city' + 'halloween' are implemented, every other combination renders
+// 'medieval' + 'valentines', 'medieval' + 'easter', 'city' + 'halloween',
+// and 'city' + 'christmas' are implemented, every other combination renders
 // exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
@@ -103,6 +103,19 @@ function Survivor({ world = 'medieval', holiday = null }) {
     // Halloween: the black city outfit stays exactly as-is — only the
     // sunglasses are swapped for a skull mask over the face.
     const isHalloween = holiday === 'halloween';
+    // Christmas: the opposite approach — the outfit recolors (same
+    // red-tier palette the village uses) and a Santa hat is added, but the
+    // face (sunglasses + beard) stays untouched, since Christmas doesn't
+    // touch the face.
+    const isChristmas = holiday === 'christmas';
+    // Outfit fills: black coat/arms and blue jeans swapped for Christmas
+    // red when active. Jeans and coat start as different base colors, so
+    // each needs its own fallback even though both become the same red.
+    const coatFill = isChristmas ? '#8a2f2a' : '#1c1c20'; // torso + both arms
+    const legFillLight = isChristmas ? '#8a2f2a' : '#2a4a78'; // front leg
+    const legFillDark = isChristmas ? '#6e231f' : '#24406a'; // back leg
+    const legSeamHighlight = isChristmas ? '#a8453d' : '#4a6ea6'; // jean seam highlights
+    const coatHighlightStroke = isChristmas ? '#a8453d' : '#38383e'; // coat sheen stroke
     return (
       <g className="survivor">
         <g transform="translate(243,221) scale(0.7) translate(-243,-221)">
@@ -114,28 +127,28 @@ function Survivor({ world = 'medieval', holiday = null }) {
             <ellipse cx="239" cy="221" rx="4.2" ry="2.1" fill="#0c0c0e" />
             <ellipse cx="253" cy="221" rx="4.2" ry="2.1" fill="#0c0c0e" />
 
-            {/* Legs (blue jeans), standing with a small natural stance */}
-            <path d="M 236 200 L 235 220 L 242 220 L 243 200 Z" fill="#2a4a78" stroke="#15161e" strokeWidth="0.7" />
-            <path d="M 244 200 L 247 220 L 254 220 L 250 200 Z" fill="#24406a" stroke="#15161e" strokeWidth="0.7" />
+            {/* Legs (blue jeans, or Christmas red), standing with a small natural stance */}
+            <path d="M 236 200 L 235 220 L 242 220 L 243 200 Z" fill={legFillLight} stroke="#15161e" strokeWidth="0.7" />
+            <path d="M 244 200 L 247 220 L 254 220 L 250 200 Z" fill={legFillDark} stroke="#15161e" strokeWidth="0.7" />
             {/* Jean seam highlights */}
-            <line x1="239" y1="203" x2="238" y2="218" stroke="#4a6ea6" strokeWidth="0.7" opacity="0.5" />
-            <line x1="248" y1="203" x2="250" y2="218" stroke="#4a6ea6" strokeWidth="0.7" opacity="0.35" />
+            <line x1="239" y1="203" x2="238" y2="218" stroke={legSeamHighlight} strokeWidth="0.7" opacity="0.5" />
+            <line x1="248" y1="203" x2="250" y2="218" stroke={legSeamHighlight} strokeWidth="0.7" opacity="0.35" />
 
             {/* Far arm hanging at the side */}
-            <path d="M 234 188 L 230 199 L 233 202 L 237 190 Z" fill="#1c1c20" stroke="#0c0c0e" strokeWidth="0.6" />
+            <path d="M 234 188 L 230 199 L 233 202 L 237 190 Z" fill={coatFill} stroke="#0c0c0e" strokeWidth="0.6" />
             <circle cx="231" cy="202" r="2.3" fill="#8a7361" />
 
-            {/* Torso (black coat) */}
-            <path d="M 233 187 Q 232 178 245 176 Q 258 178 257 187 L 259 202 Q 246 207 233 202 Z" fill="#1c1c20" stroke="#0c0c0e" strokeWidth="0.8" />
+            {/* Torso (black coat, or Christmas red) */}
+            <path d="M 233 187 Q 232 178 245 176 Q 258 178 257 187 L 259 202 Q 246 207 233 202 Z" fill={coatFill} stroke="#0c0c0e" strokeWidth="0.8" />
             {/* Coat lapels */}
             <path d="M 241 179 L 245 189 L 249 179" fill="none" stroke="#0c0c0e" strokeWidth="1.1" opacity="0.7" />
             {/* Coat highlight */}
-            <path d="M 236 186 Q 235 194 237 201" stroke="#38383e" strokeWidth="1.1" fill="none" opacity="0.5" />
+            <path d="M 236 186 Q 235 194 237 201" stroke={coatHighlightStroke} strokeWidth="1.1" fill="none" opacity="0.5" />
 
             {/* Near arm, bent, holding a small coffee cup at chest height */}
             <g>
-              <path d="M 256 189 L 263 195 L 260 199 L 254 193 Z" fill="#1c1c20" stroke="#0c0c0e" strokeWidth="0.6" />
-              <path d="M 260 196 L 266 200 L 263 204 L 258 200 Z" fill="#1c1c20" stroke="#0c0c0e" strokeWidth="0.6" />
+              <path d="M 256 189 L 263 195 L 260 199 L 254 193 Z" fill={coatFill} stroke="#0c0c0e" strokeWidth="0.6" />
+              <path d="M 260 196 L 266 200 L 263 204 L 258 200 Z" fill={coatFill} stroke="#0c0c0e" strokeWidth="0.6" />
               {/* Hand */}
               <circle cx="266" cy="201" r="2.2" fill="#8a7361" />
               {/* Small coffee cup, a reasonable hand-held size (not a giant prop) */}
@@ -183,6 +196,26 @@ function Survivor({ world = 'medieval', holiday = null }) {
                 <line x1="243.5" y1="176.8" x2="248.5" y2="176.8" stroke="#1a1712" strokeWidth="0.6" />
                 <line x1="245.3" y1="176.3" x2="245.3" y2="177.3" stroke="#1a1712" strokeWidth="0.4" />
                 <line x1="246.7" y1="176.3" x2="246.7" y2="177.3" stroke="#1a1712" strokeWidth="0.4" />
+              </g>
+            )}
+
+            {isChristmas && (
+              // Santa hat, same shape/color technique as the village's own
+              // Christmas hat (red cone + white pompom + white fur trim),
+              // but drawn front-on since this figure faces the camera
+              // rather than showing the back of its head — the cone leans
+              // and flops to one side instead of tilting backward.
+              <g className="survivor-santa-hat-city">
+                <path
+                  d="M 241 165 Q 244 152 250 150 Q 256 149 253 156 Q 250 161 251 165 Z"
+                  fill="#b5342c"
+                  stroke="#4a1512"
+                  strokeWidth="0.5"
+                />
+                {/* White pompom at the flopped-over tip */}
+                <circle cx="253" cy="156.5" r="1.8" fill="#f4f4f0" stroke="#cfcfc2" strokeWidth="0.3" />
+                {/* White fur trim band at the base */}
+                <path d="M 240 165 Q 246 160.5 252 165" fill="none" stroke="#f4f4f0" strokeWidth="2" strokeLinecap="round" />
               </g>
             )}
           </g>
