@@ -11,9 +11,9 @@ import './Survivor.css';
 // sunglasses. All three share the same outer scale/anchor so the figure's
 // on-screen size and ground position stay identical between worlds.
 // `holiday` layers a seasonal costume on top of the current world's pose;
-// currently only 'medieval' + 'christmas', 'medieval' + 'newyear', and
-// 'medieval' + 'valentines' are implemented, every other combination renders
-// exactly as before.
+// currently only 'medieval' + 'christmas', 'medieval' + 'newyear',
+// 'medieval' + 'valentines', and 'medieval' + 'easter' are implemented,
+// every other combination renders exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     return (
@@ -162,22 +162,24 @@ function Survivor({ world = 'medieval', holiday = null }) {
   // base point (243,221) so the feet stay on the ground line. Faces right
   // toward the fire.
   //
-  // Christmas/Valentine's outfits: this pose only ever shows the back of the
-  // head (hood + a sliver of profile toward the fire) — the face itself
-  // never renders — so holiday costumes here are limited to recoloring the
-  // outfit (plus, for Christmas, a Santa hat). No masks/glasses/face props,
-  // since there's no face to put them on.
+  // Christmas/Valentine's/Easter outfits: this pose only ever shows the back
+  // of the head (hood + a sliver of profile toward the fire) — the face
+  // itself never renders — so holiday costumes here are limited to
+  // recoloring the outfit, plus headwear for Christmas/New Year/Easter.
+  // No masks/glasses/face props, since there's no face to put them on.
   const isChristmas = holiday === 'christmas';
   const isNewyear = holiday === 'newyear';
   const isValentines = holiday === 'valentines';
+  const isEaster = holiday === 'easter';
   // Outfit fills: khaki-green swapped for a holiday color when active,
   // leaving every other color (skin, outlines, campfire rim light)
-  // untouched. Valentine's pink matches the assistant's own valentines tones.
-  const bodyFill = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : '#4a4b32';
-  const bodyDark = isChristmas ? '#6e231f' : isValentines ? '#8a2f45' : '#34351f';
-  const bodyLight = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : '#5e6040';
-  const hoodFill = isChristmas ? '#5c1f1a' : isValentines ? '#6e2439' : '#262716';
-  const foldShadow = isChristmas ? '#3a1613' : isValentines ? '#4a1626' : '#2c2d1a';
+  // untouched. Valentine's pink and Easter yellow match the assistant's own
+  // tones for those holidays.
+  const bodyFill = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : isEaster ? '#c99328' : '#4a4b32';
+  const bodyDark = isChristmas ? '#6e231f' : isValentines ? '#8a2f45' : isEaster ? '#8a661a' : '#34351f';
+  const bodyLight = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : isEaster ? '#f7dd6e' : '#5e6040';
+  const hoodFill = isChristmas ? '#5c1f1a' : isValentines ? '#6e2439' : isEaster ? '#6b4f14' : '#262716';
+  const foldShadow = isChristmas ? '#3a1613' : isValentines ? '#4a1626' : isEaster ? '#4a3610' : '#2c2d1a';
 
   return (
     <g className="survivor">
@@ -278,6 +280,25 @@ function Survivor({ world = 'medieval', holiday = null }) {
                 <circle cx="247" cy="168" r="0.7" fill="#f7d97a" />
                 <circle cx="238" cy="157" r="0.6" fill="#f7d97a" />
               </g>
+            </g>
+          )}
+
+          {isEaster && (
+            // Unlike the Christmas/New Year headwear, these stand upright
+            // rather than leaning back — no rotate transform, just placed
+            // on the same spot on the crown.
+            <g className="survivor-bunny-ears">
+              {/* Left ear — cream outer, pink inner, the assistant's own
+                  bunny-ear palette scaled down to the figure's head (r=8).
+                  Nearly vertical (only a slight curve), with its base
+                  overlapping the right ear's base at x=243 so the pair reads
+                  as close together rather than splayed apart, shifted
+                  toward the forehead (right) to sit more over the crown. */}
+              <path d="M 240 172 Q 239.3 163 241.5 156 Q 243.7 163 243 172 Z" fill="#efe7d8" stroke="#b0a68e" strokeWidth="0.4" />
+              <path d="M 240.6 171 Q 240.1 163 241.5 157.5 Q 242.9 163 242.4 171 Z" fill="#f6b8ce" />
+              {/* Right ear */}
+              <path d="M 243 172 Q 242.3 163 244.5 156 Q 246.7 163 246 172 Z" fill="#efe7d8" stroke="#b0a68e" strokeWidth="0.4" />
+              <path d="M 243.6 171 Q 243.1 163 244.5 157.5 Q 245.9 163 245.4 171 Z" fill="#f6b8ce" />
             </g>
           )}
 
