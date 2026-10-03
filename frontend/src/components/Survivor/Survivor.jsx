@@ -14,8 +14,9 @@ import './Survivor.css';
 // currently only 'medieval' + 'christmas', 'medieval' + 'newyear',
 // 'medieval' + 'valentines', 'medieval' + 'easter', 'city' + 'halloween',
 // 'city' + 'christmas', 'city' + 'newyear', 'city' + 'valentines',
-// 'city' + 'easter', 'space' + 'halloween', and 'space' + 'christmas' are
-// implemented, every other combination renders exactly as before.
+// 'city' + 'easter', 'space' + 'halloween', 'space' + 'christmas', and
+// 'space' + 'newyear' are implemented, every other combination renders
+// exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     // Halloween: the spacesuit/helmet/visor stay exactly as-is — only a
@@ -26,6 +27,9 @@ function Survivor({ world = 'medieval', holiday = null }) {
     // the helmet dome, but the helmet shell, visor, and face stay
     // untouched, since Christmas doesn't touch those.
     const isChristmas = holiday === 'christmas';
+    // New Year: like the other worlds, just a gold party hat added on top
+    // of the helmet — no suit recolor, helmet/visor/face stay untouched.
+    const isNewyear = holiday === 'newyear';
     // Suit fills: pale spacesuit fabric swapped for Christmas red when
     // active. Helmet shell, visor, chest light, and collar indicator
     // lights are NOT suit fabric, so they're untouched regardless.
@@ -155,6 +159,40 @@ function Survivor({ world = 'medieval', holiday = null }) {
                 <circle cx="255.3" cy="151" r="2.4" fill="#f4f4f0" stroke="#cfcfc2" strokeWidth="0.4" />
                 {/* White fur trim band at the base, sitting on the helmet's own top curve */}
                 <path d="M 238 162.3 Q 246 156.3 254 162.3" fill="none" stroke="#f4f4f0" strokeWidth="2.7" strokeLinecap="round" />
+              </g>
+            )}
+
+            {isNewyear && (
+              // Same gold party hat as the other worlds, same scaling
+              // technique as the Santa hat above (~1.33x the city hat,
+              // recentered on the helmet dome at cx246 cy169). Straight up,
+              // no rotate — matches the city version, not the village's
+              // leaned-back one. MUST stay after the visor above, same
+              // reason as the Santa hat: it sits on top of the helmet.
+              <g className="survivor-newyear-hat-space">
+                {/* Gold cone, sized to sit on the helmet dome (r=9.6) */}
+                <path
+                  d="M 239.33 162.33 L 243.33 150.33 L 252.67 162.33 Z"
+                  fill="#f0c14a"
+                  stroke="#a8842a"
+                  strokeWidth="0.6"
+                />
+                {/* Diagonal shine/shadow stripes */}
+                <path d="M 241.2 159.4 L 243.07 153.4" stroke="#f7d97a" strokeWidth="0.93" opacity="0.5" strokeLinecap="round" />
+                <path d="M 250.8 159.4 L 244.8 153.4" stroke="#c89a2e" strokeWidth="0.93" opacity="0.5" strokeLinecap="round" />
+                {/* Small star at the tip, in place of a pompom */}
+                <path
+                  d="M 243.6 146.9 L 244.1 148.1 L 245.2 148.6 L 244.1 149.1 L 243.6 150.5 L 243.1 149.1 L 242 148.6 L 243.1 148.1 Z"
+                  fill="#f7d97a"
+                  stroke="#c89a2e"
+                  strokeWidth="0.4"
+                />
+                {/* Faint gold sparkles twinkling around the hat */}
+                <g className="survivor-sparkle">
+                  <circle cx="234" cy="154.6" r="0.8" fill="#f7d97a" />
+                  <circle cx="254.4" cy="157" r="0.8" fill="#f7d97a" />
+                  <circle cx="243.6" cy="143.8" r="0.73" fill="#f7d97a" />
+                </g>
               </g>
             )}
           </g>
