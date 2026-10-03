@@ -1662,7 +1662,7 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         {/* SURVIVOR (always) — stands in front of the diner, holding its own
             small coffee cup, when the world is 'city' */}
         <g transform="translate(0, 20)">
-          <Survivor world={world} />
+          <Survivor world={world} holiday={holiday} />
         </g>
 
         {/* CAMPFIRE (medieval only) — right where the survivor stands. The

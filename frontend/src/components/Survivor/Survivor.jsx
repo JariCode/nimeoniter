@@ -10,7 +10,10 @@ import './Survivor.css';
 // instead of holding a cup, and a full-face visor helmet instead of
 // sunglasses. All three share the same outer scale/anchor so the figure's
 // on-screen size and ground position stay identical between worlds.
-function Survivor({ world = 'medieval' }) {
+// `holiday` layers a seasonal costume on top of the current world's pose;
+// currently only 'medieval' + 'christmas' is implemented, every other
+// combination renders exactly as before.
+function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     return (
       <g className="survivor">
@@ -153,9 +156,25 @@ function Survivor({ world = 'medieval' }) {
     );
   }
 
-  // Hooded survivor by the fire, scaled to 70% and colored military khaki-green.
-  // The transform scales around the seated base point (243,221) so the feet
-  // stay on the ground line. Faces right toward the fire.
+  // Hooded survivor by the fire, scaled to 70% and colored military khaki-green
+  // (or Christmas red, see below). The transform scales around the seated base
+  // point (243,221) so the feet stay on the ground line. Faces right toward
+  // the fire.
+  //
+  // Christmas outfit: this pose only ever shows the back of the head (hood +
+  // a sliver of profile toward the fire) — the face itself never renders — so
+  // the costume is limited to recoloring the outfit and adding a Santa hat on
+  // top of the head. No mask/glasses/face props, since there's no face to put
+  // them on.
+  const isChristmas = holiday === 'christmas';
+  // Outfit fills: khaki-green swapped for Christmas red when active, leaving
+  // every other color (skin, outlines, campfire rim light) untouched.
+  const bodyFill = isChristmas ? '#8a2f2a' : '#4a4b32';
+  const bodyDark = isChristmas ? '#6e231f' : '#34351f';
+  const bodyLight = isChristmas ? '#a8453d' : '#5e6040';
+  const hoodFill = isChristmas ? '#5c1f1a' : '#262716';
+  const foldShadow = isChristmas ? '#3a1613' : '#2c2d1a';
+
   return (
     <g className="survivor">
       <g transform="translate(243,221) scale(0.7) translate(-243,-221)">
@@ -164,25 +183,25 @@ function Survivor({ world = 'medieval' }) {
 
         <g className="survivor-body">
           {/* Back leg folded */}
-          <path d="M 234 221 Q 232 212 241 209 L 253 212 Q 251 217 250 221 Z" fill="#34351f" stroke="#15110a" strokeWidth="0.8" opacity="0.98" />
+          <path d="M 234 221 Q 232 212 241 209 L 253 212 Q 251 217 250 221 Z" fill={bodyDark} stroke="#15110a" strokeWidth="0.8" opacity="0.98" />
 
           {/* Front thigh + knee + shin + foot */}
-          <path d="M 232 217 L 256 208 Q 260 207 261 211 L 241 221 Z" fill="#4a4b32" stroke="#15110a" strokeWidth="0.8" />
-          <circle cx="258" cy="210" r="3.5" fill="#5e6040" />
-          <path d="M 255 210 L 261 209 L 263 220 L 257 221 Z" fill="#34351f" />
+          <path d="M 232 217 L 256 208 Q 260 207 261 211 L 241 221 Z" fill={bodyFill} stroke="#15110a" strokeWidth="0.8" />
+          <circle cx="258" cy="210" r="3.5" fill={bodyLight} />
+          <path d="M 255 210 L 261 209 L 263 220 L 257 221 Z" fill={bodyDark} />
           <path d="M 255 219 L 267 219 L 267 222 L 254 222 Z" fill="#211c11" opacity="0.95" />
 
           {/* Torso */}
-          <path d="M 231 216 Q 224 199 235 187 Q 242 184 247 189 Q 244 202 246 216 Z" fill="#4a4b32" stroke="#15110a" strokeWidth="0.8" />
+          <path d="M 231 216 Q 224 199 235 187 Q 242 184 247 189 Q 244 202 246 216 Z" fill={bodyFill} stroke="#15110a" strokeWidth="0.8" />
           {/* Fold shadow */}
-          <path d="M 240 190 Q 238 202 242 215" stroke="#2c2d1a" strokeWidth="1.6" fill="none" opacity="0.85" />
+          <path d="M 240 190 Q 238 202 242 215" stroke={foldShadow} strokeWidth="1.6" fill="none" opacity="0.85" />
           {/* Cool lit edge on the back */}
-          <path d="M 233 189 Q 227 200 232 214" stroke="#5e6040" strokeWidth="1.4" fill="none" opacity="0.5" />
+          <path d="M 233 189 Q 227 200 232 214" stroke={bodyLight} strokeWidth="1.4" fill="none" opacity="0.5" />
 
           {/* Upper arm + forearm reaching to fire — occasionally pokes it */}
           <g className="survivor-arm">
-            <path d="M 240 192 L 252 197 L 250 201 L 238 197 Z" fill="#5e6040" stroke="#15110a" strokeWidth="0.6" />
-            <path d="M 250 197 L 265 203 L 263 207 L 248 202 Z" fill="#4a4b32" stroke="#15110a" strokeWidth="0.6" />
+            <path d="M 240 192 L 252 197 L 250 201 L 238 197 Z" fill={bodyLight} stroke="#15110a" strokeWidth="0.6" />
+            <path d="M 250 197 L 265 203 L 263 207 L 248 202 Z" fill={bodyFill} stroke="#15110a" strokeWidth="0.6" />
             {/* Hand */}
             <circle cx="267" cy="205" r="2.8" fill="#6e5943" />
           </g>
@@ -193,7 +212,37 @@ function Survivor({ world = 'medieval' }) {
           <path d="M 248 174 Q 250 177 248 180 L 251 182 Q 248 184 247 185 Q 249 187 245 189"
             fill="none" stroke="#211a12" strokeWidth="1.6" opacity="0.9" />
           {/* Hood over the back of the head */}
-          <path d="M 244 169 Q 229 169 230 184 Q 231 191 238 190 Q 231 179 241 169 Z" fill="#262716" stroke="#15110a" strokeWidth="0.8" />
+          <path d="M 244 169 Q 229 169 230 184 Q 231 191 238 190 Q 231 179 241 169 Z" fill={hoodFill} stroke="#15110a" strokeWidth="0.8" />
+
+          {isChristmas && (
+            // Nudged down (translate) so the hat sits deeper into the head
+            // rather than floating above it, then rotated around the head's
+            // own center (240,178) so the tip and pompom droop toward the
+            // back of the head (left, away from the fire), matching the 3/4
+            // back profile.
+            <g className="survivor-santa-hat" transform="rotate(-20 240 178) translate(0 4)">
+              {/* Red cone, leaning back over the hood and drooping down past
+                  its far (back) edge. Base (right end) nudged slightly
+                  toward the forehead (247 -> 252) to meet the white band's
+                  own right end below, so the two pieces read as connected. */}
+              <path
+                d="M 252 172 Q 240 156 224 158 Q 208 160 213 180 Q 221 171 230 167 Z"
+                fill="#b5342c"
+                stroke="#4a1512"
+                strokeWidth="0.6"
+              />
+              {/* White pompom at the drooping tip */}
+              <circle cx="213" cy="181" r="2.3" fill="#f4f4f0" stroke="#cfcfc2" strokeWidth="0.4" />
+              {/* White fur trim band at the base, covering the seam between
+                  the cone and the head/hood */}
+              <path
+                d="M 229 169 Q 239 163 251 171 Q 240 173 229 169 Z"
+                fill="#f4f4f0"
+                stroke="#cfcfc2"
+                strokeWidth="0.4"
+              />
+            </g>
+          )}
 
           {/* Crisp warm rim light on the fire-facing side, tracing the head and torso silhouette */}
           <path d="M 246 189 Q 244 202 246 216" stroke="#f0a83a" strokeWidth="2.1" fill="none" opacity="0.9" />
