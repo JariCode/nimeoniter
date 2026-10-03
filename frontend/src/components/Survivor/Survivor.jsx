@@ -11,8 +11,9 @@ import './Survivor.css';
 // sunglasses. All three share the same outer scale/anchor so the figure's
 // on-screen size and ground position stay identical between worlds.
 // `holiday` layers a seasonal costume on top of the current world's pose;
-// currently only 'medieval' + 'christmas' and 'medieval' + 'newyear' are
-// implemented, every other combination renders exactly as before.
+// currently only 'medieval' + 'christmas', 'medieval' + 'newyear', and
+// 'medieval' + 'valentines' are implemented, every other combination renders
+// exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     return (
@@ -157,24 +158,26 @@ function Survivor({ world = 'medieval', holiday = null }) {
   }
 
   // Hooded survivor by the fire, scaled to 70% and colored military khaki-green
-  // (or Christmas red, see below). The transform scales around the seated base
-  // point (243,221) so the feet stay on the ground line. Faces right toward
-  // the fire.
+  // (or a holiday color, see below). The transform scales around the seated
+  // base point (243,221) so the feet stay on the ground line. Faces right
+  // toward the fire.
   //
-  // Christmas outfit: this pose only ever shows the back of the head (hood +
-  // a sliver of profile toward the fire) — the face itself never renders — so
-  // the costume is limited to recoloring the outfit and adding a Santa hat on
-  // top of the head. No mask/glasses/face props, since there's no face to put
-  // them on.
+  // Christmas/Valentine's outfits: this pose only ever shows the back of the
+  // head (hood + a sliver of profile toward the fire) — the face itself
+  // never renders — so holiday costumes here are limited to recoloring the
+  // outfit (plus, for Christmas, a Santa hat). No masks/glasses/face props,
+  // since there's no face to put them on.
   const isChristmas = holiday === 'christmas';
   const isNewyear = holiday === 'newyear';
-  // Outfit fills: khaki-green swapped for Christmas red when active, leaving
-  // every other color (skin, outlines, campfire rim light) untouched.
-  const bodyFill = isChristmas ? '#8a2f2a' : '#4a4b32';
-  const bodyDark = isChristmas ? '#6e231f' : '#34351f';
-  const bodyLight = isChristmas ? '#a8453d' : '#5e6040';
-  const hoodFill = isChristmas ? '#5c1f1a' : '#262716';
-  const foldShadow = isChristmas ? '#3a1613' : '#2c2d1a';
+  const isValentines = holiday === 'valentines';
+  // Outfit fills: khaki-green swapped for a holiday color when active,
+  // leaving every other color (skin, outlines, campfire rim light)
+  // untouched. Valentine's pink matches the assistant's own valentines tones.
+  const bodyFill = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : '#4a4b32';
+  const bodyDark = isChristmas ? '#6e231f' : isValentines ? '#8a2f45' : '#34351f';
+  const bodyLight = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : '#5e6040';
+  const hoodFill = isChristmas ? '#5c1f1a' : isValentines ? '#6e2439' : '#262716';
+  const foldShadow = isChristmas ? '#3a1613' : isValentines ? '#4a1626' : '#2c2d1a';
 
   return (
     <g className="survivor">
