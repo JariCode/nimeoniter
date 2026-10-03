@@ -14,13 +14,24 @@ import './Survivor.css';
 // currently only 'medieval' + 'christmas', 'medieval' + 'newyear',
 // 'medieval' + 'valentines', 'medieval' + 'easter', 'city' + 'halloween',
 // 'city' + 'christmas', 'city' + 'newyear', 'city' + 'valentines',
-// 'city' + 'easter', and 'space' + 'halloween' are implemented, every other
-// combination renders exactly as before.
+// 'city' + 'easter', 'space' + 'halloween', and 'space' + 'christmas' are
+// implemented, every other combination renders exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     // Halloween: the spacesuit/helmet/visor stay exactly as-is — only a
     // skull mask is added inside the helmet, under the face.
     const isHalloween = holiday === 'halloween';
+    // Christmas: the opposite approach — the suit fabric recolors (same
+    // red-tier palette the village/city use) and a Santa hat sits on top of
+    // the helmet dome, but the helmet shell, visor, and face stay
+    // untouched, since Christmas doesn't touch those.
+    const isChristmas = holiday === 'christmas';
+    // Suit fills: pale spacesuit fabric swapped for Christmas red when
+    // active. Helmet shell, visor, chest light, and collar indicator
+    // lights are NOT suit fabric, so they're untouched regardless.
+    const suitFill = isChristmas ? '#8a2f2a' : '#d4d8de'; // torso, light leg, near-arm upper
+    const suitDark = isChristmas ? '#6e231f' : '#c6cad2'; // dark leg, far arm, collar ring
+    const suitLight = isChristmas ? '#a8453d' : '#eef0f3'; // boots, gloves, suit highlight
     return (
       <g className="survivor">
         <g transform="translate(243,221) scale(0.7) translate(-243,-221)">
@@ -28,13 +39,13 @@ function Survivor({ world = 'medieval', holiday = null }) {
           <ellipse cx="246" cy="221" rx="14" ry="3.4" fill="#000" opacity="0.5" />
 
           <g className="survivor-body--space">
-            {/* Boots — white, not the other worlds' dark shoes */}
-            <ellipse cx="239" cy="221" rx="4.2" ry="2.1" fill="#eef0f3" stroke="#aab0ba" strokeWidth="0.6" />
-            <ellipse cx="253" cy="221" rx="4.2" ry="2.1" fill="#eef0f3" stroke="#aab0ba" strokeWidth="0.6" />
+            {/* Boots — white (or Christmas red), not the other worlds' dark shoes */}
+            <ellipse cx="239" cy="221" rx="4.2" ry="2.1" fill={suitLight} stroke="#aab0ba" strokeWidth="0.6" />
+            <ellipse cx="253" cy="221" rx="4.2" ry="2.1" fill={suitLight} stroke="#aab0ba" strokeWidth="0.6" />
 
-            {/* Legs (pale suit fabric), same stance as the city pose */}
-            <path d="M 236 200 L 235 220 L 242 220 L 243 200 Z" fill="#d4d8de" stroke="#5a6068" strokeWidth="0.7" />
-            <path d="M 244 200 L 247 220 L 254 220 L 250 200 Z" fill="#c6cad2" stroke="#5a6068" strokeWidth="0.7" />
+            {/* Legs (pale suit fabric, or Christmas red), same stance as the city pose */}
+            <path d="M 236 200 L 235 220 L 242 220 L 243 200 Z" fill={suitFill} stroke="#5a6068" strokeWidth="0.7" />
+            <path d="M 244 200 L 247 220 L 254 220 L 250 200 Z" fill={suitDark} stroke="#5a6068" strokeWidth="0.7" />
             {/* Orange ID stripes, a classic suit accent */}
             <line x1="239" y1="203" x2="238" y2="218" stroke="#e8a23d" strokeWidth="1" opacity="0.8" />
             <line x1="248" y1="203" x2="250" y2="218" stroke="#e8a23d" strokeWidth="1" opacity="0.7" />
@@ -42,16 +53,17 @@ function Survivor({ world = 'medieval', holiday = null }) {
             {/* Far arm hanging at the side, with a clearly defined glove
                 (lighter than the sleeve, with its own outline) so it reads
                 as a hand rather than fading into the torso */}
-            <path d="M 234 188 L 230 199 L 233 202 L 237 190 Z" fill="#c6cad2" stroke="#5a6068" strokeWidth="0.6" />
-            <circle cx="231" cy="202" r="2.5" fill="#eef0f3" stroke="#5a6068" strokeWidth="0.6" />
+            <path d="M 234 188 L 230 199 L 233 202 L 237 190 Z" fill={suitDark} stroke="#5a6068" strokeWidth="0.6" />
+            <circle cx="231" cy="202" r="2.5" fill={suitLight} stroke="#5a6068" strokeWidth="0.6" />
 
-            {/* Torso (suit) */}
-            <path d="M 233 187 Q 232 178 245 176 Q 258 178 257 187 L 259 202 Q 246 207 233 202 Z" fill="#d4d8de" stroke="#5a6068" strokeWidth="0.8" />
+            {/* Torso (suit, or Christmas red) */}
+            <path d="M 233 187 Q 232 178 245 176 Q 258 178 257 187 L 259 202 Q 246 207 233 202 Z" fill={suitFill} stroke="#5a6068" strokeWidth="0.8" />
             {/* Chest seam */}
             <path d="M 241 179 L 245 189 L 249 179" fill="none" stroke="#5a6068" strokeWidth="1.1" opacity="0.6" />
             {/* Suit highlight */}
-            <path d="M 236 186 Q 235 194 237 201" stroke="#eef0f3" strokeWidth="1.1" fill="none" opacity="0.6" />
-            {/* Life-support chest light, softly glowing */}
+            <path d="M 236 186 Q 235 194 237 201" stroke={suitLight} strokeWidth="1.1" fill="none" opacity="0.6" />
+            {/* Life-support chest light, softly glowing — unaffected by
+                Christmas, it's equipment, not suit fabric */}
             <circle cx="246" cy="193" r="1.6" fill="#3de0ff" opacity="0.9" filter="url(#glow)" />
 
             {/* Near arm, raised in a wave toward the viewer instead of
@@ -61,10 +73,10 @@ function Survivor({ world = 'medieval', holiday = null }) {
                 from the shoulder, forearm continues up and back in past the
                 shoulder line to bring the hand up beside the helmet. */}
             <g className="survivor-wave">
-              <path d="M 257.9 188.7 L 261.9 178.3 L 258.1 177 L 254.1 187.3 Z" fill="#d4d8de" stroke="#5a6068" strokeWidth="0.6" />
-              <path d="M 261.8 177.7 L 259.8 165.9 L 256.2 166.5 L 258.2 178.3 Z" fill="#eef0f3" stroke="#5a6068" strokeWidth="0.6" />
+              <path d="M 257.9 188.7 L 261.9 178.3 L 258.1 177 L 254.1 187.3 Z" fill={suitFill} stroke="#5a6068" strokeWidth="0.6" />
+              <path d="M 261.8 177.7 L 259.8 165.9 L 256.2 166.5 L 258.2 178.3 Z" fill={suitLight} stroke="#5a6068" strokeWidth="0.6" />
               {/* Glove */}
-              <circle cx="258" cy="166" r="2.4" fill="#eef0f3" stroke="#5a6068" strokeWidth="0.6" />
+              <circle cx="258" cy="166" r="2.4" fill={suitLight} stroke="#5a6068" strokeWidth="0.6" />
             </g>
 
             {/* Head, visible through the visor */}
@@ -83,9 +95,9 @@ function Survivor({ world = 'medieval', holiday = null }) {
             {/* Helmet shell behind the head, a rounded dome reaching past
                 the head's silhouette so it reads as a full helmet */}
             <circle cx="246" cy="169" r="9.6" fill="none" stroke="#aab0ba" strokeWidth="1.6" opacity="0.9" />
-            {/* Neck collar ring where the helmet meets the suit */}
-            <path d="M 239 176 Q 246 181 253 176 L 253 179 Q 246 184 239 179 Z" fill="#c6cad2" stroke="#5a6068" strokeWidth="0.6" />
-            {/* Small collar indicator lights */}
+            {/* Neck collar ring where the helmet meets the suit (suit fabric, recolors with the rest) */}
+            <path d="M 239 176 Q 246 181 253 176 L 253 179 Q 246 184 239 179 Z" fill={suitDark} stroke="#5a6068" strokeWidth="0.6" />
+            {/* Small collar indicator lights — unaffected, they're equipment, not suit fabric */}
             <circle cx="242" cy="178.5" r="0.9" fill="#ffd97a" opacity="0.9" />
             <circle cx="250" cy="178.5" r="0.9" fill="#3de0ff" opacity="0.9" />
 
@@ -124,6 +136,27 @@ function Survivor({ world = 'medieval', holiday = null }) {
             <ellipse cx="246" cy="170.5" rx="7.6" ry="8" fill="none" stroke="#f6d888" strokeWidth="0.8" opacity="0.6" />
             {/* Glossy highlight streak on the visor */}
             <path d="M 240.5 165.5 Q 239 170 240.5 175" stroke="#fff6d8" strokeWidth="1.1" fill="none" opacity="0.45" strokeLinecap="round" />
+
+            {isChristmas && (
+              // Santa hat, same shape/color technique as the city world's
+              // own front-facing Christmas hat, scaled up (~1.33x, the ratio
+              // between the helmet shell's r=9.6 and the city head's r=7.2)
+              // and recentered on the helmet dome (cx246 cy169) instead of
+              // the bare head. MUST stay after the visor above: the hat
+              // sits ON TOP of the helmet, not under the glass.
+              <g className="survivor-santa-hat-space">
+                <path
+                  d="M 239.3 162.3 Q 243.3 145 251.3 142.3 Q 259.3 141 255.3 150.3 Q 251.3 157 252.7 162.3 Z"
+                  fill="#b5342c"
+                  stroke="#4a1512"
+                  strokeWidth="0.65"
+                />
+                {/* White pompom at the flopped-over tip */}
+                <circle cx="255.3" cy="151" r="2.4" fill="#f4f4f0" stroke="#cfcfc2" strokeWidth="0.4" />
+                {/* White fur trim band at the base, sitting on the helmet's own top curve */}
+                <path d="M 238 162.3 Q 246 156.3 254 162.3" fill="none" stroke="#f4f4f0" strokeWidth="2.7" strokeLinecap="round" />
+              </g>
+            )}
           </g>
         </g>
       </g>
