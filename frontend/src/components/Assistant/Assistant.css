@@ -27,11 +27,12 @@
   height: 195px;
   display: block;
   filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.65));
-  transition: transform 0.35s ease, width 0.35s ease, height 0.35s ease;
+  transition: transform 0.35s ease, width 0.35s ease, height 0.35s ease, filter 0.35s ease;
 }
 
 .assistant__figure:hover {
-  transform: translateY(-3px);
+  transform: translateY(-3px) scale(1.04);
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.65)) brightness(1.12);
 }
 
 /* When open, pin the whole thing to center and lay out chat + figure. */

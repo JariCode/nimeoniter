@@ -54,7 +54,6 @@ function App() {
   const [assistantHistory, setAssistantHistory] = useState([]);
   const [assistantBusy, setAssistantBusy] = useState(false);
   const [assistantSpeaking, setAssistantSpeaking] = useState(false);
-  const greetedRef = useRef(false); // greet only once per session
   // True once the player's saved state has come back from the backend on the
   // initial load — distinguishes "not loaded yet" from a real new player who
   // has 0 missions and 0 XP.
@@ -218,20 +217,6 @@ function App() {
       console.error('Assistant history failed:', err);
     }
   }, [getToken]);
-
-  // Greet automatically once per browser tab session — not on every refresh.
-  // sessionStorage holds only a tiny non-sensitive flag ("have we greeted in
-  // this tab yet"): no tokens, no game data. It clears when the tab closes, so
-  // a real sign-in (fresh tab/session) greets, while a page refresh within the
-  // same tab does not. The backend stays the source of truth for everything.
-  useEffect(() => {
-    if (!isSignedIn) return;
-    if (!stateLoaded) return; // wait until state is in
-    if (sessionStorage.getItem('nimeoniter_greeted') === '1') return;
-    sessionStorage.setItem('nimeoniter_greeted', '1');
-    openAssistant();
-    talkToAssistant('greeting');
-  }, [isSignedIn, stateLoaded, openAssistant, talkToAssistant]);
 
   async function addTask(task) {
     try {
