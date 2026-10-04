@@ -31,6 +31,10 @@ const ACHIEVEMENTS = [
     reward: { xp: 250, wood: 5, stone: 5, food: 5 },
     check: (s) => s.tasksDone >= 250 },
 
+  { id: 'tasks_500', icon: '🏆', title: 'Untiring', desc: 'Complete 500 tasks',
+    reward: { xp: 400, wood: 7, stone: 7, food: 7 },
+    check: (s) => s.tasksDone >= 500 },
+
   // --- Level ---
 
   { id: 'level_5', icon: '⭐', title: 'Survivor', desc: 'Reach level 5',
@@ -49,6 +53,18 @@ const ACHIEVEMENTS = [
     reward: { xp: 200, wood: 5, stone: 5, food: 5 },
     check: (s) => s.level >= 20 },
 
+  { id: 'level_30', icon: '🛡️', title: 'Champion', desc: 'Reach level 30',
+    reward: { xp: 300, wood: 6, stone: 6, food: 6 },
+    check: (s) => s.level >= 30 },
+
+  { id: 'level_50', icon: '⚔️', title: 'Myth', desc: 'Reach level 50',
+    reward: { xp: 500, wood: 8, stone: 8, food: 8 },
+    check: (s) => s.level >= 50 },
+
+  { id: 'level_80', icon: '🚀', title: 'Ascendant', desc: 'Reach level 80',
+    reward: { xp: 800, wood: 10, stone: 10, food: 10 },
+    check: (s) => s.level >= 80 },
+
   // --- Building ---
 
   { id: 'first_build', icon: '🔨', title: 'Foundations', desc: 'Build your first structure',
@@ -58,6 +74,14 @@ const ACHIEVEMENTS = [
   { id: 'build_4', icon: '🏘️', title: 'Settler', desc: 'Build 4 structures',
     reward: { xp: 50, wood: 2, stone: 2, food: 2 },
     check: (s) => s.buildingsBuilt >= 4 },
+
+  { id: 'build_8', icon: '🏕️', title: 'Homestead', desc: 'Build 8 structures',
+    reward: { xp: 100, wood: 3, stone: 3, food: 3 },
+    check: (s) => s.buildingsBuilt >= 8 },
+
+  { id: 'build_16', icon: '🌆', title: 'Metropolis', desc: 'Build 16 structures',
+    reward: { xp: 250, wood: 5, stone: 5, food: 5 },
+    check: (s) => s.buildingsBuilt >= 16 },
 
   { id: 'base_complete', icon: '🏰', title: 'Fortress', desc: 'Build your entire base',
     reward: { xp: 150, wood: 5, stone: 5, food: 5 },
@@ -80,6 +104,14 @@ const ACHIEVEMENTS = [
   { id: 'streak_30', icon: '🔥', title: 'Unstoppable', desc: 'Reach a 30-day streak',
     reward: { xp: 200, wood: 5, stone: 5, food: 5 },
     check: (s) => s.streak >= 30 },
+
+  { id: 'streak_60', icon: '🔥', title: 'Relentless Spirit', desc: 'Reach a 60-day streak',
+    reward: { xp: 300, wood: 6, stone: 6, food: 6 },
+    check: (s) => s.streak >= 60 },
+
+  { id: 'streak_100', icon: '🔥', title: 'Eternal Flame', desc: 'Reach a 100-day streak',
+    reward: { xp: 500, wood: 8, stone: 8, food: 8 },
+    check: (s) => s.streak >= 100 },
 
 ];
 
