@@ -14,9 +14,9 @@ import './Survivor.css';
 // currently only 'medieval' + 'christmas', 'medieval' + 'newyear',
 // 'medieval' + 'valentines', 'medieval' + 'easter', 'city' + 'halloween',
 // 'city' + 'christmas', 'city' + 'newyear', 'city' + 'valentines',
-// 'city' + 'easter', 'space' + 'halloween', 'space' + 'christmas', and
-// 'space' + 'newyear' are implemented, every other combination renders
-// exactly as before.
+// 'city' + 'easter', 'space' + 'halloween', 'space' + 'christmas',
+// 'space' + 'newyear', and 'space' + 'valentines' are implemented, every
+// other combination renders exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     // Halloween: the spacesuit/helmet/visor stay exactly as-is — only a
@@ -30,12 +30,16 @@ function Survivor({ world = 'medieval', holiday = null }) {
     // New Year: like the other worlds, just a gold party hat added on top
     // of the helmet — no suit recolor, helmet/visor/face stay untouched.
     const isNewyear = holiday === 'newyear';
-    // Suit fills: pale spacesuit fabric swapped for Christmas red when
+    // Valentine's: suit fabric recolors pink (same tiers the city uses) and
+    // heart-shaped lenses are added inside the helmet, under the visor —
+    // helmet shell, visor, and chest light stay untouched.
+    const isValentines = holiday === 'valentines';
+    // Suit fills: pale spacesuit fabric swapped for a holiday color when
     // active. Helmet shell, visor, chest light, and collar indicator
     // lights are NOT suit fabric, so they're untouched regardless.
-    const suitFill = isChristmas ? '#8a2f2a' : '#d4d8de'; // torso, light leg, near-arm upper
-    const suitDark = isChristmas ? '#6e231f' : '#c6cad2'; // dark leg, far arm, collar ring
-    const suitLight = isChristmas ? '#a8453d' : '#eef0f3'; // boots, gloves, suit highlight
+    const suitFill = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : '#d4d8de'; // torso, light leg, near-arm upper
+    const suitDark = isChristmas ? '#6e231f' : isValentines ? '#8a2f45' : '#c6cad2'; // dark leg, far arm, collar ring
+    const suitLight = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : '#eef0f3'; // boots, gloves, suit highlight
     return (
       <g className="survivor">
         <g transform="translate(243,221) scale(0.7) translate(-243,-221)">
@@ -129,6 +133,47 @@ function Survivor({ world = 'medieval', holiday = null }) {
                 <line x1="243.5" y1="176.8" x2="248.5" y2="176.8" stroke="#1a1712" strokeWidth="0.6" />
                 <line x1="245.3" y1="176.3" x2="245.3" y2="177.3" stroke="#1a1712" strokeWidth="0.4" />
                 <line x1="246.7" y1="176.3" x2="246.7" y2="177.3" stroke="#1a1712" strokeWidth="0.4" />
+              </g>
+            )}
+
+            {isValentines && (
+              // Heart-shaped glasses, same shape/coordinates as the city
+              // world's own lenses — the head sits at the same (246,170)
+              // spot in both worlds, so it lines up directly without
+              // rework. MUST stay before the visor below, same reason as
+              // the Halloween mask above: the visor is translucent and
+              // drawn last, so the lenses show through it instead of being
+              // hidden under it.
+              <g className="survivor-heart-glasses">
+                {/* Temple arms, reaching back from each lens */}
+                <path
+                  d="M 240.5 170.1 L 238 169 M 251.5 170.1 L 254 169"
+                  stroke="#a8335a"
+                  strokeWidth="0.65"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+                {/* Bridge across the nose, linking the two lenses */}
+                <path d="M 245.5 168.7 Q 246 168 246.5 168.7" stroke="#a8335a" strokeWidth="0.6" fill="none" strokeLinecap="round" />
+                {/* Left heart lens */}
+                <path
+                  d="M 243 172.6 C 240.5 170.1 240.5 167.4 243 168.9 C 245.5 167.4 245.5 170.1 243 172.6 Z"
+                  fill="#f08aa0"
+                  fillOpacity="0.9"
+                  stroke="#a8335a"
+                  strokeWidth="0.55"
+                />
+                {/* Right heart lens */}
+                <path
+                  d="M 249 172.6 C 246.5 170.1 246.5 167.4 249 168.9 C 251.5 167.4 251.5 170.1 249 172.6 Z"
+                  fill="#f08aa0"
+                  fillOpacity="0.9"
+                  stroke="#a8335a"
+                  strokeWidth="0.55"
+                />
+                {/* Small glossy highlight on each lens */}
+                <circle cx="241.9" cy="169.3" r="0.35" fill="#fce4e9" opacity="0.85" />
+                <circle cx="250.1" cy="169.3" r="0.35" fill="#fce4e9" opacity="0.85" />
               </g>
             )}
 
