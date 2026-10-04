@@ -10,6 +10,9 @@ node_modules/
 dist/
 build/
 
+# Claude local settings
+.claude/settings.local.json
+
 # Lokit
 *.log
 npm-debug.log*
