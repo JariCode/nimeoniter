@@ -15,8 +15,8 @@ import './Survivor.css';
 // 'medieval' + 'valentines', 'medieval' + 'easter', 'city' + 'halloween',
 // 'city' + 'christmas', 'city' + 'newyear', 'city' + 'valentines',
 // 'city' + 'easter', 'space' + 'halloween', 'space' + 'christmas',
-// 'space' + 'newyear', and 'space' + 'valentines' are implemented, every
-// other combination renders exactly as before.
+// 'space' + 'newyear', 'space' + 'valentines', and 'space' + 'easter' are
+// implemented, every other combination renders exactly as before.
 function Survivor({ world = 'medieval', holiday = null }) {
   if (world === 'space') {
     // Halloween: the spacesuit/helmet/visor stay exactly as-is — only a
@@ -34,12 +34,16 @@ function Survivor({ world = 'medieval', holiday = null }) {
     // heart-shaped lenses are added inside the helmet, under the visor —
     // helmet shell, visor, and chest light stay untouched.
     const isValentines = holiday === 'valentines';
+    // Easter: suit fabric recolors yellow (same tiers the village/city use)
+    // and bunny ears sit on top of the helmet dome — helmet shell, visor,
+    // and face stay untouched.
+    const isEaster = holiday === 'easter';
     // Suit fills: pale spacesuit fabric swapped for a holiday color when
     // active. Helmet shell, visor, chest light, and collar indicator
     // lights are NOT suit fabric, so they're untouched regardless.
-    const suitFill = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : '#d4d8de'; // torso, light leg, near-arm upper
-    const suitDark = isChristmas ? '#6e231f' : isValentines ? '#8a2f45' : '#c6cad2'; // dark leg, far arm, collar ring
-    const suitLight = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : '#eef0f3'; // boots, gloves, suit highlight
+    const suitFill = isChristmas ? '#8a2f2a' : isValentines ? '#d9425e' : isEaster ? '#c99328' : '#d4d8de'; // torso, light leg, near-arm upper
+    const suitDark = isChristmas ? '#6e231f' : isValentines ? '#8a2f45' : isEaster ? '#8a661a' : '#c6cad2'; // dark leg, far arm, collar ring
+    const suitLight = isChristmas ? '#a8453d' : isValentines ? '#ec7a95' : isEaster ? '#f7dd6e' : '#eef0f3'; // boots, gloves, suit highlight
     return (
       <g className="survivor">
         <g transform="translate(243,221) scale(0.7) translate(-243,-221)">
@@ -238,6 +242,24 @@ function Survivor({ world = 'medieval', holiday = null }) {
                   <circle cx="254.4" cy="157" r="0.8" fill="#f7d97a" />
                   <circle cx="243.6" cy="143.8" r="0.73" fill="#f7d97a" />
                 </g>
+              </g>
+            )}
+
+            {isEaster && (
+              // Same bunny-ear shape/palette as the city world (cream
+              // outer, pink inner), scaled up (~1.33x the city pair, same
+              // ratio as the Santa/New Year hats above) and recentered on
+              // the helmet dome (cx246 cy169). Straight up, no rotate —
+              // matches the city version. MUST stay after the visor above,
+              // same reason as the other space headwear: it sits on top of
+              // the helmet, not inside it.
+              <g className="survivor-bunny-ears-space">
+                {/* Left ear */}
+                <path d="M 241.6 161.8 Q 240.76 152.2 243.4 145 Q 246.04 152.2 245.2 161.8 Z" fill="#efe7d8" stroke="#b0a68e" strokeWidth="0.5" />
+                <path d="M 242.32 160.6 Q 241.72 152.2 243.4 146.8 Q 245.08 152.2 244.48 160.6 Z" fill="#f6b8ce" />
+                {/* Right ear */}
+                <path d="M 246.8 161.8 Q 245.96 152.2 248.6 145 Q 251.24 152.2 250.4 161.8 Z" fill="#efe7d8" stroke="#b0a68e" strokeWidth="0.5" />
+                <path d="M 247.52 160.6 Q 246.92 152.2 248.6 146.8 Q 250.28 152.2 249.68 160.6 Z" fill="#f6b8ce" />
               </g>
             )}
           </g>
