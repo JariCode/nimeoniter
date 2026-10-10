@@ -43,10 +43,14 @@ const TASK_CATALOG = [
   { key: 'skincare',  icon: '🧴', name: 'Skincare routine',     xp: 10, resources: { food: 1 } },
   { key: 'meal_prep', icon: '🍱', name: 'Meal prep',            xp: 10, resources: { food: 2 } },
   { key: 'grilling',  icon: '🔥', name: 'Grilling',             xp: 10, resources: { food: 2 } },
+  { key: 'party',     icon: '🎉', name: 'Host a party',         xp: 20, resources: { food: 3, wood: 1 } },
+  { key: 'picnic',    icon: '🧺', name: 'Have a picnic',        xp: 20, resources: { food: 2, wood: 1 } },
+  { key: 'celebrate',  icon: '🎊', name: 'Celebrate an occasion', xp: 20, resources: { food: 3, wood: 1 } },
+  { key: 'cozy',       icon: '🛋️', name: 'Have a cozy night in', xp: 10, resources: { food: 1, wood: 1 } },
 
   // --- Home & tidying (mixed) ---
   { key: 'clean',     icon: '🧹', name: 'Clean',                xp: 10, resources: { stone: 1, food: 1 } },
-  { key: 'window',     icon: '🪟', name: 'Clean the windows',    xp: 10, resources: { stone: 1, wood: 1 } },
+  { key: 'window',    icon: '🪟', name: 'Clean the windows',    xp: 10, resources: { stone: 1, wood: 1 } },
   { key: 'laundry',   icon: '🧺', name: 'Do laundry',           xp: 10, resources: { wood: 1, stone: 1 } },
   { key: 'dishes',    icon: '🍽️', name: 'Wash the dishes',      xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'tidy',      icon: '🛏️', name: 'Tidy your room',       xp: 10, resources: { wood: 1, food: 1 } },
@@ -58,6 +62,7 @@ const TASK_CATALOG = [
   { key: 'makebed',   icon: '🛏️', name: 'Make the bed',         xp: 10, resources: { food: 1 } },
   { key: 'sweep',     icon: '🧹', name: 'Sweep / mop',          xp: 20, resources: { stone: 1, wood: 1 } },
   { key: 'painting',  icon: '🎨', name: 'Painting',             xp: 20, resources: { wood: 2, stone: 1 } },
+  { key: 'bathroom',  icon: '🛁', name: 'Clean the bathroom',   xp: 20, resources: { stone: 2, wood: 1 } },
 
   // --- Mind & growth (wood + food) ---
   { key: 'study',     icon: '📚', name: 'Study',                xp: 20, resources: { wood: 1, stone: 1 } },
