@@ -9,6 +9,9 @@ createRoot(document.getElementById('root')).render(
     <ClerkProvider
       routerPush={() => {}}
       routerReplace={() => {}}
+       telemetry={{
+        disabled: import.meta.env.VITE_CLERK_TELEMETRY_DISABLED === 'true',
+      }}
       appearance={{
         /* Global fallback theme: some Clerk-rendered surfaces (e.g. the
            profile modal after cancelling an OAuth connect redirect) remount
