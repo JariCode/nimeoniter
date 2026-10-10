@@ -25,17 +25,10 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
 
   // Auto-focus the question input when the chat opens, so the player can
   // type immediately without clicking into the field first. Also re-run on
-  // busy: an auto-opened chat greets with busy=true (input disabled), so
-  // focus must land once busy flips back to false after the greeting.
-  // The very first open in this tab session is the automatic login greeting,
-  // so it is skipped; every open after that is user-initiated and gets focus.
-  const firstOpenRef = useRef(true);
+  // busy: while the greeting loads the input is disabled (busy=true), so
+  // focus lands once busy flips back to false.
   useEffect(() => {
     if (open && !busy && inputRef.current) {
-      if (firstOpenRef.current) {
-        firstOpenRef.current = false;
-        return;
-      }
       inputRef.current.focus();
     }
   }, [open, busy]);

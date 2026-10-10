@@ -205,8 +205,8 @@ function App() {
     }
   }, [getToken]);
 
-  // Open the chat and load the saved conversation. Greeting is handled by the
-  // sign-in effect, so opening by click never triggers another greeting.
+   // Open the chat (only by the player's click) and load the saved chat.
+  // The first open in this browser tab session also greets.
   const openAssistant = useCallback(async () => {
     setAssistantOpen(true);
     try {
@@ -216,7 +216,11 @@ function App() {
     } catch (err) {
       console.error('Assistant history failed:', err);
     }
-  }, [getToken]);
+    if (sessionStorage.getItem('nimeoniter_greeted') !== '1') {
+      sessionStorage.setItem('nimeoniter_greeted', '1');
+      talkToAssistant('greeting');
+    }
+  }, [getToken, talkToAssistant]);
 
   async function addTask(task) {
     try {
