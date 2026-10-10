@@ -40,7 +40,9 @@ const TASK_CATALOG = [
   { key: 'tea',       icon: '🍵', name: 'Have a cup of tea',    xp: 10, resources: { food: 1 } },
   { key: 'juice',     icon: '🧃', name: 'Have a juice',          xp: 10, resources: { food: 1 } },
   { key: 'candy',     icon: '🍬', name: 'Have a treat',          xp: 10, resources: { food: 1 } },
-  { key: 'salty',    icon: '🥨', name: 'Have a salty snack',     xp: 10, resources: { food: 1 } },
+  { key: 'salty',     icon: '🥨', name: 'Have a salty snack',     xp: 10, resources: { food: 1 } },
+  { key: 'fastfood',  icon: '🍕', name: 'Have fast food',       xp: 10, resources: { food: 1 } },
+  { key: 'eatout',    icon: '🍽️', name: 'Eat out',              xp: 10, resources: { food: 1 } },
   { key: 'water',     icon: '💧', name: 'Drink water',          xp: 10, resources: { food: 1 } },
   { key: 'healthy',   icon: '🥗', name: 'Eat something healthy', xp: 10, resources: { food: 2 } },
   { key: 'breakfast', icon: '🥣', name: 'Eat breakfast',        xp: 10, resources: { food: 2 } },
@@ -55,8 +57,8 @@ const TASK_CATALOG = [
   { key: 'grilling',  icon: '🔥', name: 'Grilling',             xp: 10, resources: { food: 2 } },
   { key: 'party',     icon: '🎉', name: 'Host a party',         xp: 20, resources: { food: 3, wood: 1 } },
   { key: 'picnic',    icon: '🧺', name: 'Have a picnic',        xp: 20, resources: { food: 2, wood: 1 } },
-  { key: 'celebrate',  icon: '🎊', name: 'Celebrate an occasion', xp: 20, resources: { food: 3, wood: 1 } },
-  { key: 'cozy',       icon: '🛋️', name: 'Have a cozy night in', xp: 10, resources: { food: 1, wood: 1 } },
+  { key: 'celebrate', icon: '🎊', name: 'Celebrate an occasion', xp: 20, resources: { food: 3, wood: 1 } },
+  { key: 'cozy',      icon: '🛋️', name: 'Have a cozy night in', xp: 10, resources: { food: 1, wood: 1 } },
 
   // --- Home & tidying (mixed) ---
   { key: 'clean',     icon: '🧹', name: 'Clean',                xp: 10, resources: { stone: 1, food: 1 } },
