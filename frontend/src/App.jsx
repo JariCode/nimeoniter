@@ -15,6 +15,7 @@ import WorldComplete from './components/WorldComplete/WorldComplete';
 import Achievement from './components/Achievement/Achievement';
 import Notice from './components/Notice/Notice';
 import Assistant from './components/Assistant/Assistant';
+import RotateNotice from './components/RotateNotice/RotateNotice';
 import { currentWorldFromBuilt } from './data/world';
 import { todayKey } from './data/dateUtils';
 import { getHoliday } from './data/holiday';
@@ -383,6 +384,13 @@ function App() {
 
   return (
     <>
+      {/* Portrait-phone "turn your device" overlay (CSS decides when it
+          shows). Uses the player's real world once loaded — same gate as
+          the Assistant below — otherwise the default look. */}
+      <RotateNotice
+        world={stateLoaded && buildStages.length > 0 ? currentWorld : 'medieval'}
+      />
+
       {!started && !isSignedIn && <Landing onStart={() => setStarted(true)} />}
 
       {levelUpShown && <LevelUp level={levelUpShown} onDone={dismissLevelUp} />}
