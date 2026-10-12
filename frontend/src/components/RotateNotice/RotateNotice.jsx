@@ -51,7 +51,7 @@ function RotateNotice({ world = 'medieval' }) {
       </div>
 
       <div className="rotate-notice-figure" aria-hidden="true">
-        <SurvivorFace speaking holiday={getHoliday()} world={world} />
+        <SurvivorFace  holiday={getHoliday()} world={world} />
       </div>
     </div>
   );
