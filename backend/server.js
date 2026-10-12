@@ -15,15 +15,33 @@ app.set('trust proxy', 1);
 
 // Security headers, tuned for an API backend that serves no HTML
 app.use(helmet({
+  // useDefaults: false — Helmet's default directives are meant for HTML pages
+  // (they re-add script/style sources and 'unsafe-inline'); a JSON API needs
+  // nothing loaded at all
   contentSecurityPolicy: {
+    useDefaults: false,
     directives: {
       defaultSrc: ["'none'"],
+      baseUri: ["'none'"],
+      formAction: ["'none'"],
       frameAncestors: ["'none'"]
     }
   },
+  frameguard: { action: 'deny' },
   crossOriginResourcePolicy: { policy: 'same-site' },
   referrerPolicy: { policy: 'no-referrer' }
 }));
+
+// Restrict browser features the API doesn't need, and never let browsers or
+// proxies cache API responses (they carry per-player data)
+app.use((req, res, next) => {
+  res.setHeader(
+    'Permissions-Policy',
+    'geolocation=(), microphone=(), camera=(), payment=()'
+  );
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+});
 
 // Restrict browser features the API doesn't need
 app.use((req, res, next) => {
