@@ -125,7 +125,8 @@ router.post('/tasks', async (req, res, next) => {
   try {
     const { key, date } = req.body;
 
-    const catalogTask = TASK_BY_KEY[key];
+    const catalogTask =
+      typeof key === 'string' && Object.hasOwn(TASK_BY_KEY, key) ? TASK_BY_KEY[key] : undefined;
     if (!catalogTask) {
       return res.status(400).json({ error: 'Unknown task' });
     }

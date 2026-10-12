@@ -124,7 +124,10 @@ router.get('/history', async (req, res) => {
 router.post('/', aiLimiter, async (req, res) => {
   try {
     const { mode, question, holiday, today, timeOfDay } = req.body;
-    const instruction = MODE_INSTRUCTIONS[mode];
+    const instruction =
+      typeof mode === 'string' && Object.hasOwn(MODE_INSTRUCTIONS, mode)
+        ? MODE_INSTRUCTIONS[mode]
+        : undefined;
     if (!instruction) {
       return res.status(400).json({ error: 'Unknown assistant mode' });
     }
@@ -156,7 +159,7 @@ router.post('/', aiLimiter, async (req, res) => {
     // Only greetings get a holiday touch, and only for a holiday we actually
     // recognize — an unknown/invalid value from the client is just ignored.
     const holidayNote =
-      mode === 'greeting' && typeof holiday === 'string' && HOLIDAY_GREETINGS[holiday]
+      mode === 'greeting' && typeof holiday === 'string' && Object.hasOwn(HOLIDAY_GREETINGS, holiday)
         ? HOLIDAY_GREETINGS[holiday]
         : null;
 
