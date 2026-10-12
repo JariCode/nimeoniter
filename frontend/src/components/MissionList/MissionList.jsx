@@ -28,12 +28,16 @@ function MissionList({ missions, onComplete, onRemove }) {
               key={mission.id}
               className={`mission ${mission.done ? 'mission-done' : ''}`}
             >
-              <span
+              <button
+                type="button"
                 className="mission-check"
+                role="checkbox"
+                aria-checked={mission.done}
+                aria-label={`${mission.name}`}
                 onClick={() => handleComplete(mission)}
               >
                 {mission.done ? '☑' : '☐'}
-              </span>
+              </button>
               <span
                 className="mission-name"
                 onClick={() => handleComplete(mission)}
