@@ -280,6 +280,9 @@ function App() {
       applyState(data);
     } catch (err) {
       console.error('Remove task failed:', err);
+      if (err.message === 'Cannot remove a completed task') {
+        setNoticeShown("A completed task can't be removed. Undo it first if you want to remove it.");
+      }
     }
   }
 
