@@ -1,4 +1,5 @@
 const express = require('express');
+const { clerkClient } = require('@clerk/express');
 const requireAuth = require('../middleware/requireAuth');
 const PlayerState = require('../models/PlayerState');
 const { BUILD_STAGES, levelFromXp, minXpForLevel } = require('../data/gameConfig');
@@ -29,6 +30,18 @@ router.use(requireAuth);
 async function getOrCreateState(userId) {
   let state = await PlayerState.findOne({ clerkUserId: userId });
   if (!state) {
+    // A deleted user's Clerk token stays valid for a short window (~60s)
+    // after the user.deleted webhook has already removed their game state.
+    // Without this check, a request arriving in that window would recreate
+    // the state for a user who no longer exists.
+    try {
+      await clerkClient.users.getUser(userId);
+    } catch (err) {
+      if (err.status === 404) {
+        return null;
+      }
+      throw err;
+    }
     try {
       state = await PlayerState.create({ clerkUserId: userId });
     } catch (err) {
@@ -88,6 +101,9 @@ async function grantAchievements(userId, stateDoc) {
 router.get('/', async (req, res, next) => {
   try {
     const state = await getOrCreateState(req.userId);
+    if (!state) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
     res.json(state);
   } catch (err) {
     next(err);
@@ -120,7 +136,10 @@ router.post('/tasks', async (req, res, next) => {
     // Ensure the state document exists, then atomically add the task only if
     // it isn't already present for that day — closes the race where two
     // simultaneous requests both see "not added yet" and both insert it.
-    await getOrCreateState(req.userId);
+    const existingState = await getOrCreateState(req.userId);
+    if (!existingState) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
 
     const updated = await PlayerState.findOneAndUpdate(
       {
@@ -158,6 +177,9 @@ router.post('/tasks/:id/complete', async (req, res, next) => {
   try {
     const taskId = Number(req.params.id);
     const state = await getOrCreateState(req.userId);
+    if (!state) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
 
     const mission = state.missions.find((m) => m.id === taskId);
     if (!mission) {
@@ -247,6 +269,9 @@ router.post('/tasks/:id/uncomplete', async (req, res, next) => {
   try {
     const taskId = Number(req.params.id);
     const state = await getOrCreateState(req.userId);
+    if (!state) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
 
     const mission = state.missions.find((m) => m.id === taskId);
     if (!mission) {
@@ -330,6 +355,9 @@ router.delete('/tasks/:id', async (req, res, next) => {
   try {
     const taskId = Number(req.params.id);
     const state = await getOrCreateState(req.userId);
+    if (!state) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
 
     const mission = state.missions.find((m) => m.id === taskId);
     if (!mission) {
@@ -358,6 +386,9 @@ router.delete('/tasks/:id', async (req, res, next) => {
 router.post('/build', async (req, res, next) => {
   try {
     const state = await getOrCreateState(req.userId);
+    if (!state) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
 
     const nextStage = BUILD_STAGES[state.baseStageIndex + 1];
     if (!nextStage) {
