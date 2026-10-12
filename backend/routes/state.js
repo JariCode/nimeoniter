@@ -242,7 +242,9 @@ router.post('/tasks/:id/complete', async (req, res, next) => {
 
     // --- Streak: count consecutive days with at least one completed task ---
     // The client sends its own local date so the streak follows the user's day.
-    const today = typeof req.body?.date === 'string' ? req.body.date : null;
+    // Only a real YYYY-MM-DD date is accepted; anything else is treated as if
+    // no date was sent.
+    const today = isValidTaskDate(req.body?.date) ? req.body.date : null;
     if (today) {
       const last = updated.lastActiveDate;
       if (last !== today) {
