@@ -66,7 +66,9 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('CORS: origin not allowed'));
+      const err = new Error('CORS: origin not allowed');
+      err.status = 403;
+      callback(err);
     }
   },
   credentials: true,
@@ -102,8 +104,18 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Central error handler, no stack trace leaked to the client
+// Central error handler, no stack trace or error message leaked to the client
 app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Request body too large' });
+  }
+  if (err.type === 'entity.parse.failed') {
+    return res.status(400).json({ error: 'Invalid JSON' });
+  }
+  const status = err.status || err.statusCode;
+  if (status >= 400 && status <= 499) {
+    return res.status(status).json({ error: status === 403 ? 'Forbidden' : 'Bad request' });
+  }
   console.error('Unhandled error', err);
   res.status(500).json({ error: 'Server error' });
 });
