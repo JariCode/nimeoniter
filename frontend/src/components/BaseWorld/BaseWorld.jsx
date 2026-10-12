@@ -234,6 +234,8 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
         viewBox="0 0 400 300"
         className="base-world-svg"
         xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        focusable="false"
       >
         <defs>
           {skyRadial ? (
