@@ -73,7 +73,15 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
       const worldBottom = world.getBoundingClientRect().bottom;
 
       const bottom = window.innerHeight - buttonTop + 4;
-      const maxHeight = Math.max(40, buttonTop - worldBottom - 8);
+      const gap = buttonTop - worldBottom - 8;
+      // The figure's SVG (viewBox 0 0 200 260) is empty above the hood,
+      // which starts at y≈62. On landscape phones the gap is small, so let
+      // that transparent top part reach up beside the world image and keep
+      // the visible hood ~4px below it. Tablets keep the plain gap height.
+      const HOOD_TOP = 62 / 260;
+      const maxHeight = window.innerHeight <= 500
+        ? Math.max(40, Math.round(gap / (1 - HOOD_TOP)))
+        : Math.max(40, gap);
 
       document.documentElement.style.setProperty('--companion-bottom', `${bottom}px`);
       document.documentElement.style.setProperty('--companion-max-height', `${maxHeight}px`);
