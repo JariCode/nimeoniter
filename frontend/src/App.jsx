@@ -458,6 +458,25 @@ function App() {
                     color: '#c58a22',
                   },
 
+                  // Custom UserButton.Action items (Terms of Service,
+                  // Privacy Policy) use a different element key than
+                  // Clerk's own reserved actions above, so they need their
+                  // own copy of the same styling or they'd fall back to
+                  // Clerk's default light theme and render dark-on-dark.
+                  userButtonPopoverCustomItemButton: {
+                    background: 'transparent',
+                    color: '#e6e0d2',
+
+                    '&:hover': {
+                      background: '#2a2418',
+                      color: '#e6e0d2',
+                    },
+                  },
+
+                  userButtonPopoverCustomItemButtonIconBox: {
+                    color: '#c58a22',
+                  },
+
                   userPreviewMainIdentifier: {
                     color: '#e6e0d2',
                   },
