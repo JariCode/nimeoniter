@@ -16,7 +16,7 @@ import './RotateNotice.css';
 // keeps a single SurvivorFace on screen in landscape, exactly as before.
 
 // Must match the media query in RotateNotice.css
-const PORTRAIT_PHONE = '(orientation: portrait) and (max-width: 600px)';
+const PORTRAIT_PHONE = '(orientation: portrait) and (max-width: 600px), (orientation: portrait) and (max-width: 1024px) and (pointer: coarse)';
 
 function subscribe(callback) {
   const mq = window.matchMedia(PORTRAIT_PHONE);

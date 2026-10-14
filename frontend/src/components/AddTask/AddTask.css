@@ -112,7 +112,9 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 12px 8px;
+  /* Matches .mission's own padding (MissionList.css) so the two lists'
+     rows are the same height and more tasks fit on screen at once. */
+  padding: 14px 8px;
   background: none;
   border: none;
   font: inherit;
@@ -127,7 +129,9 @@
 }
 
 .add-task-option-icon {
-  font-size: 20px;
+  /* Matches .mission-check's font-size (MissionList.css) for consistent
+     row height between the two lists. */
+  font-size: 18px;
 }
 
 .add-task-option-name {
@@ -205,8 +209,10 @@
     margin-bottom: 6px;
   }
 
-  .add-task-option {
-    padding: 8px;
+  /* Matches .mission's landscape padding (App.css) so rows stay the same
+     height as the mission list here too. */
+  .add-task-option-button {
+    padding: 6px 8px;
   }
 
   .add-task-done {

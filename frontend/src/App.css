@@ -48,6 +48,103 @@
   }
 }
 
+/* Tablet and short desktop windows: below ~820px tall there isn't room
+   for the full desktop spacing, so tighten the vertical gaps, a few font
+   sizes, and cap the world image's height. The header itself is left
+   untouched, so app-right's margin-top above still lines its divider up
+   with the header's — this only squeezes the room below both titles. */
+@media (min-width: 900px) and (max-height: 820px) {
+  .energy-bar,
+  .daily-progress,
+  .day-nav,
+  .mission-list,
+  .add-task,
+  .resource-bar {
+    margin-top: 12px;
+  }
+
+  .energy-bar-label {
+    margin-bottom: 4px;
+  }
+
+  .daily-progress,
+  .resource-bar {
+    padding: 10px 14px;
+  }
+
+  .daily-progress-value,
+  .resource-value {
+    font-size: 18px;
+  }
+
+  .day-nav-arrow {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+
+  .mission-list-items {
+    max-height: 240px;
+  }
+
+  .base-status-title {
+    margin-bottom: 8px;
+  }
+
+  /* Fills the real available height so .base-world below can grow into
+     whatever room is left after the title/stage/build rows — see
+     .base-world and .base-world-svg for why that keeps the image's own
+     box (and so its frame) at the SVG's true 4:3 ratio instead of being
+     stretched to the column width independently of its capped height. */
+  .app-right {
+    height: calc(100dvh - 149.5px);
+  }
+
+  .base-status {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .base-world {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .base-world-svg {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    /* 20px reserves room for .base-world-stage below it (own content,
+       not flex-grown). Both width and height are auto, so the browser
+       picks the largest size under max-width/max-height that keeps the
+       SVG's 4:3 ratio — never a box shaped differently from its content,
+       which is what caused the black/blank bars at this size. */
+    max-height: calc(100% - 20px);
+    margin: 0 auto;
+  }
+
+  .base-world-stage {
+    margin-top: 6px;
+  }
+
+  .base-build {
+    margin-top: 10px;
+  }
+
+  .base-build-header {
+    margin-bottom: 6px;
+  }
+
+  .base-build-cost {
+    margin-bottom: 8px;
+  }
+
+  .base-build-button {
+    padding: 10px;
+  }
+}
+
 /* Mobile landscape: a short, wide viewport. Force the two-column layout
    below the desktop breakpoint and tighten spacing/font sizes so both
    columns fit on one screen without vertical scrolling. */
@@ -62,6 +159,10 @@
 
   .app-right {
     margin-top: 0;
+    /* Fills the real available height so .base-status below can pin its
+       build section to the bottom (margin-top: auto), leaving a measured
+       gap above it — see .base-status — for the resting companion. */
+    height: calc(100dvh - 12px);
   }
 
   .user-menu {
@@ -211,6 +312,17 @@
     margin-bottom: 4px;
   }
 
+  /* Stretches to app-right's full (viewport-filling) height so the build
+     section below (margin-top: auto) is pinned to the bottom of the
+     column, same as it already is at this size — see .base-build below
+     and .assistant in Assistant.css for the resting companion that sits
+     to the right of the NEXT/cost rows, above the button. */
+  .base-status {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
   .base-world-svg {
     width: auto;
     height: auto;
@@ -224,8 +336,13 @@
     font-size: 11px;
   }
 
-  .base-build {
-    margin-top: 4px;
+  /* Pinned to the bottom of .base-status (flex column above) instead of
+     flowing right after .base-world-stage, so the gap above it is real
+     and not just whatever the content happens to leave — the resting
+     companion sits in that gap. */
+  .base-build,
+  .base-build-complete {
+    margin-top: auto;
   }
 
   .base-build-header {
@@ -315,5 +432,142 @@
   .cl-userProfile-root .cl-profileSection {
     padding-top: 8px !important;
     padding-bottom: 8px !important;
+  }
+}
+
+/* Mobile landscape, wider phones (e.g. 844x390): meaningfully more width
+   and a little more height than the 667x375 rules above, so grow fonts,
+   spacing and the world image to use it instead of leaving it blank.
+   The block above remains the floor for the smallest landscape phones. */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 780px) {
+  .app {
+    gap: 20px;
+    padding: 8px 16px;
+  }
+
+  .app-right {
+    /* Matches this block's own .app padding (8px top + 8px bottom), same
+       purpose as the 667x375 rule above. */
+    height: calc(100dvh - 16px);
+  }
+
+  .header-greeting {
+    font-size: 12px;
+  }
+
+  .header-level-label {
+    font-size: 11px;
+  }
+
+  .header-level-number {
+    font-size: 20px;
+  }
+
+  .header-streak {
+    padding: 2px 8px;
+    gap: 4px;
+  }
+
+  .header-streak-fire,
+  .header-streak-count {
+    font-size: 12px;
+  }
+
+  .header-streak-label {
+    font-size: 9px;
+  }
+
+  .energy-bar,
+  .daily-progress,
+  .day-nav,
+  .mission-list,
+  .add-task,
+  .resource-bar {
+    margin-top: 6px;
+  }
+
+  .energy-bar-label {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .energy-bar-track {
+    height: 10px;
+  }
+
+  .daily-progress,
+  .resource-bar {
+    padding: 6px 10px;
+  }
+
+  .daily-progress-label {
+    font-size: 11px;
+  }
+
+  .daily-progress-value {
+    font-size: 15px;
+  }
+
+  .day-nav-arrow {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .day-nav-label {
+    font-size: 12px;
+  }
+
+  .day-nav-date {
+    font-size: 11px;
+  }
+
+  .mission-list-items {
+    max-height: 150px;
+  }
+
+  .mission {
+    padding: 8px 10px;
+  }
+
+  .resource {
+    gap: 3px;
+  }
+
+  .resource-icon {
+    font-size: 18px;
+  }
+
+  .resource-value {
+    font-size: 15px;
+  }
+
+  .resource-label {
+    font-size: 9px;
+  }
+
+  .base-status-title {
+    margin-bottom: 2px;
+  }
+
+  /* Grows to use whatever room is left after title/stage/build, same
+     mechanism as the tablet breakpoint — see the comment on .base-world
+     there. Lets the world image use the extra width at this size without
+     a guessed max-height leaving it mismatched against its own ratio. */
+  .base-world {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .base-world-svg {
+    max-height: calc(100% - 18px);
+  }
+
+  .base-world-stage {
+    margin-top: 1px;
+  }
+
+  .base-build-cost {
+    margin-bottom: 4px;
   }
 }

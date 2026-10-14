@@ -273,14 +273,21 @@
 /* Mobile landscape: a short, wide viewport — shrink the companion and keep the
    chat inside the short viewport, matching App.css's own breakpoint. */
 @media (orientation: landscape) and (max-height: 500px) {
+  /* Right edge flush with the build button's (this breakpoint's own .app
+     padding-right, 10px). Bottom: .app padding-bottom (6px) + the
+     button's own height (6px top padding + 6px bottom padding + a 14px
+     line at normal 1.2 line-height = 16.8px content, so 28.8px total) +
+     a 4px gap above the button = 38.8px, rounded to 39px. Figure height
+     fills the gap up to the world image (~4px short of it, per the same
+     4px target), at the 60:79 aspect ratio the figure is drawn at. */
   .assistant {
-    right: 0.6rem;
-    bottom: 2.5rem;
+    right: 10px;
+    bottom: 39px;
   }
 
   .assistant__figure {
-    width: 60px;
-    height: 79px;
+    width: 39px;
+    height: 52px;
   }
 
   .assistant--open .assistant__stage {
@@ -301,5 +308,43 @@
 
   .assistant__log {
     max-height: 60vh;
+  }
+}
+
+/* Mobile landscape, wider phones (e.g. 844x390): .app padding-right is
+   16px here (not 10px). The build button's own padding/font are
+   unchanged from the breakpoint above (not overridden in App.css here),
+   so its height is the same 28.8px — only .app's padding-bottom differs
+   (8px vs 6px): bottom = 8 + 28.8 + 4px gap = 40.8px, rounded to 41px. */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 780px) {
+  .assistant {
+    right: 16px;
+    bottom: 41px;
+  }
+
+  .assistant__figure {
+    width: 38px;
+    height: 50px;
+  }
+}
+
+/* Tablet and short desktop windows (App.css's own breakpoint): right
+   edge flush with the build button's (.app's own padding-right here,
+   16px — App.css doesn't override it in this breakpoint). Bottom: .app
+   padding-bottom (14px, also not overridden here) + the button's own
+   height (10px top padding + 10px bottom padding, from App.css's
+   .base-build-button override, + a 14px line at 1.2 line-height =
+   16.8px content, so 36.8px total) + a 4px gap above the button =
+   54.8px, rounded to 55px. Figure height fills the much taller gap up
+   to the world image at this breakpoint, same 60:79 aspect ratio. */
+@media (min-width: 900px) and (max-height: 820px) {
+  .assistant {
+    right: 16px;
+    bottom: 55px;
+  }
+
+  .assistant__figure {
+    width: 76px;
+    height: 100px;
   }
 }

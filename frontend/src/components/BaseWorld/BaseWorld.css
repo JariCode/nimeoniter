@@ -6,6 +6,11 @@
   width: 100%;
   height: auto;
   display: block;
+  /* Makes the element's own box always match the SVG's viewBox ratio
+     (400x300 = 4:3), even where App.css caps its height independently of
+     its width (mobile landscape, tablet) — otherwise the box can end up a
+     different shape than the artwork and show blank/black bars. */
+  aspect-ratio: 4 / 3;
   border: 1px solid var(--border);
   border-radius: 8px;
   background-color: #0b0a08;
