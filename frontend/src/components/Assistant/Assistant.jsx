@@ -54,6 +54,47 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
     wasOpenRef.current = open;
   }, [open]);
 
+  // In the narrow landscape/tablet layouts (Assistant.css), the resting
+  // companion fills whatever real gap exists between the world image and
+  // the build button — sizes that depend on rendered text and borders,
+  // not just the CSS values that produced them. Measure that gap in the
+  // DOM instead of guessing it, and publish it as CSS custom properties
+  // Assistant.css's narrow-layout rules read. Doesn't touch React state —
+  // this only affects the companion's own layout, nothing else.
+  useEffect(() => {
+    function measure() {
+      const button =
+        document.querySelector('.base-build-button') ||
+        document.querySelector('.base-build-complete');
+      const world = document.querySelector('.base-world-svg');
+      if (!button || !world) return;
+
+      const buttonTop = button.getBoundingClientRect().top;
+      const worldBottom = world.getBoundingClientRect().bottom;
+
+      const bottom = window.innerHeight - buttonTop + 4;
+      const maxHeight = Math.max(40, buttonTop - worldBottom - 8);
+
+      document.documentElement.style.setProperty('--companion-bottom', `${bottom}px`);
+      document.documentElement.style.setProperty('--companion-max-height', `${maxHeight}px`);
+    }
+
+    measure();
+    window.addEventListener('resize', measure);
+
+    // The game (and so .base-build-button/.base-world-svg) only appears
+    // once auth and state have loaded, so watch .app itself — it exists
+    // from the first render — for the size changes that come with that.
+    const target = document.querySelector('.app') || document.body;
+    const observer = new ResizeObserver(measure);
+    observer.observe(target);
+
+    return () => {
+      window.removeEventListener('resize', measure);
+      observer.disconnect();
+    };
+  }, []);
+
   function submitQuestion() {
     const q = draft.trim();
     if (!q || busy) return;
