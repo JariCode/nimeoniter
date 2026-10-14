@@ -6,6 +6,7 @@ import LegalModalHost from './components/Legal/LegalModalHost.jsx';
 import SignUpPage from './components/Auth/SignUpPage.jsx';
 import { isSignUpPath } from './data/signUpPath.js';
 import { ClerkProvider } from '@clerk/react';
+import { ui } from '@clerk/ui';
 
 // Checked once at load, the same way data/legalPath.js is — there is no
 // router. Without signUpUrl pointing at this in-app page, Clerk can't send
@@ -26,6 +27,9 @@ function withBaseSlash(to) {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider
+      // The Clerk UI version is pinned in package.json, so Clerk's
+      // component updates can't change the DOM that App.css styles.
+      ui={ui}
       // Clerk's own navigation is only needed on the dedicated sign-up
       // page; everywhere else Clerk runs in modals, which must not
       // navigate the page away.
