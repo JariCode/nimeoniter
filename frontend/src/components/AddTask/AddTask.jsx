@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './AddTask.css';
 
 function AddTask({ catalog = [], addedKeys, onAdd }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const addButtonRef = useRef(null);
+  const wasOpenRef = useRef(open);
 
   // Tasks not already added today
   const available = catalog.filter((task) => !addedKeys.includes(task.key));
@@ -22,9 +24,28 @@ function AddTask({ catalog = [], addedKeys, onAdd }) {
     setQuery('');
   }
 
+  // Close on Escape from anywhere in the modal, not just the search field.
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') close();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open]);
+
+  // Return focus to the "+ Add task" button when the modal closes, but not
+  // on the initial render (before it has ever been open).
+  useEffect(() => {
+    if (wasOpenRef.current && !open) {
+      addButtonRef.current?.focus();
+    }
+    wasOpenRef.current = open;
+  }, [open]);
+
   return (
     <div className="add-task">
-      <button className="add-task-button" onClick={() => setOpen(true)}>
+      <button ref={addButtonRef} className="add-task-button" onClick={() => setOpen(true)}>
         ＋ Add task
       </button>
 
@@ -49,7 +70,6 @@ function AddTask({ catalog = [], addedKeys, onAdd }) {
               placeholder="Search tasks..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Escape') close(); }}
               maxLength={50}
               aria-label="Search tasks"
               autoFocus

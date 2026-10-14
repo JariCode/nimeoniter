@@ -12,6 +12,8 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
+  const figureRef = useRef(null);
+  const wasOpenRef = useRef(open);
   // Active holiday costume, shared by the small icon and the opened figure
   // since both render the same SurvivorFace element below.
   const holiday = getHoliday();
@@ -32,6 +34,25 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
       inputRef.current.focus();
     }
   }, [open, busy]);
+
+  // Close on Escape from anywhere in the chat, not just the input.
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, onClose]);
+
+  // Return focus to the companion button when the chat closes, but not on
+  // the initial render (before it has ever been open).
+  useEffect(() => {
+    if (wasOpenRef.current && !open) {
+      figureRef.current?.focus();
+    }
+    wasOpenRef.current = open;
+  }, [open]);
 
   function submitQuestion() {
     const q = draft.trim();
@@ -100,6 +121,7 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
         )}
 
         <button
+          ref={figureRef}
           type="button"
           className="assistant__figure"
           onClick={open ? onClose : onOpen}
