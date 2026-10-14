@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import './Landing.css';
 import { useClerk } from '@clerk/react';
 
@@ -5,6 +6,16 @@ import { useClerk } from '@clerk/react';
 // title + punchline below, and a themed start button.
 function Landing({ onStart }) {
   const clerk = useClerk();
+
+  // ?sign-in is appended by main.jsx's routerReplace when Clerk sends the
+  // user back here from the sign-up page's "Already have an account?"
+  // link — strip it and reopen the sign-in modal.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has('sign-in')) {
+      history.replaceState(null, '', import.meta.env.BASE_URL);
+      handleStart();
+    }
+  }, []);
 
   function handleStart() {
     // Clerk's own layout doesn't respond to short landscape viewports, so

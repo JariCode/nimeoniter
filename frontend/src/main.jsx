@@ -14,14 +14,26 @@ import { ClerkProvider } from '@clerk/react';
 // instead — see SignUpPage.jsx.
 const showSignUpPage = isSignUpPath(window.location.pathname);
 
+// Clerk drops the trailing slash from the base path ("/nimeoniter?sign-in"),
+// but the app is served under "/nimeoniter/" — put the slash back.
+function withBaseSlash(to) {
+  const url = new URL(to, window.location.origin);
+  const base = import.meta.env.BASE_URL;
+  if (url.pathname === base.replace(/\/$/, '')) url.pathname = base;
+  return url.toString();
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider
-      routerPush={() => {}}
-      routerReplace={() => {}}
+      // Clerk's own navigation is only needed on the dedicated sign-up
+      // page; everywhere else Clerk runs in modals, which must not
+      // navigate the page away.
+      routerPush={(to) => { if (showSignUpPage) window.location.assign(withBaseSlash(to)); }}
+      routerReplace={(to) => { if (showSignUpPage) window.location.replace(withBaseSlash(to)); }}
       signUpUrl={`${import.meta.env.BASE_URL}sign-up`}
-      signInUrl={import.meta.env.BASE_URL}
-       telemetry={{
+      signInUrl={`${import.meta.env.BASE_URL}?sign-in`}
+      telemetry={{
         disabled: import.meta.env.VITE_CLERK_TELEMETRY_DISABLED === 'true',
       }}
       appearance={{
