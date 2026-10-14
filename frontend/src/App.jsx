@@ -618,7 +618,38 @@ function App() {
                   },
                 },
               }}
-            />
+            >
+              {/* UserButton.Link isn't used here — ClerkProvider's
+                  routerPush is intentionally a no-op in the game, so a Link
+                  item would navigate nowhere. These open LegalModalHost's
+                  modal instead, the same way the landing page's footer
+                  links and the sign-up page's consent links do. */}
+              <UserButton.MenuItems>
+                <UserButton.Action label="manageAccount" />
+                <UserButton.Action
+                  label="Terms of Service"
+                  labelIcon={(
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 1.5h5.5L12.5 4.5V14.5H4V1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+                      <path d="M9.5 1.5V4.5H12.5" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+                      <path d="M6 8H10M6 10.5H10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                    </svg>
+                  )}
+                  onClick={() => window.dispatchEvent(new CustomEvent('nimeoniter:open-legal', { detail: 'terms' }))}
+                />
+                <UserButton.Action
+                  label="Privacy Policy"
+                  labelIcon={(
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8 1.5L13 3.5V7.5C13 11 10.5 13.3 8 14.5C5.5 13.3 3 11 3 7.5V3.5L8 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+                      <path d="M5.8 8L7.3 9.5L10.3 6.3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                  onClick={() => window.dispatchEvent(new CustomEvent('nimeoniter:open-legal', { detail: 'privacy' }))}
+                />
+                <UserButton.Action label="signOut" />
+              </UserButton.MenuItems>
+            </UserButton>
           </div>
 
           <div className="app">
