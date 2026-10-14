@@ -40,7 +40,7 @@ function Landing({ onStart }) {
           colorBorder: '#444444',
           borderRadius: '4px',
           ...(isCompactLandscape && {
-            spacing: '0.5rem',
+            spacing: '0.4rem',
             fontSize: '0.7rem',
           }),
         },
