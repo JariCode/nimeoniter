@@ -337,4 +337,29 @@
     height: min(var(--companion-max-height), 140px);
     aspect-ratio: 60 / 79;
   }
+
+  /* Open: cover the whole screen again (the resting bottom offset above
+     would otherwise push the open view up and cut off the chat), and put
+     the chat beside the companion, because the two stacked are taller
+     than a short screen. */
+  .assistant--open {
+    right: 0;
+    bottom: 0;
+  }
+
+  .assistant--open .assistant__stage {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .assistant--open .assistant__figure {
+    width: 240px;
+    height: 312px;
+  }
+
+  .assistant__log {
+    max-height: 50vh;
+  }
 }
