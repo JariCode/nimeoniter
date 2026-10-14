@@ -65,11 +65,16 @@ function AddTask({ catalog = [], addedKeys, onAdd }) {
                   <li
                     key={task.key}
                     className="add-task-option"
-                    onClick={() => onAdd(task)}
                   >
-                    <span className="add-task-option-icon">{task.icon}</span>
-                    <span className="add-task-option-name">{task.name}</span>
-                    <span className="add-task-option-xp">+{task.xp} XP</span>
+                    <button
+                      type="button"
+                      className="add-task-option-button"
+                      onClick={() => onAdd(task)}
+                    >
+                      <span className="add-task-option-icon">{task.icon}</span>
+                      <span className="add-task-option-name">{task.name}</span>
+                      <span className="add-task-option-xp">+{task.xp} XP</span>
+                    </button>
                   </li>
                 ))}
               </ul>
