@@ -142,4 +142,14 @@
     font-size: 11px;
     letter-spacing: 1px;
   }
+
+  .landing-legal-links {
+    margin-top: 8px;
+    gap: 12px;
+  }
+
+  .landing-legal-links a {
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
 }

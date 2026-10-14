@@ -148,6 +148,20 @@
 
   .legal-modal-body {
     padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .legal-modal-title {
+    font-size: 14px;
+  }
+
+  .legal-modal-body h2 {
+    font-size: 14px;
+    margin-top: 18px;
+  }
+
+  .legal-modal-body table {
+    font-size: 12px;
   }
 }
 
