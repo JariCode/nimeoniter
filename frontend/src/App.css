@@ -33,6 +33,45 @@
   border: 1px solid rgba(197, 138, 34, 0.4) !important;
 }
 
+/* Clerk's legal-consent checkbox: the browser default border is dark on
+   our dark card, so draw our own box in the theme's amber. */
+.cl-formFieldCheckboxInput {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1px solid #c58a22 !important;
+  border-radius: 3px;
+  background-color: #151515 !important;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cl-formFieldCheckboxInput:checked {
+  background-color: #c58a22 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23151515' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 12px 12px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.cl-formFieldCheckboxInput:focus-visible {
+  outline: 2px solid #c58a22;
+  outline-offset: 2px;
+}
+
+/* Clerk's show/hide password button: the default icon colour is too dark
+   on our dark input, so lighten it and brighten it on hover/focus. */
+.cl-formFieldInputShowPasswordButton {
+  color: #a89a80 !important;
+}
+
+.cl-formFieldInputShowPasswordButton:hover,
+.cl-formFieldInputShowPasswordButton:focus-visible {
+  color: #c58a22 !important;
+}
+
 /* Desktop: two columns starting from the same top line */
 @media (min-width: 900px) {
   .app {

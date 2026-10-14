@@ -132,6 +132,11 @@ function Landing({ onStart }) {
         <button className="landing-start" onClick={handleStart}>
           Light the fire
         </button>
+
+        <div className="landing-legal-links">
+          <a href={`${import.meta.env.BASE_URL}terms`}>Terms of Service</a>
+          <a href={`${import.meta.env.BASE_URL}privacy`}>Privacy Policy</a>
+        </div>
       </div>
     </div>
   );
