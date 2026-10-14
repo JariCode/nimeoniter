@@ -201,6 +201,13 @@ function App() {
       setTimeout(() => setAssistantSpeaking(false), readMs);
     } catch (err) {
       console.error('Assistant failed:', err);
+      const message = err.message === 'Assistant is resting. Try again in a little while.'
+        ? err.message
+        : "The signal's gone quiet. Try me again in a moment.";
+      setAssistantHistory((h) => [...h, { role: 'assistant', content: message }]);
+      setAssistantSpeaking(true);
+      const readMs = Math.min(9000, 1800 + message.length * 45);
+      setTimeout(() => setAssistantSpeaking(false), readMs);
     } finally {
       setAssistantBusy(false);
     }
