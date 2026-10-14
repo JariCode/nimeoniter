@@ -3,13 +3,24 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 import LegalModalHost from './components/Legal/LegalModalHost.jsx';
+import SignUpPage from './components/Auth/SignUpPage.jsx';
+import { isSignUpPath } from './data/signUpPath.js';
 import { ClerkProvider } from '@clerk/react';
+
+// Checked once at load, the same way data/legalPath.js is — there is no
+// router. Without signUpUrl pointing at this in-app page, Clerk can't send
+// the browser back here after Google OAuth when a sign-up needs an extra
+// step (e.g. legal consent), and falls back to its own Account Portal
+// instead — see SignUpPage.jsx.
+const showSignUpPage = isSignUpPath(window.location.pathname);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider
       routerPush={() => {}}
       routerReplace={() => {}}
+      signUpUrl={`${import.meta.env.BASE_URL}sign-up`}
+      signInUrl={import.meta.env.BASE_URL}
        telemetry={{
         disabled: import.meta.env.VITE_CLERK_TELEMETRY_DISABLED === 'true',
       }}
@@ -104,7 +115,7 @@ createRoot(document.getElementById('root')).render(
         },
       }}
     >
-      <App />
+      {showSignUpPage ? <SignUpPage /> : <App />}
       <LegalModalHost />
     </ClerkProvider>
   </StrictMode>

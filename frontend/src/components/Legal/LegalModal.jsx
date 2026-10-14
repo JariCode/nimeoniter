@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import PrivacyPolicy from './PrivacyPolicy';
 import TermsOfService from './TermsOfService';
 import './LegalModal.css';
@@ -6,10 +7,18 @@ import './LegalModal.css';
 // Terms of Service / Privacy Policy as a modal over whatever is currently
 // showing (landing, game, or a Clerk form) — see LegalModalHost for how it
 // gets opened and closed.
+//
+// When a Clerk modal (sign-up/sign-in) is open, Clerk locks page scrolling
+// and only allows scrolling inside its own modal. Rendering this modal into
+// Clerk's backdrop keeps it inside that allowed area, so the text can be
+// scrolled with the wheel and touch. Otherwise it goes to document.body.
 function LegalModal({ page, onClose }) {
   const isTerms = page === 'terms';
   const title = isTerms ? 'Terms of Service' : 'Privacy Policy';
   const panelRef = useRef(null);
+  const [container] = useState(
+    () => document.querySelector('.cl-modalBackdrop') || document.body
+  );
 
   // Swap the document title for as long as the modal is open, and move
   // focus into it so screen readers land on the dialog, not whatever was
@@ -23,17 +32,27 @@ function LegalModal({ page, onClose }) {
     };
   }, [title]);
 
-  // Close on Escape from anywhere in the modal.
+  // Close on Escape. Listen on window in the capture phase and stop the
+  // event, so an open Clerk modal underneath doesn't close at the same time.
   useEffect(() => {
     function handleKeyDown(e) {
-      if (e.key === 'Escape') onClose();
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      e.preventDefault();
+      onClose();
     }
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [onClose]);
 
-  return (
-    <div className="legal-modal-overlay" onClick={onClose}>
+  // Clicks must not reach Clerk's backdrop, which would close the Clerk modal.
+  function handleOverlayClick(e) {
+    e.stopPropagation();
+    onClose();
+  }
+
+  return createPortal(
+    <div className="legal-modal-overlay" onClick={handleOverlayClick}>
       <div
         ref={panelRef}
         className="legal-modal"
@@ -58,7 +77,8 @@ function LegalModal({ page, onClose }) {
           {isTerms ? <TermsOfService /> : <PrivacyPolicy />}
         </div>
       </div>
-    </div>
+    </div>,
+    container
   );
 }
 
