@@ -284,10 +284,13 @@
     bottom: var(--companion-bottom);
   }
 
+  /* Width computed from the height instead of width: auto + aspect-ratio:
+     Safari can ignore aspect-ratio on a <button> whose content is a
+     percentage-sized SVG, so the button grew wider than the figure and
+     the face was drawn far left of the right corner. */
   .assistant__figure {
-    width: auto;
     height: min(var(--companion-max-height), 140px);
-    aspect-ratio: 60 / 79;
+    width: calc(min(var(--companion-max-height), 140px) * 60 / 79);
   }
 
   .assistant--open .assistant__stage {
@@ -332,10 +335,10 @@
     bottom: var(--companion-bottom);
   }
 
+  /* Same explicit width as the landscape-phone rule above (Safari). */
   .assistant__figure {
-    width: auto;
     height: min(var(--companion-max-height), 140px);
-    aspect-ratio: 60 / 79;
+    width: calc(min(var(--companion-max-height), 140px) * 60 / 79);
   }
 
   /* Open: cover the whole screen again (the resting bottom offset above
