@@ -65,6 +65,11 @@ app.use(cors({
   credentials: true,
 }));
 
+// Rate limiting — before every route, the webhook included, so no endpoint
+// takes unlimited requests. It reads no body, so the webhook's raw-body
+// signature check below is unaffected.
+app.use(limiter);
+
 // Clerk webhooks — must come BEFORE express.json() because it needs the raw body
 app.use('/api/webhooks', require('./routes/webhooks'));
 
@@ -73,9 +78,6 @@ app.use(express.json({ limit: '100kb' }));
 
 // NoSQL injection protection
 app.use(sanitize);
-
-// Rate limiting
-app.use(limiter);
 
 // Clerk: reads the session token and attaches auth info to requests. Only
 // tokens issued for our own frontend origin(s) are accepted — the same list
