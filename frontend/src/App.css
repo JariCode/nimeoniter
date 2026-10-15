@@ -85,6 +85,16 @@
   color: #c58a22 !important;
 }
 
+/* Touch screens: Clerk sizes the verification code boxes from its spacing
+   (~32px), not its font size, so give them a tappable size of their own */
+@media (pointer: coarse) {
+  .cl-otpCodeFieldInput {
+    width: 44px !important;
+    height: 48px !important;
+    font-size: 20px !important;
+  }
+}
+
 /* Desktop: two columns starting from the same top line */
 @media (min-width: 900px) {
   .app {
