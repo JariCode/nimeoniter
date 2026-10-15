@@ -3,7 +3,7 @@ function TermsOfService() {
   return (
     <>
       <h1>Terms of Service</h1>
-      <p>Last updated: 14 October 2026</p>
+      <p>Last updated: 15 October 2026</p>
 
       <p>
         By creating an account or using Nimeoniter, you agree to these Terms of Service. If you do not agree, please
@@ -21,7 +21,7 @@ function TermsOfService() {
       <h2>2. Access and accounts</h2>
       <ul>
         <li>Nimeoniter is invite-only. You can only create an account with an invitation from the developer.</li>
-        <li>You must be at least 13 years old to use Nimeoniter.</li>
+        <li>You must be at least 16 years old to use Nimeoniter.</li>
         <li>Sign-in is handled by Clerk, with an email address and password or with Google.</li>
         <li>You are responsible for keeping your sign-in details safe and for all activity under your account.</li>
       </ul>
