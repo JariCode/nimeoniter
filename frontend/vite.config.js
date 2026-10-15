@@ -21,17 +21,20 @@ function securityHeaders(env) {
   const clerkApi = clerkFrontendApi(env.VITE_CLERK_PUBLISHABLE_KEY)
   const apiOrigin = env.VITE_API_URL ? new URL(env.VITE_API_URL).origin : null
   const turnstile = 'https://challenges.cloudflare.com'
+  // Clerk's abuse and fraud protection (production instances); its hosts
+  // also use ports other than 443, hence the :* in connect-src
+  const clerkProtect = 'https://*.protect.clerk.com'
 
   const csp = [
     "default-src 'self'",
-    `script-src 'self' ${clerkApi ?? ''} ${turnstile}`,
+    `script-src 'self' ${clerkApi ?? ''} ${turnstile} ${clerkProtect}`,
     // Clerk injects its component styles at runtime, and the SVG world uses
     // inline style attributes, so inline styles must stay allowed
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https://img.clerk.com",
     "font-src 'self'",
-    `connect-src 'self' ${clerkApi ?? ''} ${apiOrigin ?? ''}`,
-    `frame-src ${turnstile}`,
+    `connect-src 'self' ${clerkApi ?? ''} ${apiOrigin ?? ''} ${clerkProtect}:*`,
+    `frame-src ${turnstile} ${clerkProtect}`,
     "worker-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
