@@ -39,9 +39,11 @@ function Landing({ onStart }) {
           colorInputForeground: '#e6e0d2',
           colorBorder: '#444444',
           borderRadius: '4px',
+          // Big enough to tap on a phone; the modal scrolls if a step is
+          // taller than the short screen (App.css .cl-modalContent)
           ...(isCompactLandscape && {
-            spacing: '0.4rem',
-            fontSize: '0.7rem',
+            spacing: '0.65rem',
+            fontSize: '0.9rem',
           }),
         },
         elements: {
