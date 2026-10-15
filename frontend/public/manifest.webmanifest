@@ -1,0 +1,17 @@
+{
+  "id": "/nimeoniter/",
+  "name": "Nimeoniter",
+  "short_name": "Nimeoniter",
+  "description": "Turn everyday tasks into XP, resources and progress in your own evolving world.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "icons": [
+    { "src": "img/Nimeoniter-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/Nimeoniter-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "img/Nimeoniter-icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
