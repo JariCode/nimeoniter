@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files (dev .env and the production .env.live)
+.env
+.env.*
+!.env.example
