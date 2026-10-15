@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "node --watch server.js"
   },
   "keywords": [],
   "author": "",
@@ -21,8 +21,5 @@
     "mongoose": "^9.9.4",
     "openai": "^7.15.0",
     "svix": "^2.3.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.14"
   }
 }
