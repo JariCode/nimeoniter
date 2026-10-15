@@ -43,15 +43,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Restrict browser features the API doesn't need
-app.use((req, res, next) => {
-  res.setHeader(
-    'Permissions-Policy',
-    'geolocation=(), microphone=(), camera=(), payment=()'
-  );
-  next();
-});
-
 // Hide the Express fingerprint
 app.disable('x-powered-by');
 
