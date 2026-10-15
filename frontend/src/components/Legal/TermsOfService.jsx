@@ -21,7 +21,7 @@ function TermsOfService() {
       <h2>2. Access and accounts</h2>
       <ul>
         <li>Nimeoniter is invite-only. You can only create an account with an invitation from the developer.</li>
-        <li>You must be at least 16 years old to use Nimeoniter.</li>
+        <li>You must be at least 18 years old to use Nimeoniter.</li>
         <li>Sign-in is handled by Clerk, with an email address and password or with Google.</li>
         <li>You are responsible for keeping your sign-in details safe and for all activity under your account.</li>
       </ul>

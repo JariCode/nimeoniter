@@ -18,7 +18,7 @@ function PrivacyPolicy() {
       <h2>2. Who can use Nimeoniter</h2>
       <p>
         Nimeoniter is invite-only: you can only create an account with an invitation from the developer. You must be
-        at least 16 years old to use the application.
+        at least 18 years old to use the application.
       </p>
 
       <h2>3. Information we collect</h2>
