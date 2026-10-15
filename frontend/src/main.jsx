@@ -41,6 +41,9 @@ createRoot(document.getElementById('root')).render(
       routerReplace={(to) => { if (showSignUpPage) window.location.replace(withBaseSlash(to)); }}
       signUpUrl={`${import.meta.env.BASE_URL}sign-up`}
       signInUrl={`${import.meta.env.BASE_URL}?sign-in`}
+      // Address for Clerk's "Email support" button (e.g. on the restricted
+      // sign-up page); without it Clerk builds one that doesn't exist
+      supportEmail={import.meta.env.VITE_SUPPORT_EMAIL}
       telemetry={{
         disabled: import.meta.env.VITE_CLERK_TELEMETRY_DISABLED === 'true',
       }}
