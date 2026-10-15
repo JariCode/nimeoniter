@@ -77,8 +77,11 @@ app.use(sanitize);
 // Rate limiting
 app.use(limiter);
 
-// Clerk: reads the session token and attaches auth info to requests
-app.use(clerkMiddleware());
+// Clerk: reads the session token and attaches auth info to requests. Only
+// tokens issued for our own frontend origin(s) are accepted — the same list
+// CORS allows (ALLOWED_ORIGIN) — so a token minted for another site can't be
+// replayed against this API.
+app.use(clerkMiddleware({ authorizedParties: allowedOrigins }));
 
 // Health check
 app.get('/', (req, res) => {
