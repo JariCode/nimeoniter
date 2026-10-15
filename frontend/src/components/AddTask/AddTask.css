@@ -220,3 +220,10 @@
     padding: 8px;
   }
 }
+
+/* iOS Safari zooms into a focused field whose text is under 16px */
+@media (pointer: coarse) {
+  .add-task-search {
+    font-size: 16px;
+  }
+}

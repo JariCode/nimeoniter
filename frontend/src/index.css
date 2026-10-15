@@ -15,6 +15,13 @@
   box-sizing: border-box;
 }
 
+/* iOS Safari enlarges text on its own in landscape; keep the sizes the
+   layout was designed for */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   background-color: var(--bg-dark);
   color: var(--text-light);
