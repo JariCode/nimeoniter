@@ -61,15 +61,17 @@
   outline-offset: 2px;
 }
 
-/* Clerk's show/hide password button: the default icon colour is too dark
-   on our dark input, so lighten it and brighten it on hover/focus. */
-.cl-formFieldInputShowPasswordButton {
-  color: #a89a80 !important;
+/* Clerk's email verification code: the digit boxes have almost no visible
+   border on our dark card (hard to see on a phone), so draw one in the
+   card's amber and brighten it on the box being typed into. */
+.cl-otpCodeFieldInput {
+  border: 1px solid #8a641c !important;
+  border-radius: 4px !important;
+  background-color: #1c1c1c !important;
 }
 
-.cl-formFieldInputShowPasswordButton:hover,
-.cl-formFieldInputShowPasswordButton:focus-visible {
-  color: #c58a22 !important;
+.cl-otpCodeFieldInput:focus {
+  border-color: #c58a22 !important;
 }
 
 /* Desktop: two columns starting from the same top line */
@@ -209,9 +211,11 @@
     right: 4px;
   }
 
+  /* Fits the 20px title row plus its 4px top offset (.user-menu), ending
+     at the row's underline, and the title's 28px right padding */
   .cl-userButtonAvatarBox {
-    width: 20px !important;
-    height: 20px !important;
+    width: 24px !important;
+    height: 24px !important;
   }
 
   /* Header: one row (greeting + level side by side) instead of stacked, so
@@ -412,23 +416,25 @@
 
     /* Clerk sign-in / sign-up: tighten Clerk's generous vertical spacing so
      the whole form, including the "Sign up" footer row, fits a short
-     landscape screen. Scoped to these roots so the profile is unaffected. */
+     landscape screen. Scoped to these roots so the profile is unaffected.
+     Production Clerk has no "Development mode" row, so these leave a
+     little more room than the dev-only minimum did. */
   .cl-signIn-root .cl-card,
   .cl-signUp-root .cl-card {
-    padding: 14px 20px !important;
-    gap: 12px !important;
+    padding: 18px 24px !important;
+    gap: 16px !important;
   }
 
   .cl-signIn-root .cl-header,
   .cl-signUp-root .cl-header {
-    gap: 2px !important;
+    gap: 4px !important;
   }
 
   .cl-signIn-root .cl-main,
   .cl-signUp-root .cl-main,
   .cl-signIn-root .cl-form,
   .cl-signUp-root .cl-form {
-    gap: 10px !important;
+    gap: 14px !important;
   }
 
   .cl-signIn-root .cl-footer,
@@ -439,7 +445,7 @@
 
   .cl-signIn-root .cl-footerAction,
   .cl-signUp-root .cl-footerAction {
-    padding: 8px !important;
+    padding: 10px !important;
   }
 
   .cl-cardBox,
