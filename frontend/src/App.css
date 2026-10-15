@@ -227,22 +227,16 @@
     height: calc(100dvh - 12px);
   }
 
+  /* Moved in from the screen edge, roughly in line with the world
+     image's right edge */
   .user-menu {
-    top: 4px;
-    right: 4px;
+    top: 2px;
+    right: 10px;
   }
-
-  /* Fits the 20px title row plus its 4px top offset (.user-menu), ending
-     at the row's underline, and the title's 28px right padding */
+  /* Centred on the 20px title row, ending at its underline */
   .cl-userButtonAvatarBox {
-    width: 24px !important;
-    height: 24px !important;
-  }
-
-  /* The avatar stays small, but its tap area reaches ~44px */
-  .cl-userButtonTrigger {
-    padding: 10px !important;
-    margin: -10px !important;
+    width: 28px !important;
+    height: 28px !important;
   }
 
   /* Header: one row (greeting + level side by side) instead of stacked, so
@@ -505,8 +499,28 @@
     padding-top: 8px !important;
     padding-bottom: 8px !important;
   }
-}
 
+  /* Profile on phones: the menu (hamburger) and close buttons and the
+     avatars are sized from Clerk's spacing, which is scaled down here,
+     so give them tappable sizes of their own */
+  .cl-userProfile-root .cl-navbarMobileMenuButton,
+  .cl-modalCloseButton {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .cl-userProfile-root .cl-navbarMobileMenuButtonIcon,
+  .cl-modalCloseButton svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .cl-userProfile-root .cl-avatarBox,
+  .cl-userProfile-root .cl-userPreviewAvatarBox {
+    width: 64px !important;
+    height: 64px !important;
+  }
+}
 /* Mobile landscape, wider phones (e.g. 844x390): meaningfully more width
    and a little more height than the 667x375 rules above, so grow fonts,
    spacing and the world image to use it instead of leaving it blank.
