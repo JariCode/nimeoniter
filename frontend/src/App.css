@@ -227,6 +227,27 @@
     height: calc(100dvh - 12px);
   }
 
+  /* Same full height as .app-right, with the task list taking whatever
+     room is left, so the resource bar's bottom edge lines up with the
+     build button's on every phone */
+  .app-left {
+    height: calc(100dvh - 12px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Only the task list grows or shrinks; everything else keeps its size */
+  .app-left > * {
+    flex-shrink: 0;
+  }
+
+  .mission-list {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
   /* Right edge in line with the world image's on every phone: the image's
      width depends on the screen, so its distance from the viewport's right
      edge is measured in Assistant.jsx (--world-right-inset). 10px (the
@@ -335,10 +356,12 @@
     font-size: 10px;
   }
 
-  /* Task list: the priority in this layout, gets whatever height the
-     other (shrunk) panels free up */
+  /* Task list: fills whatever height the other (shrunk) panels leave,
+     and scrolls inside that (overflow-y in MissionList.css) */
   .mission-list-items {
-    max-height: 135px;
+    max-height: none;
+    flex: 1;
+    min-height: 0;
   }
 
   .mission {
@@ -540,6 +563,11 @@
     height: calc(100dvh - 16px);
   }
 
+  /* Same full height as .app-right here too (see the block above) */
+  .app-left {
+    height: calc(100dvh - 16px);
+  }
+
   .header-greeting {
     font-size: 12px;
   }
@@ -611,8 +639,10 @@
     font-size: 11px;
   }
 
+  /* No fixed cap here either: the task list fills the column (see the
+     block above) */
   .mission-list-items {
-    max-height: 142px;
+    max-height: none;
   }
 
   .mission {
