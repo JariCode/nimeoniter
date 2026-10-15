@@ -70,7 +70,8 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
       if (!button || !world) return;
 
       const buttonTop = button.getBoundingClientRect().top;
-      const worldBottom = world.getBoundingClientRect().bottom;
+      const worldRect = world.getBoundingClientRect();
+      const worldBottom = worldRect.bottom;
 
       const bottom = window.innerHeight - buttonTop + 4;
       const gap = buttonTop - worldBottom - 8;
@@ -85,6 +86,13 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
 
       document.documentElement.style.setProperty('--companion-bottom', `${bottom}px`);
       document.documentElement.style.setProperty('--companion-max-height', `${maxHeight}px`);
+
+      // App.css lines the user menu avatar up with the world image's right
+      // edge on landscape phones; the image's width depends on the screen,
+      // so publish its measured distance from the viewport's right edge.
+      // clientWidth (not innerWidth) is the box position: fixed uses.
+      const worldRightInset = document.documentElement.clientWidth - worldRect.right;
+      document.documentElement.style.setProperty('--world-right-inset', `${worldRightInset}px`);
     }
 
     measure();

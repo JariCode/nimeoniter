@@ -227,11 +227,14 @@
     height: calc(100dvh - 12px);
   }
 
-  /* Moved in from the screen edge, roughly in line with the world
-     image's right edge */
+  /* Right edge in line with the world image's on every phone: the image's
+     width depends on the screen, so its distance from the viewport's right
+     edge is measured in Assistant.jsx (--world-right-inset). 10px (the
+     build button's edge) until measured. 4px from the top keeps the whole
+     tap area on screen. */
   .user-menu {
-    top: 2px;
-    right: 10px;
+    top: 4px;
+    right: var(--world-right-inset, 10px);
   }
   /* Centred on the 20px title row, ending at its underline */
   .cl-userButtonAvatarBox {
