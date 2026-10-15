@@ -366,3 +366,10 @@
     max-height: 50vh;
   }
 }
+
+/* iOS Safari zooms into a focused field whose text is under 16px */
+@media (pointer: coarse) {
+  .assistant__input {
+    font-size: 16px;
+  }
+}

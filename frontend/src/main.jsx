@@ -24,6 +24,10 @@ function withBaseSlash(to) {
   return url.toString();
 }
 
+// Touch screens: Clerk's default 13px text, fields and buttons are too
+// small to tap reliably, so scale Clerk's whole UI up there
+const IS_TOUCH = window.matchMedia('(pointer: coarse)').matches;
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider
@@ -55,6 +59,7 @@ createRoot(document.getElementById('root')).render(
           colorInputForeground: '#e6e0d2',
           colorBorder: '#444444',
           borderRadius: '4px',
+          ...(IS_TOUCH && { fontSize: '1rem' }),
         },
         elements: {
           card: {

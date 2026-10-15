@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import './AddTask.css';
 
+// Touch screens open the on-screen keyboard on focus, which covers most of
+// a landscape phone screen, so the search field is focused automatically
+// only with a mouse or trackpad
+const AUTOFOCUS_SEARCH = !window.matchMedia('(pointer: coarse)').matches;
+
 function AddTask({ catalog = [], addedKeys, onAdd }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -72,7 +77,7 @@ function AddTask({ catalog = [], addedKeys, onAdd }) {
               onChange={(e) => setQuery(e.target.value)}
               maxLength={50}
               aria-label="Search tasks"
-              autoFocus
+              autoFocus={AUTOFOCUS_SEARCH}
             />
 
             {available.length === 0 ? (
