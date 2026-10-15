@@ -236,7 +236,7 @@
     top: 4px;
     right: var(--world-right-inset, 10px);
   }
-  /* Centred on the 20px title row, ending at its underline */
+  /* Fits inside the 28px title row, above its underline */
   .cl-userButtonAvatarBox {
     width: 28px !important;
     height: 28px !important;
@@ -251,7 +251,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    height: 20px;
+    height: 28px;
     padding: 0;
     border-bottom: 1px solid var(--border);
   }
@@ -338,7 +338,7 @@
   /* Task list: the priority in this layout, gets whatever height the
      other (shrunk) panels free up */
   .mission-list-items {
-    max-height: 143px;
+    max-height: 135px;
   }
 
   .mission {
@@ -372,7 +372,7 @@
   .base-status-title {
     display: flex;
     align-items: center;
-    height: 20px;
+    height: 28px;
     font-size: 11px;
     padding-bottom: 0;
     padding-right: 28px;
@@ -394,7 +394,7 @@
     width: auto;
     height: auto;
     max-width: 100%;
-    max-height: 238px;
+    max-height: 230px;
     margin: 0 auto;
   }
 
@@ -612,7 +612,7 @@
   }
 
   .mission-list-items {
-    max-height: 150px;
+    max-height: 142px;
   }
 
   .mission {
