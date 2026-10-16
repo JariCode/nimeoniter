@@ -780,4 +780,8 @@
     height: 44px;
     transform: translate(-50%, -50%);
   }
+
+    .mission-list-items {
+    overflow-x: hidden;
+  }
 }
