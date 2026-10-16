@@ -149,7 +149,8 @@
     max-height: 240px;
   }
 
-  .base-status-title {
+  .base-status-title,
+  .base-loading-title {
     margin-bottom: 8px;
   }
 
@@ -162,18 +163,21 @@
     height: calc(100dvh - 149.5px);
   }
 
-  .base-status {
+  .base-status,
+  .base-loading {
     height: 100%;
     display: flex;
     flex-direction: column;
   }
 
-  .base-world {
+  .base-world,
+  .base-loading-frame {
     flex: 1;
     min-height: 0;
   }
 
-  .base-world-svg {
+  .base-world-svg,
+  .base-loading-svg {
     width: auto;
     height: auto;
     max-width: 100%;
@@ -186,23 +190,28 @@
     margin: 0 auto;
   }
 
-  .base-world-stage {
+  .base-world-stage,
+  .base-loading-stage {
     margin-top: 6px;
   }
 
-  .base-build {
+  .base-build,
+  .base-loading-build {
     margin-top: 10px;
   }
 
-  .base-build-header {
+  .base-build-header,
+  .base-loading-build-header {
     margin-bottom: 6px;
   }
 
-  .base-build-cost {
+  .base-build-cost,
+  .base-loading-build-cost {
     margin-bottom: 8px;
   }
 
-  .base-build-button {
+  .base-build-button,
+  .base-loading-build-button {
     padding: 10px;
   }
 }
@@ -392,7 +401,8 @@
      pushed the build button off-screen — cap its height instead of
      letting it fill the column width at a 4:3 ratio. Fixed height +
      border-bottom matches .header's box so the two underlines line up. */
-  .base-status-title {
+  .base-status-title,
+  .base-loading-title {
     display: flex;
     align-items: center;
     height: 28px;
@@ -407,13 +417,15 @@
      column, same as it already is at this size — see .base-build below
      and .assistant in Assistant.css for the resting companion that sits
      to the right of the NEXT/cost rows, above the button. */
-  .base-status {
+  .base-status,
+  .base-loading {
     height: 100%;
     display: flex;
     flex-direction: column;
   }
 
-  .base-world-svg {
+  .base-world-svg,
+  .base-loading-svg {
     width: auto;
     height: auto;
     max-width: 100%;
@@ -421,7 +433,8 @@
     margin: 0 auto;
   }
 
-  .base-world-stage {
+  .base-world-stage,
+  .base-loading-stage {
     margin-top: 2px;
     font-size: 11px;
   }
@@ -431,19 +444,23 @@
      and not just whatever the content happens to leave — the resting
      companion sits in that gap. */
   .base-build,
-  .base-build-complete {
+  .base-build-complete,
+  .base-loading-build {
     margin-top: auto;
   }
 
-  .base-build-header {
+  .base-build-header,
+  .base-loading-build-header {
     margin-bottom: 4px;
   }
 
-  .base-build-cost {
+  .base-build-cost,
+  .base-loading-build-cost {
     margin-bottom: 6px;
   }
 
-  .base-build-button {
+  .base-build-button,
+  .base-loading-build-button {
     padding: 6px;
   }
 
@@ -665,7 +682,8 @@
     font-size: 9px;
   }
 
-  .base-status-title {
+  .base-status-title,
+  .base-loading-title {
     margin-bottom: 2px;
   }
 
@@ -673,20 +691,24 @@
      mechanism as the tablet breakpoint — see the comment on .base-world
      there. Lets the world image use the extra width at this size without
      a guessed max-height leaving it mismatched against its own ratio. */
-  .base-world {
+  .base-world,
+  .base-loading-frame {
     flex: 1;
     min-height: 0;
   }
 
-  .base-world-svg {
+  .base-world-svg,
+  .base-loading-svg {
     max-height: calc(100% - 18px);
   }
 
-  .base-world-stage {
+  .base-world-stage,
+  .base-loading-stage {
     margin-top: 1px;
   }
 
-  .base-build-cost {
+  .base-build-cost,
+  .base-loading-build-cost {
     margin-bottom: 4px;
   }
 }

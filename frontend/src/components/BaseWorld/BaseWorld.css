@@ -1,8 +1,10 @@
-.base-world {
+.base-world,
+.base-loading-frame {
   width: 100%;
 }
 
-.base-world-svg {
+.base-world-svg,
+.base-loading-svg {
   width: 100%;
   height: auto;
   display: block;
@@ -16,7 +18,8 @@
   background-color: #0b0a08;
 }
 
-.base-world-stage {
+.base-world-stage,
+.base-loading-stage {
   text-align: center;
   margin-top: 12px;
   font-size: 14px;

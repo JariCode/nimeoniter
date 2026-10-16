@@ -1,8 +1,10 @@
-.base-status {
+.base-status,
+.base-loading {
   width: 100%;
 }
 
-.base-status-title {
+.base-status-title,
+.base-loading-title {
   font-size: 14px;
   letter-spacing: 3px;
   color: var(--text-dim);
@@ -11,18 +13,21 @@
   margin-bottom: 16px;
 }
 
-.base-build {
+.base-build,
+.base-loading-build {
   margin-top: 16px;
 }
 
-.base-build-header {
+.base-build-header,
+.base-loading-build-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.base-build-label {
+.base-build-label,
+.base-loading-build-label {
   font-size: 13px;
   letter-spacing: 2px;
   color: var(--accent);
@@ -34,7 +39,8 @@
   color: #c0504d;
 }
 
-.base-build-cost {
+.base-build-cost,
+.base-loading-build-cost {
   display: flex;
   gap: 16px;
   margin-bottom: 12px;
@@ -49,7 +55,8 @@
   color: #c0504d;
 }
 
-.base-build-button {
+.base-build-button,
+.base-loading-build-button {
   width: 100%;
   padding: 12px;
   background-color: var(--accent-dim);
@@ -67,7 +74,8 @@
   color: #1a1a1a;
 }
 
-.base-build-button:disabled {
+.base-build-button:disabled,
+.base-loading-build-button:disabled {
   background-color: var(--bg-panel);
   color: var(--text-dim);
   border-color: var(--border);
