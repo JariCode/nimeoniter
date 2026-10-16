@@ -740,3 +740,44 @@
     margin-bottom: 4px;
   }
 }
+
+/* Touch screens: bigger tap targets for the task row and day nav.
+   The visible glyphs grow a little, and an invisible ::after area brings
+   each target to 44x44 px without changing the row height, so the task
+   list and the task picker rows stay the same height (TC12-015).
+   Placed last so it wins over the landscape breakpoints above. */
+@media (pointer: coarse) {
+  .mission-check,
+  .mission-remove,
+  .day-nav-arrow {
+    position: relative;
+    line-height: 1;
+  }
+
+  .mission-check {
+    font-size: 22px;
+  }
+
+  .mission-remove {
+    font-size: 20px;
+    padding: 0 6px;
+  }
+
+  .day-nav-arrow {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  .mission-check::after,
+  .mission-remove::after,
+  .day-nav-arrow::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+}
