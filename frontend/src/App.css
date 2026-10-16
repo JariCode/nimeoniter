@@ -101,12 +101,44 @@
     display: grid;
     grid-template-columns: 1fr 1.3fr;
     gap: 40px;
-    align-items: start;
+    align-items: stretch;
   }
 
   .app-right {
     /* Tuned against a screenshot so its divider line matches the header's. */
     margin-top: 121.5px;
+  }
+
+  /* The row's height comes from .app-right (world image + build bar), not
+     from however many tasks are in the list. contain: size makes
+     .app-left's own content (specifically a long task list) invisible to
+     the grid row's auto-sizing, so align-items: stretch above then
+     stretches this column to .app-right's height instead of the row
+     growing to fit it — see .mission-list-items below, which absorbs the
+     difference by scrolling instead of growing. */
+  .app-left {
+    display: flex;
+    flex-direction: column;
+    contain: size;
+  }
+
+  /* Only the task list grows or shrinks; everything else (including the
+     resource bar at the bottom) keeps its own size. */
+  .app-left > * {
+    flex-shrink: 0;
+  }
+
+  .mission-list {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mission-list-items {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
   }
 }
 
@@ -143,10 +175,6 @@
     width: 30px;
     height: 30px;
     font-size: 18px;
-  }
-
-  .mission-list-items {
-    max-height: 240px;
   }
 
   .base-status-title,
