@@ -142,6 +142,22 @@
   }
 }
 
+
+/* Large, tall desktop windows (and the installed desktop app): use the
+   room the screen has. The width grows with the window's height, so the
+   world image (4:3) and the build bar below it always fit without
+   scrolling; 2.3 is the ratio between the layout's width and the height
+   it needs, and 360px covers the header, the titles and the build bar.
+   The content is also centred vertically instead of starting at the top.
+   Shorter windows keep the tuned layout of the block below. */
+@media (min-width: 1200px) and (min-height: 821px) {
+  .app {
+    max-width: clamp(1100px, calc((100dvh - 360px) * 2.3), 1500px);
+    min-height: 100dvh;
+    align-content: center;
+  }
+}
+
 /* Tablet and short desktop windows: below ~820px tall there isn't room
    for the full desktop spacing, so tighten the vertical gaps, a few font
    sizes, and cap the world image's height. The header itself is left
