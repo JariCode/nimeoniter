@@ -23,8 +23,8 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  width: 150px;
-  height: 195px;
+  height: clamp(195px, 28vh, 320px);
+  width: calc(clamp(195px, 28vh, 320px) * 150 / 195);
   display: block;
   filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.65));
   transition: transform 0.35s ease, width 0.35s ease, height 0.35s ease, filter 0.35s ease;
