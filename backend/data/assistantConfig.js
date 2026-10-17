@@ -96,11 +96,18 @@ const MODE_INSTRUCTIONS = {
     + 'dusk → an evening tone, e.g. "Evening", "Good to see you tonight", '
     + '"Evening, survivor"; night → a late-night tone, e.g. "Still up?", '
     + '"Burning the midnight oil", "Late one, huh". These are examples to riff '
-    + 'on, not fixed scripts. Never use a morning greeting during day, dusk, or '
-    + 'night, and never use an evening greeting during dawn or day.'
+    + 'on, not fixed scripts. The current timeOfDay is a hard constraint, not '
+    + 'a suggestion. Before writing, identify the exact timeOfDay in the '
+    + 'current player state and choose the greeting only from its category. '
+    + 'If timeOfDay is dawn, use a morning greeting. If it is day, use a '
+    + 'neutral daytime greeting and do not use morning, evening, tonight, or '
+    + 'night language. If it is dusk, use an evening greeting. If it is night, '
+    + 'use a late-night greeting. Never use a morning greeting for day, dusk, '
+    + 'or night. Never use an evening or night greeting for dawn or day. '
+    + 'Do not mention, quote, or discuss an incorrect greeting category. '
     + 'Previous conversation history must never override the current '
-    + 'timeOfDay. If timeOfDay is dawn or day, never use an evening '
-    + 'greeting. If timeOfDay is dusk or night, never use a morning greeting.',
+    + 'timeOfDay. If timeOfDay is missing or null, use a neutral greeting '
+    + 'instead of guessing the time.',
 advice:
   'Give one concrete piece of advice based on the player’s actual situation '
   + 'and what they just asked or said. Use their level, resources, next '
