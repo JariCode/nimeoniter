@@ -152,9 +152,13 @@
    Shorter windows keep the tuned layout of the block below. */
 @media (min-width: 1200px) and (min-height: 821px) {
   .app {
-    max-width: clamp(1100px, calc((100dvh - 360px) * 2.3), 1500px);
+    max-width: clamp(1100px, calc((100dvh - 400px) * 2.3), 1500px);
     min-height: 100dvh;
     align-content: center;
+    /* Optical centring: the right column starts lower than the left one
+       (its margin-top lines up the two title underlines), so the visual
+       weight sits low. The extra bottom padding lifts the layout a little. */
+    padding-bottom: 48px;
   }
 }
 

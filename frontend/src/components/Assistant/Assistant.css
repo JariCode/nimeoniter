@@ -37,6 +37,21 @@
           brightness(1.12);
 }
 
+
+/* Focus returns to the figure when the chat closes (TC12-012). Hide the
+   browser's default ring for mouse and touch (Safari draws a large blue
+   box around the figure), and show the theme's own ring for keyboard
+   users only. */
+.assistant__figure:focus {
+  outline: none;
+}
+
+.assistant__figure:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
 /* When open, pin the whole thing to center and lay out chat + figure. */
 .assistant--open {
   right: 0;
