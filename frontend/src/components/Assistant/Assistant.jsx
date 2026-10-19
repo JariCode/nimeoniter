@@ -14,6 +14,11 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
   const inputRef = useRef(null);
   const figureRef = useRef(null);
   const wasOpenRef = useRef(open);
+  // True when the chat was closed with the keyboard (Escape, or Enter/Space
+  // on the companion). Only then does focus return to the companion button:
+  // Safari treats a scripted focus() as keyboard focus and would draw the
+  // focus ring after a mouse close too.
+  const closedWithKeyboardRef = useRef(false);
   // Active holiday costume, shared by the small icon and the opened figure
   // since both render the same SurvivorFace element below.
   const holiday = getHoliday();
@@ -39,18 +44,23 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
   useEffect(() => {
     if (!open) return;
     function handleKeyDown(e) {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        closedWithKeyboardRef.current = true;
+        onClose();
+      }
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, onClose]);
 
-  // Return focus to the companion button when the chat closes, but not on
-  // the initial render (before it has ever been open).
+  // Return focus to the companion button when the chat was closed with the
+  // keyboard, but not on the initial render and not after a mouse or touch
+  // close (see closedWithKeyboardRef).
   useEffect(() => {
-    if (wasOpenRef.current && !open) {
+    if (wasOpenRef.current && !open && closedWithKeyboardRef.current) {
       figureRef.current?.focus();
     }
+    closedWithKeyboardRef.current = false;
     wasOpenRef.current = open;
   }, [open]);
 
@@ -181,7 +191,15 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
           ref={figureRef}
           type="button"
           className="assistant__figure"
-          onClick={open ? onClose : onOpen}
+          onClick={(e) => {
+            if (!open) {
+              onOpen();
+              return;
+            }
+            // e.detail is 0 when the button was pressed with Enter or Space
+            closedWithKeyboardRef.current = e.detail === 0;
+            onClose();
+          }}
           aria-label="Talk to your companion"
         >
           <SurvivorFace speaking={speaking} holiday={holiday} world={world} />
