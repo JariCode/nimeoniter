@@ -396,12 +396,16 @@ function App() {
 
   return (
     <>
-      {/* Portrait-phone "turn your device" overlay (CSS decides when it
-          shows). Uses the player's real world once loaded — same gate as
-          the Assistant below — otherwise the default look. */}
-      <RotateNotice
-        world={stateLoaded && buildStages.length > 0 ? currentWorld : 'medieval'}
-      />
+      {/*Portrait-phone "turn your device" overlay. It is rendered only
+          after authentication, so the landing, sign-in, and registration
+          views remain usable in portrait. The notice itself decides when
+          to show based on the device orientation. Uses the player's real
+          world once loaded; otherwise falls back to the default look. */}
+      {isSignedIn && (
+        <RotateNotice
+          world={stateLoaded && buildStages.length > 0 ? currentWorld : 'medieval'}
+        />
+      )}
 
       {!started && !isSignedIn && <Landing onStart={() => setStarted(true)} />}
 
