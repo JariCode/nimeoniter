@@ -78,6 +78,8 @@
 
 .add-task-options {
   list-style: none;
+  min-height: 0;
+  flex: 1;
   overflow-y: auto;
 }
 
@@ -223,6 +225,17 @@
 
 /* iOS Safari zooms into a focused field whose text is under 16px */
 @media (pointer: coarse) {
+  /* Keep the modal anchored while filtering changes its height. Centering it
+     would move the search field down behind the on-screen keyboard. */
+  .add-task-overlay {
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+
+  .add-task-modal {
+    max-height: calc(100dvh - 40px);
+  }
+
   .add-task-search {
     font-size: 16px;
   }
