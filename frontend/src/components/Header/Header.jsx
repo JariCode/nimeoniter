@@ -1,7 +1,7 @@
 import './Header.css';
 import { getTimeOfDay, GREETINGS } from '../../data/timeOfDay';
 
-function Header({ name, level, streak }) {
+function Header({ level, streak }) {
   const greeting = GREETINGS[getTimeOfDay()];
 
   return (

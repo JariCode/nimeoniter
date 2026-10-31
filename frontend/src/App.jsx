@@ -23,10 +23,26 @@ import { getTimeOfDay } from './data/timeOfDay';
 import { fetchConfig, fetchState, addTaskApi, completeTaskApi, uncompleteTaskApi, removeTaskApi, buildApi, askAssistantApi, fetchAssistantHistory } from './lib/api';
 import './App.css';
 
+function levelFromXp(xp) {
+  let level = 1;
+  let consumed = 0;
+  while (xp >= consumed + xpForLevel(level)) {
+    consumed += xpForLevel(level);
+    level += 1;
+  }
+  return { level, xpIntoLevel: xp - consumed, xpForNext: xpForLevel(level) };
+}
+
+function xpForLevel(lvl) {
+  return lvl * 100;
+}
+
 function App() {
   // Check Clerk authentication status
   const { isLoaded, isSignedIn } = useUser();
   const hasLoadedOnce = useRef(false);
+  // This ref intentionally tracks Clerk's transient loading state without a render.
+  // eslint-disable-next-line react-hooks/refs
   if (isLoaded) hasLoadedOnce.current = true;
 
   // Landing shows first; the start button switches to the game
@@ -293,22 +309,6 @@ function App() {
     }
   }
 
-  // Local copy of the XP curve, for DISPLAY only (backend is authoritative)
-  function xpForLevel(lvl) {
-    return lvl * 100;
-  }
-
-  // Work out level, progress within the level, and XP needed for the next
-  function levelFromXp(xp) {
-    let level = 1;
-    let consumed = 0;
-    while (xp >= consumed + xpForLevel(level)) {
-      consumed += xpForLevel(level);
-      level += 1;
-    }
-    return { level, xpIntoLevel: xp - consumed, xpForNext: xpForLevel(level) };
-  }
-
   const { level, xpIntoLevel, xpForNext } = levelFromXp(totalXp);
   const levelProgress = Math.round((xpIntoLevel / xpForNext) * 100);
 
@@ -317,6 +317,7 @@ function App() {
     if (level > prevLevel.current) {
       setLevelUpShown(level);
     }
+    // eslint-disable-next-line react-hooks/immutability
     prevLevel.current = level;
   }, [level]);
 
@@ -359,6 +360,8 @@ function App() {
   // the queue has items, pop the first off the queue and display it.
   useEffect(() => {
     if (achievementShown || achievementQueue.length === 0) return;
+    // The queue and displayed item are intentionally advanced together.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAchievementShown(achievementQueue[0]);
     setAchievementQueue((q) => q.slice(1));
   }, [achievementShown, achievementQueue]);
@@ -378,6 +381,7 @@ function App() {
   // only on the very first load. Clerk briefly flips isLoaded back to
   // false while a sign-in/sign-out is completing; blanking the screen
   // every time that happens is what caused Landing to flash back in.
+  // eslint-disable-next-line react-hooks/refs
   if (!isLoaded && !hasLoadedOnce.current) {
     return null;
   }
