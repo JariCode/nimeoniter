@@ -57,13 +57,13 @@ const ACHIEVEMENTS = [
     reward: { xp: 300, wood: 60, stone: 60, food: 60 },
     check: (s) => s.level >= 30 },
 
-  { id: 'level_50', icon: '⚔️', title: 'Myth', desc: 'Reach level 50',
-    reward: { xp: 500, wood: 180, stone: 180, food: 180 },
-    check: (s) => s.level >= 50 },
+  { id: 'level_40', icon: '⚔️', title: 'Myth', desc: 'Reach level 40',
+    reward: { xp: 400, wood: 120, stone: 120, food: 120 },
+    check: (s) => s.level >= 40 },
 
-  { id: 'level_80', icon: '🚀', title: 'Ascendant', desc: 'Reach level 80',
-    reward: { xp: 800, wood: 400, stone: 400, food: 400 },
-    check: (s) => s.level >= 80 },
+  { id: 'level_50', icon: '🚀', title: 'Ascendant', desc: 'Reach level 50',
+    reward: { xp: 500, wood: 200, stone: 200, food: 200 },
+    check: (s) => s.level >= 50 },
 
   // --- Building ---
 
