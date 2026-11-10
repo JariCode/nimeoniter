@@ -160,7 +160,7 @@ const TASK_CATALOG = [
   { key: 'dentist',   icon: '🦷', name: 'Dentist appointment', xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'doctor',    icon: '🩺', name: "Doctor's appointment", xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'blood_donation', icon: '🩸', name: 'Donate blood', xp: 20, resources: { food: 1, wood: 1, stone: 1 } },
-  { key: 'medical_tests', icon: '🧪', name: 'Attend medical tests', xp: 20, resources: { food: 1, wood: 1, stone: 1 } },
+  { key: 'medical_tests', icon: '🧪', name: 'Medical tests', xp: 20, resources: { food: 1, wood: 1, stone: 1 } },
   { key: 'restday',   icon: '🛋️', name: 'Take a rest day',     xp: 10, resources: { food: 1 } },
   { key: 'massage',   icon: '💆', name: 'Get a massage',        xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'physio',    icon: '🧑‍⚕️', name: 'Physiotherapy',        xp: 10, resources: { food: 1, stone: 1 } },
