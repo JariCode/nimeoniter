@@ -172,6 +172,16 @@ const TASK_CATALOG = [
   { key: 'petnails',  icon: '🐾', name: 'Trim pet nails',       xp: 10, resources: { food: 1, stone: 1 } },
   { key: 'petwash',   icon: '🛁', name: 'Wash the pet',         xp: 10, resources: { food: 2, stone: 1 } },
 
+  // --- Culture & arts (mixed) ---
+  { key: 'museum',    icon: '🏛️', name: 'Visit a museum',       xp: 15, resources: { wood: 1, stone: 1, food: 1 } },
+  { key: 'cinema',    icon: '🎬', name: 'Go to the cinema',      xp: 15, resources: { wood: 1, stone: 1, food: 1 } },
+  { key: 'theatre',   icon: '🎭', name: 'Go to the theatre',     xp: 15, resources: { wood: 1, stone: 1, food: 1 } },
+  { key: 'concert',   icon: '🎵', name: 'Go to a concert',       xp: 15, resources: { wood: 1, stone: 1, food: 1 } },
+  { key: 'exhibition',icon: '🖼️', name: 'Visit an art exhibition', xp: 15, resources: { wood: 1, stone: 1, food: 1 } },
+  { key: 'cultural_event', icon: '🎪', name: 'Attend a cultural event', xp: 15, resources: { wood: 1, stone: 1, food: 1 } },
+  { key: 'library',   icon: '📚', name: 'Visit a library',       xp: 15, resources: { wood: 1, stone: 1, food: 1 } },
+  { key: 'sports_event', icon: '🏟️', name: 'Attend a sports event', xp: 15, resources: { wood: 1, stone: 1, food: 1 } },
+
   // --- Leisure & hobbies (mixed) ---
   { key: 'videogames',icon: '🎮', name: 'Play video games',    xp: 10, resources: { food: 1, wood: 1 } },
   { key: 'boardgame', icon: '🎲', name: 'Play a board game',   xp: 10, resources: { food: 2 } },
