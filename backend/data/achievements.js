@@ -96,15 +96,15 @@ const ACHIEVEMENTS = [
     check: (s) => s.buildingsBuilt >= 8 },
 
   { id: 'build_12', icon: '🏡', title: 'Town', desc: 'Build 12 structures',
-    reward: { xp: 150, wood: 12, stone: 12, food: 12 },
+    reward: { xp: 180, wood: 120, stone: 120, food: 120 },
     check: (s) => s.buildingsBuilt >= 12 },
 
   { id: 'build_16', icon: '🌆', title: 'Metropolis', desc: 'Build 16 structures',
-    reward: { xp: 250, wood: 250, stone: 250, food: 250 },
+    reward: { xp: 260, wood: 260, stone: 260, food: 260 },
     check: (s) => s.buildingsBuilt >= 16 },
 
   { id: 'build_20', icon: '🛰️', title: 'Orbital Hub', desc: 'Build 20 structures',
-    reward: { xp: 350, wood: 20, stone: 20, food: 20 },
+    reward: { xp: 360, wood: 360, stone: 360, food: 360 },
     check: (s) => s.buildingsBuilt >= 20 },
 
   { id: 'base_complete', icon: '🏰', title: 'Fortress', desc: 'Build your entire base',
