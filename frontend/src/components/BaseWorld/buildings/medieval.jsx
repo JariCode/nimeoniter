@@ -281,7 +281,7 @@ export function Fence({ justBuilt }) {
 export function Watchtower({ justBuilt }) {
   return (
     <g className={justBuilt === 'watchtower' ? 'building-pop' : undefined}>
-    <g transform="translate(337,-7) scale(1.4)">
+    <g transform="translate(330,-89) scale(1.6,1.8)">
       <ellipse cx="32" cy="205" rx="15" ry="4" fill="#000" opacity="0.4" />
       <rect x="26" y="165" width="4" height="40" fill="#2e2418" transform="rotate(4 28 185)" />
       <rect x="35" y="165" width="4" height="40" fill="#2e2418" transform="rotate(-4 37 185)" />
