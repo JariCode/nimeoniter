@@ -167,14 +167,14 @@ export const CITY_CHRISTMAS_ROOFLINE_LIGHTS = [
 // belongs to the shop, so they all carry the same `building` key — see
 // CITY_CHRISTMAS_ROOFLINE_LIGHTS above for why. Positions follow the
 // awning's own flat top edge (local trapezoid top y208, x22-48, inside the
-// shop's own translate(-2,-2)) -> translate(104,-196) scale(2) = final
-// x144-196, y216 — an earlier pass didn't match this shape either.
+// shop's own translate(-2,-2)) -> translate(102.7,-243.8) scale(2.04,2.2).
+// The bulb centers are x150-199, y206, just above the new awning top at y209.
 export const CITY_CHRISTMAS_AWNING_LIGHTS = [
-  { x: 146, y: 213, color: '#ffd23d', delay: 0, building: 'shop' },
-  { x: 159, y: 213, color: '#3de0ff', delay: 0.2, building: 'shop' },
-  { x: 171, y: 213, color: '#ff3d9a', delay: 0.4, building: 'shop' },
-  { x: 184, y: 213, color: '#3de0ff', delay: 0.6, building: 'shop' },
-  { x: 196, y: 213, color: '#ffd23d', delay: 0.8, building: 'shop' },
+  { x: 150, y: 206, color: '#ffd23d', delay: 0, building: 'shop' },
+  { x: 163, y: 206, color: '#3de0ff', delay: 0.2, building: 'shop' },
+  { x: 175, y: 206, color: '#ff3d9a', delay: 0.4, building: 'shop' },
+  { x: 188, y: 206, color: '#3de0ff', delay: 0.6, building: 'shop' },
+  { x: 199, y: 206, color: '#ffd23d', delay: 0.8, building: 'shop' },
 ];
 
 // A big, lit neon Christmas tree standing in the empty pavement in front of
