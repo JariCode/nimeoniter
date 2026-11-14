@@ -149,7 +149,7 @@ export function Hotel({ justBuilt }) {
 // background silhouette.
 export function Shop({ justBuilt }) {
   return (
-    <g transform="translate(104,-196) scale(2)">
+    <g transform="translate(102.7,-243.8) scale(2.04,2.2)">
     <g className={justBuilt === 'shop' ? 'building-pop' : undefined}>
     <g transform="translate(-2,-2)">
       <ellipse cx="35" cy="241" rx="18" ry="4.5" fill="#000" opacity="0.4" />
@@ -231,7 +231,7 @@ export function Street({ justBuilt }) {
 // its existing inner transform.
 export function Theater({ justBuilt }) {
   return (
-    <g transform="translate(-251.75,-221.05) scale(1.75)">
+    <g transform="translate(-262,-263.1) scale(1.78,1.9)">
     <g className={justBuilt === 'theater' ? 'building-pop' : undefined}>
     <g transform="translate(-37,-11) scale(1.2)">
       <ellipse cx="315" cy="243" rx="30" ry="6" fill="#000" opacity="0.4" />
@@ -247,9 +247,9 @@ export function Theater({ justBuilt }) {
       })}
       {/* marquee sign board */}
       <rect x="293" y="217" width="37" height="12" fill="#0d0c14" />
-      <text x="311.5" y="226" fontFamily="Georgia, serif" fontSize="7" fontWeight="bold" textAnchor="middle" fill="#b24bf3" className="neon-pulse">THEATER</text>
+      <text x="311.5" y="226" fontFamily="Georgia, serif" fontSize="6" fontWeight="bold" textAnchor="middle" fill="#b24bf3" className="neon-pulse">THEATER</text>
       {/* entrance */}
-      <rect x="304" y="230" width="15" height="12" fill="#151628" />
+      <rect x="304" y="226" width="15" height="16" fill="#151628" />
       <rect x="288" y="212" width="47" height="30" fill="none" stroke="#100f18" strokeWidth="1" opacity="0.5" />
     </g>
     </g>
