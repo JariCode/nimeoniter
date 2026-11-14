@@ -251,7 +251,7 @@ export function Storage({ justBuilt }) {
       <path d="M 288 214 L 315 192 L 342 214 Z" fill="url(#roof)" />
       <path d="M 315 192 L 342 214 L 334 214 L 315 200 Z" fill="#1c150d" opacity="0.55" />
       <line x1="291" y1="212" x2="339" y2="212" stroke="#1c150d" strokeWidth="1.3" opacity="0.5" />
-      <rect x="299" y="217" width="9" height="9" rx="1" fill="url(#paneGlow)" opacity="0.85" />
+      <rect x="297" y="217" width="9" height="9" rx="1" fill="url(#paneGlow)" opacity="0.85" />
       <rect x="308" y="220" width="15" height="22" fill="#0d0b07" />
       <line x1="315.5" y1="220" x2="315.5" y2="242" stroke="#241c12" strokeWidth="0.8" />
     </g>
