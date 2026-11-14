@@ -246,8 +246,8 @@ export function Theater({ justBuilt }) {
         return <circle key={i} cx={x} cy={y} r="1.6" fill="#ffd23d" className="christmas-light-glow" style={{ animationDelay: `${i * 0.15}s` }} />;
       })}
       {/* marquee sign board */}
-      <rect x="293" y="217" width="37" height="12" fill="#0d0c14" />
-      <text x="311.5" y="224" fontFamily="Georgia, serif" fontSize="5.5" fontWeight="bold" textAnchor="middle" fill="#b24bf3" className="neon-pulse">THEATER</text>
+      <rect x="296" y="217" width="31" height="8" fill="#0d0c14" />
+      <text x="311.5" y="223" fontFamily="Georgia, serif" fontSize="5.5" fontWeight="bold" textAnchor="middle" fill="#b24bf3" className="neon-pulse">THEATER</text>
       {/* entrance */}
       <rect x="304" y="226" width="15" height="16" fill="#151628" />
       <rect x="288" y="212" width="47" height="30" fill="none" stroke="#100f18" strokeWidth="1" opacity="0.5" />

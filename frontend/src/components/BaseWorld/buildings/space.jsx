@@ -70,14 +70,20 @@ export function LandingPad({ justBuilt }) {
             opacity="0.7"
           />
         ))}
-        {/* central landing ring, glowing cyan, set toward the near half of the deck */}
-        <circle cx="200" cy="248" r="34" fill="none" stroke="#3de0ff" strokeWidth="1.6" opacity="0.5" />
-        <circle cx="200" cy="248" r="18" fill="none" stroke="#3de0ff" strokeWidth="1.3" opacity="0.85" className="neon-pulse" />
         {/* perimeter marker lights near the deck's back and front corners */}
         {[[64, 218], [356, 218], [4, 294], [396, 294]].map(([x, y], i) => (
           <circle key={i} cx={x} cy={y} r="2" fill="#ffd97a" className="christmas-light-glow" style={{ animationDelay: `${i * 0.25}s` }} />
         ))}
       </g>
+    </g>
+  );
+}
+
+export function LandingRing() {
+  return (
+    <g>
+      <circle cx="200" cy="248" r="34" fill="none" stroke="#3de0ff" strokeWidth="1.6" opacity="0.5" />
+      <circle cx="200" cy="248" r="18" fill="none" stroke="#3de0ff" strokeWidth="1.3" opacity="0.85" className="neon-pulse" />
     </g>
   );
 }

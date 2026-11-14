@@ -7,7 +7,7 @@ import { currentWorldFromBuilt } from '../../data/world';
 import { Wall, House, Hut, Well, Field, Storage, Fence, Watchtower } from './buildings/medieval';
 import { Street, Apartment, Diner, Shop, Hotel, Casino, Theater, Skyscraper } from './buildings/city';
 import {
-  LandingPad, Habitat, Greenhouse, SolarArray, CommsTower, Lab, Reactor, CommandTower,
+  LandingPad, LandingRing, Habitat, Greenhouse, SolarArray, CommsTower, Lab, Reactor, CommandTower,
 } from './buildings/space';
 import {
   getHoliday,
@@ -1886,6 +1886,10 @@ function BaseWorld({ stageKey, buildStages = [], justBuilt }) {
             build, a glowing energy core in front of the command tower's
             foot, the casino/theater equivalent */}
         {isSpace && has('reactor') && <Reactor justBuilt={justBuilt} />}
+
+        {/* The landing ring stays on the pad but renders above buildings so
+            their silhouettes do not cut through the holographic circle. */}
+        {isSpace && has('landing-pad') && <LandingRing />}
 
         {/* ===== SPACE CHRISTMAS: holo elves on the landing-pad deck =====
              Recognizable elf silhouette (pointed hat with pompom, round
