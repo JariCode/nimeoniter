@@ -105,9 +105,17 @@ const ACHIEVEMENTS = [
     reward: { xp: 200, wood: 30, stone: 30, food: 30 },
     check: (s) => s.streak >= 30 },
 
+  { id: 'streak_45', icon: '🔥', title: 'Flamekeeper', desc: 'Reach a 45-day streak',
+    reward: { xp: 250, wood: 45, stone: 45, food: 45 },
+    check: (s) => s.streak >= 45 },
+
   { id: 'streak_60', icon: '🔥', title: 'Relentless Spirit', desc: 'Reach a 60-day streak',
     reward: { xp: 300, wood: 60, stone: 60, food: 60 },
     check: (s) => s.streak >= 60 },
+
+  { id: 'streak_75', icon: '🔥', title: 'Unyielding', desc: 'Reach a 75-day streak',
+    reward: { xp: 400, wood: 75, stone: 75, food: 75 },
+    check: (s) => s.streak >= 75 },
 
   { id: 'streak_100', icon: '🔥', title: 'Eternal Flame', desc: 'Reach a 100-day streak',
     reward: { xp: 500, wood: 100, stone: 100, food: 100 },
