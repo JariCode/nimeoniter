@@ -86,7 +86,7 @@ export function Wall({ justBuilt }) {
 export function House({ justBuilt }) {
   return (
     <g className={justBuilt === 'house' ? 'building-pop' : undefined}>
-    <g>
+    <g transform="translate(0,-33.3) scale(1,1.15)">
       <ellipse cx="90" cy="222" rx="48" ry="8" fill="#000" opacity="0.4" />
       {/* stone foundation */}
       <rect x="56" y="216" width="70" height="7" fill="url(#stone)" />
@@ -139,7 +139,7 @@ export function House({ justBuilt }) {
 export function Hut({ justBuilt }) {
   return (
     <g className={justBuilt === 'hut' ? 'building-pop' : undefined}>
-    <g transform="translate(-14,-10.4) scale(1.2)">
+    <g transform="translate(-17.5,-77) scale(1.25,1.5)">
       <ellipse cx="70" cy="222" rx="34" ry="7" fill="#000" opacity="0.4" />
       <path d="M 45 191 Q 44 220 47 222 L 93 222 Q 96 220 95 191 Z" fill="url(#wood)" />
       <line x1="46" y1="206" x2="94" y2="206" stroke="#241c12" strokeWidth="1" opacity="0.6" />
@@ -235,7 +235,7 @@ export function Field({ justBuilt }) {
 export function Storage({ justBuilt }) {
   return (
     <g className={justBuilt === 'storage' ? 'building-pop' : undefined}>
-    <g transform="translate(-37,-11) scale(1.2)">
+    <g transform="translate(-52.5,-83.5) scale(1.25,1.5)">
       <ellipse cx="315" cy="243" rx="30" ry="6" fill="#000" opacity="0.4" />
       {/* barrels beside the shed */}
       <g>
@@ -281,7 +281,7 @@ export function Fence({ justBuilt }) {
 export function Watchtower({ justBuilt }) {
   return (
     <g className={justBuilt === 'watchtower' ? 'building-pop' : undefined}>
-    <g transform="translate(330,-89) scale(1.6,1.8)">
+    <g transform="translate(330,-130) scale(1.6,2)">
       <ellipse cx="32" cy="205" rx="15" ry="4" fill="#000" opacity="0.4" />
       <rect x="26" y="165" width="4" height="40" fill="#2e2418" transform="rotate(4 28 185)" />
       <rect x="35" y="165" width="4" height="40" fill="#2e2418" transform="rotate(-4 37 185)" />
