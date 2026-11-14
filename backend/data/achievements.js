@@ -107,8 +107,8 @@ const ACHIEVEMENTS = [
     reward: { xp: 360, wood: 360, stone: 360, food: 360 },
     check: (s) => s.buildingsBuilt >= 20 },
 
-  { id: 'base_complete', icon: '🏰', title: 'Fortress', desc: 'Build your entire base',
-    reward: { xp: 150, wood: 100, stone: 100, food: 100 },
+  { id: 'base_complete', icon: '🛰️', title: 'Space Station', desc: 'Build your entire space station',
+    reward: { xp: 500, wood: 500, stone: 500, food: 500 },
     check: (s) => s.buildingsTotal > 0 && s.buildingsBuilt >= s.buildingsTotal },
 
   // --- Streak (consecutive days with a completed task) ---
