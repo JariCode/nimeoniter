@@ -54,6 +54,34 @@ async function getOrCreateState(userId) {
       }
     }
   }
+  if (state) {
+    const rewardUpdates = {};
+    state.missions.forEach((mission, index) => {
+      const catalogTask = TASK_BY_KEY[mission.key];
+      if (mission.done || !catalogTask) return;
+
+      const resources = mission.resources || {};
+      const catalogResources = catalogTask.resources || {};
+      const rewardsMatch =
+        mission.xp === catalogTask.xp &&
+        resources.wood === catalogResources.wood &&
+        resources.stone === catalogResources.stone &&
+        resources.food === catalogResources.food;
+
+      if (!rewardsMatch) {
+        rewardUpdates[`missions.${index}.xp`] = catalogTask.xp;
+        rewardUpdates[`missions.${index}.resources`] = catalogTask.resources;
+      }
+    });
+
+    if (Object.keys(rewardUpdates).length > 0) {
+      state = await PlayerState.findOneAndUpdate(
+        { clerkUserId: userId },
+        { $set: rewardUpdates },
+        { returnDocument: 'after' }
+      );
+    }
+  }
   return state;
 }
 
