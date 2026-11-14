@@ -19,17 +19,33 @@ const ACHIEVEMENTS = [
     reward: { xp: 30, wood: 3, stone: 3, food: 3 },
     check: (s) => s.tasksDone >= 10 },
 
-  { id: 'tasks_50', icon: '🏅', title: 'Relentless', desc: 'Complete 50 tasks',
+  { id: 'tasks_25', icon: '📌', title: 'Momentum', desc: 'Complete 25 tasks',
     reward: { xp: 60, wood: 6, stone: 6, food: 6 },
+    check: (s) => s.tasksDone >= 25 },
+
+  { id: 'tasks_50', icon: '🏅', title: 'Relentless', desc: 'Complete 50 tasks',
+    reward: { xp: 80, wood: 8, stone: 8, food: 8 },
     check: (s) => s.tasksDone >= 50 },
+
+  { id: 'tasks_75', icon: '🏆', title: 'Driven', desc: 'Complete 75 tasks',
+    reward: { xp: 100, wood: 10, stone: 10, food: 10 },
+    check: (s) => s.tasksDone >= 75 },
 
   { id: 'tasks_100', icon: '🎖️', title: 'Centurion', desc: 'Complete 100 tasks',
     reward: { xp: 120, wood: 12, stone: 12, food: 12 },
     check: (s) => s.tasksDone >= 100 },
 
+  { id: 'tasks_150', icon: '🪖', title: 'Persistent', desc: 'Complete 150 tasks',
+    reward: { xp: 180, wood: 18, stone: 18, food: 18 },
+    check: (s) => s.tasksDone >= 150 },
+
   { id: 'tasks_250', icon: '⚙️', title: 'Machine', desc: 'Complete 250 tasks',
     reward: { xp: 250, wood: 15, stone: 15, food: 15 },
     check: (s) => s.tasksDone >= 250 },
+
+  { id: 'tasks_350', icon: '🛠️', title: 'Factory', desc: 'Complete 350 tasks',
+    reward: { xp: 320, wood: 24, stone: 24, food: 24 },
+    check: (s) => s.tasksDone >= 350 },
 
   { id: 'tasks_500', icon: '🏆', title: 'Untiring', desc: 'Complete 500 tasks',
     reward: { xp: 400, wood: 27, stone: 27, food: 27 },
