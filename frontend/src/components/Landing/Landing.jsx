@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './Landing.css';
 import { SignIn } from '@clerk/react';
 
@@ -13,12 +13,18 @@ const hasSignInStep = () => window.location.hash.startsWith('#/');
 
 function Landing() {
   const [signInOpen, setSignInOpen] = useState(hasSignInStep);
+  const startRef = useRef(null);
+  const dialogRef = useRef(null);
 
   const handleStart = useCallback(() => setSignInOpen(true), []);
 
-  const closeSignIn = useCallback(() => {
+  // Focus returns to "Light the fire" only after a keyboard close: Safari
+  // treats a scripted focus() as keyboard focus and would draw a focus ring
+  // after a mouse or touch close too (same rule as the companion).
+  const closeSignIn = useCallback((withKeyboard = false) => {
     setSignInOpen(false);
     history.replaceState(null, '', import.meta.env.BASE_URL);
+    if (withKeyboard) startRef.current?.focus();
   }, []);
 
   // Clerk's own layout doesn't respond to short landscape viewports, so
@@ -134,12 +140,39 @@ function Landing() {
     }
   }, [handleStart]);
 
-  // Escape closes the sign-in window, as it did with Clerk's own modal.
-  // The handler is on the window's own element, so Escape inside the legal
-  // document modal (rendered outside it) closes only that document.
+  // Keyboard handling, as Clerk's own modal had it. Escape closes the
+  // window; the handler is on the window's own element, so Escape inside the
+  // legal document modal (rendered outside it) closes only that document.
+  // Tab and Shift+Tab stay inside the window instead of moving to the
+  // landing page behind it.
   const handleSignInKeyDown = (e) => {
-    if (e.key === 'Escape') closeSignIn();
+    if (e.key === 'Escape') {
+      closeSignIn(true);
+      return;
+    }
+    if (e.key !== 'Tab' || !dialogRef.current) return;
+    const items = [...dialogRef.current.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
+    )].filter((el) => el.offsetParent !== null);
+    if (items.length === 0) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   };
+
+  // Move focus into the window when it opens, so Escape and Tab work from
+  // the start (Clerk then moves it on to the first field when it renders).
+  useEffect(() => {
+    if (signInOpen && dialogRef.current && !dialogRef.current.contains(document.activeElement)) {
+      dialogRef.current.focus();
+    }
+  }, [signInOpen]);
 
   // Once the player is signed in this page unmounts: clear the leftover
   // sign-in step from the address so the next sign-out starts clean.
@@ -165,7 +198,7 @@ function Landing() {
           Do your tasks. Survive. Build your world.
         </p>
 
-        <button className="landing-start" onClick={handleStart}>
+        <button ref={startRef} className="landing-start" onClick={handleStart}>
           Light the fire
         </button>
 
@@ -181,7 +214,24 @@ function Landing() {
           onMouseDown={(e) => { if (e.target === e.currentTarget) closeSignIn(); }}
           onKeyDown={handleSignInKeyDown}
         >
-          <div className="landing-signin" role="dialog" aria-modal="true" aria-label="Sign in">
+          <div
+            ref={dialogRef}
+            tabIndex={-1}
+            className="landing-signin"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Sign in"
+          >
+            {/* Clerk's own modal had a close button; the embedded form has none */}
+            <button
+              type="button"
+              className="landing-signin-close"
+              aria-label="Close sign-in"
+              // e.detail is 0 when the button was pressed with Enter or Space
+              onClick={(e) => closeSignIn(e.detail === 0)}
+            >
+              ×
+            </button>
             <SignIn routing="hash" appearance={signInAppearance} />
           </div>
         </div>

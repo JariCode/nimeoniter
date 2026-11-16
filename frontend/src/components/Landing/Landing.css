@@ -119,7 +119,44 @@
 }
 
 .landing-signin {
+  position: relative;
   margin: auto;
+}
+
+/* The window itself takes focus when it opens; no ring around the card */
+.landing-signin:focus {
+  outline: none;
+}
+
+/* Close button in the card's top-right corner, like Clerk's own modal had;
+   44x44 px so it is easy to tap */
+.landing-signin-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: none;
+  color: #999999;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.landing-signin-close:hover {
+  color: #e6e0d2;
+}
+
+.landing-signin-close:focus {
+  outline: none;
+}
+
+.landing-signin-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -6px;
+  border-radius: 6px;
 }
 
 @media (max-width: 600px) {
