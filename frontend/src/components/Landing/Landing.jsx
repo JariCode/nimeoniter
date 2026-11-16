@@ -1,128 +1,151 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './Landing.css';
-import { useClerk } from '@clerk/react';
+import { SignIn } from '@clerk/react';
 
 // Landing page: hooded survivor image fading into darkness,
 // title + punchline below, and a themed start button.
+
+// Clerk's hash router keeps the current sign-in step in the address
+// ("#/factor-one", "#/client-trust"). If iOS closes the installed app while
+// the player fetches the email code from Mail, the app reopens on the same
+// address and Clerk continues from the code step instead of starting over.
+const hasSignInStep = () => window.location.hash.startsWith('#/');
+
 function Landing() {
-  const clerk = useClerk();
+  const [signInOpen, setSignInOpen] = useState(hasSignInStep);
+
+  const handleStart = useCallback(() => setSignInOpen(true), []);
+
+  const closeSignIn = useCallback(() => {
+    setSignInOpen(false);
+    history.replaceState(null, '', import.meta.env.BASE_URL);
+  }, []);
+
+  // Clerk's own layout doesn't respond to short landscape viewports, so
+  // shrink its spacing/font scale directly for that case (spacing and
+  // fontSize are Clerk's official theme variables — they control the
+  // --clerk-spacing / --clerk-font-size custom properties used
+  // throughout every element's padding, gaps, and text size).
+  const isCompactLandscape = window.matchMedia(
+    '(orientation: landscape) and (max-height: 500px)'
+  ).matches;
+
+  const signInAppearance = {
+    variables: {
+      colorBackground: '#151515',
+      colorForeground: '#e6e0d2',
+      colorMutedForeground: '#999999',
+      colorPrimary: '#c58a22',
+      colorPrimaryForeground: '#111111',
+      colorInput: '#1c1c1c',
+      colorInputForeground: '#e6e0d2',
+      colorBorder: '#444444',
+      borderRadius: '4px',
+      // Big enough to tap on a phone; the sign-in window scrolls if a
+      // step is taller than the short screen (Landing.css)
+      ...(isCompactLandscape && {
+        spacing: '0.65rem',
+        fontSize: '0.9rem',
+      }),
+    },
+    elements: {
+      card: {
+        background: '#151515',
+        border: '1px solid #8a641c',
+        boxShadow: 'none',
+      },
+
+      headerTitle: {
+        color: '#e6e0d2',
+      },
+
+      headerSubtitle: {
+        color: '#999999',
+      },
+
+      formFieldLabel: {
+        color: '#e6e0d2',
+      },
+
+      formFieldInput: {
+        background: '#1c1c1c',
+        color: '#e6e0d2',
+        border: '1px solid #444444',
+      },
+
+      socialButtonsBlockButton: {
+        background: '#1c1c1c',
+        color: '#e6e0d2',
+        border: '1px solid #444444',
+      },
+
+      formButtonPrimary: {
+        background: '#c58a22',
+        color: '#111111',
+      },
+
+      footerActionText: {
+        color: '#999999',
+      },
+
+      footerActionLink: {
+        color: '#c58a22',
+      },
+
+      formFieldAction: {
+        color: '#c58a22',
+      },
+
+      identityPreviewText: {
+        color: '#e6e0d2',
+      },
+
+      alternativeMethodsBlockButton: {
+        background: '#1c1c1c',
+        color: '#e6e0d2',
+        border: '1px solid #444444',
+      },
+
+      alternativeMethodsBlockButtonText: {
+        color: '#e6e0d2',
+      },
+
+      alternativeMethodsBlockButtonIcon: {
+        color: '#c58a22',
+      },
+
+      dividerText: {
+        color: '#999999',
+      },
+
+      dividerLine: {
+        background: '#333333',
+      },
+    },
+  };
 
   // ?sign-in is appended by main.jsx's routerReplace when Clerk sends the
   // user back here from the sign-up page's "Already have an account?"
-  // link — strip it and reopen the sign-in modal.
-  const handleStart = useCallback(() => {
-    // Clerk's own layout doesn't respond to short landscape viewports, so
-    // shrink its spacing/font scale directly for that case (spacing and
-    // fontSize are Clerk's official theme variables — they control the
-    // --clerk-spacing / --clerk-font-size custom properties used
-    // throughout every element's padding, gaps, and text size).
-    const isCompactLandscape = window.matchMedia(
-      '(orientation: landscape) and (max-height: 500px)'
-    ).matches;
-
-    clerk.openSignIn({
-      appearance: {
-        variables: {
-          colorBackground: '#151515',
-          colorForeground: '#e6e0d2',
-          colorMutedForeground: '#999999',
-          colorPrimary: '#c58a22',
-          colorPrimaryForeground: '#111111',
-          colorInput: '#1c1c1c',
-          colorInputForeground: '#e6e0d2',
-          colorBorder: '#444444',
-          borderRadius: '4px',
-          // Big enough to tap on a phone; the modal scrolls if a step is
-          // taller than the short screen (App.css .cl-modalContent)
-          ...(isCompactLandscape && {
-            spacing: '0.65rem',
-            fontSize: '0.9rem',
-          }),
-        },
-        elements: {
-          card: {
-            background: '#151515',
-            border: '1px solid #8a641c',
-            boxShadow: 'none',
-          },
-
-          headerTitle: {
-            color: '#e6e0d2',
-          },
-
-          headerSubtitle: {
-            color: '#999999',
-          },
-
-          formFieldLabel: {
-            color: '#e6e0d2',
-          },
-
-          formFieldInput: {
-            background: '#1c1c1c',
-            color: '#e6e0d2',
-            border: '1px solid #444444',
-          },
-
-          socialButtonsBlockButton: {
-            background: '#1c1c1c',
-            color: '#e6e0d2',
-            border: '1px solid #444444',
-          },
-
-          formButtonPrimary: {
-            background: '#c58a22',
-            color: '#111111',
-          },
-
-          footerActionText: {
-            color: '#999999',
-          },
-
-          footerActionLink: {
-            color: '#c58a22',
-          },
-
-          formFieldAction: {
-            color: '#c58a22',
-          },
-
-          identityPreviewText: {
-            color: '#e6e0d2',
-          },
-
-          alternativeMethodsBlockButton: {
-            background: '#1c1c1c',
-            color: '#e6e0d2',
-            border: '1px solid #444444',
-          },
-
-          alternativeMethodsBlockButtonText: {
-            color: '#e6e0d2',
-          },
-
-          alternativeMethodsBlockButtonIcon: {
-            color: '#c58a22',
-          },
-
-          dividerText: {
-            color: '#999999',
-          },
-
-          dividerLine: {
-            background: '#333333',
-          },
-        },
-      },
-    });
-  }, [clerk]);
-
+  // link — strip it and open the sign-in window.
   useEffect(() => {
     if (new URLSearchParams(window.location.search).has('sign-in')) {
       history.replaceState(null, '', import.meta.env.BASE_URL);
       handleStart();
     }
   }, [handleStart]);
+
+  // Escape closes the sign-in window, as it did with Clerk's own modal.
+  // The handler is on the window's own element, so Escape inside the legal
+  // document modal (rendered outside it) closes only that document.
+  const handleSignInKeyDown = (e) => {
+    if (e.key === 'Escape') closeSignIn();
+  };
+
+  // Once the player is signed in this page unmounts: clear the leftover
+  // sign-in step from the address so the next sign-out starts clean.
+  useEffect(() => () => {
+    if (hasSignInStep()) history.replaceState(null, '', import.meta.env.BASE_URL);
+  }, []);
 
   return (
     <div className="landing">
@@ -151,6 +174,18 @@ function Landing() {
           <a href={`${import.meta.env.BASE_URL}privacy`}>Privacy Policy</a>
         </div>
       </div>
+
+      {signInOpen && (
+        <div
+          className="landing-signin-overlay"
+          onMouseDown={(e) => { if (e.target === e.currentTarget) closeSignIn(); }}
+          onKeyDown={handleSignInKeyDown}
+        >
+          <div className="landing-signin" role="dialog" aria-modal="true" aria-label="Sign in">
+            <SignIn routing="hash" appearance={signInAppearance} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

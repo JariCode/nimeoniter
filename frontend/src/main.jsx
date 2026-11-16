@@ -24,6 +24,15 @@ function withBaseSlash(to) {
   return url.toString();
 }
 
+// Clerk may navigate the page only on the dedicated sign-up page, or to
+// reach it (the sign-in window's "Sign up" link). Everywhere else Clerk
+// runs inside the app — the sign-in window keeps its steps in the address
+// hash (Landing.jsx) and the profile in a modal — and must not navigate
+// the page away.
+function shouldNavigate(to) {
+  return showSignUpPage || isSignUpPath(new URL(to, window.location.origin).pathname);
+}
+
 // Touch screens: Clerk's default 13px text, fields and buttons are too
 // small to tap reliably, so scale Clerk's whole UI up there
 const IS_TOUCH = window.matchMedia('(pointer: coarse)').matches;
@@ -34,11 +43,8 @@ createRoot(document.getElementById('root')).render(
       // The Clerk UI version is pinned in package.json, so Clerk's
       // component updates can't change the DOM that App.css styles.
       ui={ui}
-      // Clerk's own navigation is only needed on the dedicated sign-up
-      // page; everywhere else Clerk runs in modals, which must not
-      // navigate the page away.
-      routerPush={(to) => { if (showSignUpPage) window.location.assign(withBaseSlash(to)); }}
-      routerReplace={(to) => { if (showSignUpPage) window.location.replace(withBaseSlash(to)); }}
+      routerPush={(to) => { if (shouldNavigate(to)) window.location.assign(withBaseSlash(to)); }}
+      routerReplace={(to) => { if (shouldNavigate(to)) window.location.replace(withBaseSlash(to)); }}
       signUpUrl={`${import.meta.env.BASE_URL}sign-up`}
       signInUrl={`${import.meta.env.BASE_URL}?sign-in`}
       // Address for Clerk's "Email support" button (e.g. on the restricted
