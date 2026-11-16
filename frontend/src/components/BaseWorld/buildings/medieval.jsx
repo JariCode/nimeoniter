@@ -277,34 +277,41 @@ export function Fence({ justBuilt }) {
   );
 }
 
-// WATCHTOWER (foreground, stays at the right edge)
 export function Watchtower({ justBuilt }) {
   return (
     <g className={justBuilt === 'watchtower' ? 'building-pop' : undefined}>
     <g transform="translate(330,-130) scale(1.6,2)">
       <ellipse cx="32" cy="205" rx="15" ry="4" fill="#000" opacity="0.4" />
-      <rect x="26" y="165" width="4" height="40" fill="#2e2418" transform="rotate(4 28 185)" />
-      <rect x="35" y="165" width="4" height="40" fill="#2e2418" transform="rotate(-4 37 185)" />
-      {/* X cross-bracing */}
-      <line x1="24" y1="203" x2="41" y2="178" stroke="#241d13" strokeWidth="1.4" opacity="0.7" />
-      <line x1="41" y1="203" x2="24" y2="178" stroke="#241d13" strokeWidth="1.4" opacity="0.7" />
-      <line x1="25" y1="185" x2="40" y2="169" stroke="#241d13" strokeWidth="1.2" opacity="0.6" />
-      <line x1="40" y1="185" x2="25" y2="169" stroke="#241d13" strokeWidth="1.2" opacity="0.6" />
-      {/* deck */}
-      <rect x="23" y="157" width="19" height="10" fill="url(#wood)" />
-      <line x1="23" y1="157" x2="42" y2="157" stroke="#443e34" strokeWidth="1" opacity="0.6" />
-      {/* rail posts */}
-      <line x1="23" y1="150" x2="23" y2="157" stroke="#241d13" strokeWidth="1.2" />
-      <line x1="42" y1="150" x2="42" y2="157" stroke="#241d13" strokeWidth="1.2" />
-      <line x1="23" y1="151" x2="42" y2="151" stroke="#241d13" strokeWidth="1" opacity="0.7" />
+      {/* legs: taller than before, same footprint on the ground */}
+      <rect x="26" y="158" width="4" height="47" fill="#2e2418" transform="rotate(4 28 181)" />
+      <rect x="35" y="158" width="4" height="47" fill="#2e2418" transform="rotate(-4 37 181)" />
+      {/* X cross-bracing, two sections and a middle beam */}
+      <line x1="24" y1="203" x2="41" y2="182" stroke="#241d13" strokeWidth="1.4" opacity="0.7" />
+      <line x1="41" y1="203" x2="24" y2="182" stroke="#241d13" strokeWidth="1.4" opacity="0.7" />
+      <line x1="25" y1="182" x2="40" y2="161" stroke="#241d13" strokeWidth="1.2" opacity="0.6" />
+      <line x1="40" y1="182" x2="25" y2="161" stroke="#241d13" strokeWidth="1.2" opacity="0.6" />
+      <line x1="24" y1="182" x2="41" y2="182" stroke="#241d13" strokeWidth="1.2" opacity="0.6" />
+      {/* floor beam the lookout cabin stands on */}
+      <rect x="21" y="155" width="23" height="4" fill="url(#woodDark)" />
+      {/* lookout cabin: a room at the top instead of a bare deck */}
+      <rect x="23" y="136" width="19" height="19" fill="url(#wood)" />
+      <rect x="37" y="136" width="5" height="19" fill="#1c150d" opacity="0.35" />
+      <line x1="23" y1="149" x2="42" y2="149" stroke="#241d13" strokeWidth="0.6" opacity="0.5" />
+      {/* balcony rail around the cabin */}
+      <line x1="21" y1="149" x2="44" y2="149" stroke="#241d13" strokeWidth="1" opacity="0.8" />
+      <line x1="21" y1="149" x2="21" y2="155" stroke="#241d13" strokeWidth="1.1" />
+      <line x1="44" y1="149" x2="44" y2="155" stroke="#241d13" strokeWidth="1.1" />
+      <line x1="27.5" y1="149" x2="27.5" y2="155" stroke="#241d13" strokeWidth="0.8" opacity="0.7" />
+      <line x1="37.5" y1="149" x2="37.5" y2="155" stroke="#241d13" strokeWidth="0.8" opacity="0.7" />
+      {/* lantern-lit window */}
+      <circle cx="32" cy="142" r="8" fill="url(#lanternGlow)" filter="url(#softGlow)" />
+      <rect x="28" y="138.5" width="8" height="7" fill="url(#paneGlow)" opacity="0.85" />
+      <line x1="32" y1="138.5" x2="32" y2="145.5" stroke="#241d13" strokeWidth="0.7" opacity="0.8" />
       {/* roof + flag */}
-      <path d="M 20 157 L 32 145 L 44 157 Z" fill="url(#roof)" />
-      <path d="M 32 145 L 44 157 L 40 157 L 32 149 Z" fill="#1c150d" opacity="0.5" />
-      <line x1="32" y1="145" x2="32" y2="136" stroke="#241d13" strokeWidth="1" />
-      <path className="flag" d="M 32 137 L 42 141 L 32 145 Z" fill="#e8a23d" opacity="0.85" />
-      {/* lantern */}
-      <circle cx="32" cy="162" r="7" fill="url(#lanternGlow)" filter="url(#softGlow)" />
-      <rect x="28" y="159" width="8" height="6" fill="url(#paneGlow)" opacity="0.85" />
+      <path d="M 19 137 L 32 123 L 45 137 Z" fill="url(#roof)" />
+      <path d="M 32 123 L 45 137 L 40 137 L 32 128 Z" fill="#1c150d" opacity="0.5" />
+      <line x1="32" y1="123" x2="32" y2="114" stroke="#241d13" strokeWidth="1" />
+      <path className="flag" d="M 32 115 L 42 119 L 32 123 Z" fill="#e8a23d" opacity="0.85" />
     </g>
     </g>
   );
