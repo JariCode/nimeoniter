@@ -37,6 +37,9 @@ function xpForLevel(lvl) {
   return lvl * 100;
 }
 
+// How fast the companion's reply appears, in milliseconds per word
+const REVEAL_WORD_MS = 70;
+
 function App() {
   // Check Clerk authentication status
   const { isLoaded, isSignedIn } = useUser();
@@ -66,11 +69,15 @@ function App() {
   const [streak, setStreak] = useState(0);
 
   // AI assistant: whether the chat is open, the saved conversation, whether a
-  // request is in flight, and whether the figure's mouth is animating.
+  // request is in flight, and how far the newest reply has been revealed.
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [assistantHistory, setAssistantHistory] = useState([]);
   const [assistantBusy, setAssistantBusy] = useState(false);
-  const [assistantSpeaking, setAssistantSpeaking] = useState(false);
+  // The newest reply appears word by word ({ shown, total } words, or null
+  // when nothing is being revealed); the figure's mouth moves only meanwhile.
+  const [assistantReveal, setAssistantReveal] = useState(null);
+  const revealTimerRef = useRef(null);
+  const assistantSpeaking = assistantReveal !== null;
   // True once the player's saved state has come back from the backend on the
   // initial load — distinguishes "not loaded yet" from a real new player who
   // has 0 missions and 0 XP.
@@ -193,10 +200,39 @@ function App() {
   const [noticeShown, setNoticeShown] = useState(null);
   const dismissNotice = useCallback(() => setNoticeShown(null), []);
 
+  // Stops the word-by-word reveal (and with it the mouth).
+  const stopReveal = useCallback(() => {
+    clearInterval(revealTimerRef.current);
+    revealTimerRef.current = null;
+    setAssistantReveal(null);
+  }, []);
+
+  // Reveal the newest reply one word at a time. Display only: the whole reply
+  // is already in the history (and saved by the backend) before this starts.
+  const startReveal = useCallback((text) => {
+    stopReveal();
+    const total = (text || '').trim().split(/\s+/).filter(Boolean).length;
+    if (total <= 1 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let shown = 1;
+    setAssistantReveal({ shown, total });
+    revealTimerRef.current = setInterval(() => {
+      shown += 1;
+      if (shown >= total) {
+        stopReveal();
+      } else {
+        setAssistantReveal({ shown, total });
+      }
+    }, REVEAL_WORD_MS);
+  }, [stopReveal]);
+
+  useEffect(() => () => clearInterval(revealTimerRef.current), []);
+
   // Send one turn to the companion and fold the reply into the saved chat. The
   // backend is authoritative: it reads the saved state, returns text only, and
   // persists the conversation — this never touches XP, resources or buildings.
   const talkToAssistant = useCallback(async (mode, question) => {
+    // A new turn ends any reply still being revealed
+    stopReveal();
     setAssistantBusy(true);
     // Optimistically show the player's own turn right away for typed questions.
     if (mode === 'question' && question) {
@@ -212,22 +248,18 @@ function App() {
       } else if (data.message) {
         setAssistantHistory((h) => [...h, { role: 'assistant', content: data.message }]);
       }
-      setAssistantSpeaking(true);
-      const readMs = Math.min(9000, 1800 + (data.message?.length || 0) * 45);
-      setTimeout(() => setAssistantSpeaking(false), readMs);
+      startReveal(data.message);
     } catch (err) {
       console.error('Assistant failed:', err);
       const message = err.message === 'Assistant is resting. Try again in a little while.'
         ? err.message
         : "The signal's gone quiet. Try me again in a moment.";
       setAssistantHistory((h) => [...h, { role: 'assistant', content: message }]);
-      setAssistantSpeaking(true);
-      const readMs = Math.min(9000, 1800 + message.length * 45);
-      setTimeout(() => setAssistantSpeaking(false), readMs);
+      startReveal(message);
     } finally {
       setAssistantBusy(false);
     }
-  }, [getToken]);
+  }, [getToken, stopReveal, startReveal]);
 
    // Open the chat (only by the player's click) and load the saved chat.
   // The first open in this browser tab session also greets.
@@ -734,10 +766,11 @@ function App() {
             <Assistant
               open={assistantOpen}
               speaking={assistantSpeaking}
+              reveal={assistantReveal}
               history={assistantHistory}
               busy={assistantBusy}
               onOpen={openAssistant}
-              onClose={() => { setAssistantOpen(false); setAssistantSpeaking(false); }}
+              onClose={() => { setAssistantOpen(false); stopReveal(); }}
               onSend={talkToAssistant}
               world={currentWorld}
             />

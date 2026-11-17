@@ -166,6 +166,12 @@
   word-wrap: break-word;
 }
 
+/* Words of the companion's reply not yet revealed: kept in place but
+   invisible, so the bubble doesn't grow line by line while it types. */
+.chat-msg__pending {
+  color: transparent;
+}
+
 /* Player's messages — right side, warmer */
 .chat-msg--you {
   align-self: flex-end;

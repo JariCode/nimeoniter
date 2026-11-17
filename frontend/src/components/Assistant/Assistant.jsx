@@ -3,12 +3,29 @@ import SurvivorFace from './SurvivorFace';
 import { getHoliday } from '../../data/holiday';
 import './Assistant.css';
 
+// Splits a reply into the part already revealed and the rest. The rest stays
+// in the bubble but transparent, so the bubble has its final size from the
+// start and the full text is always in the page (screen readers, tests).
+function splitReveal(text, shown) {
+  const parts = text.split(/(\s+)/);
+  let words = 0;
+  for (let i = 0; i < parts.length; i += 1) {
+    if (parts[i].trim()) {
+      words += 1;
+      if (words === shown) {
+        return [parts.slice(0, i + 1).join(''), parts.slice(i + 1).join('')];
+      }
+    }
+  }
+  return [text, ''];
+}
+
 // The survivor companion. Renders the shared SurvivorFace and a persistent
 // chat: the player and the character trade messages in one scrolling log,
 // with buttons for advice and the daily challenge. The backend is the source
 // of truth: this component only shows the conversation and sends turns. It
 // never computes rewards or game state.
-function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, world }) {
+function Assistant({ open, speaking, reveal, history, busy, onOpen, onClose, onSend, world }) {
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
@@ -139,14 +156,22 @@ function Assistant({ open, speaking, history, busy, onOpen, onClose, onSend, wor
               {history.length === 0 && !busy && (
                 <div className="assistant__empty">Say something to the survivor.</div>
               )}
-              {history.map((m, i) => (
-                <div
-                  key={i}
-                  className={`chat-msg ${m.role === 'user' ? 'chat-msg--you' : 'chat-msg--them'}`}
-                >
-                  {m.content}
-                </div>
-              ))}
+              {history.map((m, i) => {
+                // Only the newest companion reply is revealed word by word
+                const revealing = reveal && i === history.length - 1 && m.role !== 'user';
+                const [shownText, restText] = revealing
+                  ? splitReveal(m.content, reveal.shown)
+                  : [m.content, ''];
+                return (
+                  <div
+                    key={i}
+                    className={`chat-msg ${m.role === 'user' ? 'chat-msg--you' : 'chat-msg--them'}`}
+                  >
+                    {shownText}
+                    {restText && <span className="chat-msg__pending">{restText}</span>}
+                  </div>
+                );
+              })}
               {busy && <div className="chat-msg chat-msg--them chat-msg--typing">…</div>}
             </div>
 
